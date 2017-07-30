@@ -16,9 +16,7 @@ def scrapCnbc(address):
     tableSup = sup.find("tbody")
     print(tableSup)
 
-
-
-def scrapCmegroup(address, maxRows, switchOI4eachMonth):
+def scrapCmegroup(address, maxRows, switchOI4eachMonth = True):
 
     #creating/formatting data from scrapdata
     r = requests.get(address)
@@ -125,8 +123,6 @@ def scrapCmegroup(address, maxRows, switchOI4eachMonth):
 
     return totalValues, table, ioTable
 
-
-
 def scrapMarketwatch(address):
     #creating/formatting data from scrapdata
     r = requests.get(address)
@@ -207,8 +203,6 @@ def scrapMarketwatch(address):
 
     return data;
 
-
-
 def scrapBloomberg(address):
     #creating/formatting data from scrapdata
     r = requests.get("https://www.bloomberg.com/quote/" + address)
@@ -287,8 +281,6 @@ def scrapBloomberg(address):
         print("No 'OpenInterest' for '{}'".format(address))
 
     return data;
-
-
 
 def mkTranslator(text):
     string = ""
