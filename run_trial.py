@@ -1,6 +1,3 @@
 import scrapit as sc
 
-s = sc.scrapBloomberg('https://www.bloomberg.com/quote/CO1:COM')
-
-for i in s:
-    print(s[i])
+sc.scrapWgb('http://www.worldgovernmentbonds.com/country/germany/')

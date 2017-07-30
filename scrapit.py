@@ -7,14 +7,86 @@ dataFormatGlobal = {"Ticker": "","FullName": "","Date": "",
                     "DayH": "","DayL": "","52H": "","52L": "","Volume": "","OpenInterest": "",
                     "datacheck": "TNPODD55VI"}
 
-def scrapCnbc(address):
+def durataTranslator(text):
+    text = text.replace(' ','').replace('\n','')
+    multiplier = 0
+    numbers = []
+    letters = []
+
+    for l in text:
+        if l.isdigit():
+            numbers.append(l)
+        else:
+            letters.append(l)
+    if letters[0] == 'm' or letters[0] == 'M':
+        multiplier = 1
+    if letters[0] == 'y' or letters[0] == 'Y':
+        multiplier = 12
+
+    nstr = ''
+
+    for i in numbers:
+        nstr = nstr + i
+
+    months = int(nstr) * multiplier
+
+    return months
+
+def mkTranslator(text):
+    string = ""
+    multiplier = 1
+
+    for char in text:
+        if char.isdigit() or char == ".":
+            string += char
+
+        if char == "B" or char == "b":
+            multiplier = 1000000000
+        if char == "M" or char == "m":
+            multiplier = 1000000
+        if char == "K" or char == "k":
+            multiplier = 1000
+
+    num = float(string)
+    num = num * multiplier
+
+    return int(num)
+
+##
+#/ scraping function
+##
+
+def scrapWgb(address):
 
     r = requests.get(address)
     c = r.content
     sup = bs(c,"html.parser")
 
-    tableSup = sup.find("tbody")
-    print(tableSup)
+    tableSup = sup.find_all("table")[-1]
+    rows = tableSup.find_all("tr")
+
+    #check that we get today Yield and not a past one
+    headerCELLS = rows[0].find_all("th")
+    yieldIndex = 2
+    alert = False
+    for i, th in enumerate(headerCELLS):
+        if th.text == "Yield":
+            yieldIndex = 2
+            alert = True
+    if not alert:
+        print("Yield was not found")
+    #check that we get today Yield and not a past one
+
+    maturity = []
+    yields = []
+
+    for n, row in enumerate(rows):
+        if n > 0:
+            selectedCELLS = row.find_all("td")
+            maturity.append(durataTranslator(selectedCELLS[1].text))
+            yields.append(float(selectedCELLS[yieldIndex].text.replace('%','')))
+
+    return maturity, yields
 
 def scrapCmegroup(address, maxRows = 30, switchOI4eachMonth = True):
 
@@ -118,8 +190,6 @@ def scrapCmegroup(address, maxRows = 30, switchOI4eachMonth = True):
                                       'blockTrades': cells[colNumBlockTrades].text.replace(',','')}
                             ioTable.append(oiData)
         #// we now add Open Interest and Block Trades to table{}
-
-
 
     return totalValues, table, ioTable
 
@@ -284,22 +354,8 @@ def scrapBloomberg(address):
 
     return data;
 
-def mkTranslator(text):
-    string = ""
-    multiplier = 1
+##
+#\ scraping function
+##
 
-    for char in text:
-        if char.isdigit() or char == ".":
-            string += char
-
-        if char == "B" or char == "b":
-            multiplier = 1000000000
-        if char == "M" or char == "m":
-            multiplier = 1000000
-        if char == "K" or char == "k":
-            multiplier = 1000
-
-    num = float(string)
-    num = num * multiplier
-
-    return int(num)
+print(scrapWgb('http://www.worldgovernmentbonds.com/country/germany/'))
