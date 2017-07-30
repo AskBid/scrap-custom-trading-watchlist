@@ -205,7 +205,7 @@ def scrapMarketwatch(address):
 
 def scrapBloomberg(address):
     #creating/formatting data from scrapdata
-    r = requests.get("https://www.bloomberg.com/quote/" + address)
+    r = requests.get(address)
     c = r.content
     sup = bs(c,"html.parser")
 
@@ -274,12 +274,14 @@ def scrapBloomberg(address):
         data["datacheck"] = data["datacheck"].replace("V","-")
         print("No 'Volume' for '{}'".format(address))
 
+    ''' in Bloomberg non ce mai Oi
     try:
         data["OpenInterest"] = scrapData["OpenInterest"].replace(" ","")
     except:
         data["datacheck"] = data["datacheck"].replace("I","-")
         print("No 'OpenInterest' for '{}'".format(address))
-
+    '''
+    
     return data;
 
 def mkTranslator(text):
