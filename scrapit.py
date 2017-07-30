@@ -16,7 +16,7 @@ def scrapCnbc(address):
     tableSup = sup.find("tbody")
     print(tableSup)
 
-def scrapCmegroup(address, maxRows, switchOI4eachMonth = True):
+def scrapCmegroup(address, maxRows = 30, switchOI4eachMonth = True):
 
     #creating/formatting data from scrapdata
     r = requests.get(address)
