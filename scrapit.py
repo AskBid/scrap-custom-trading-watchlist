@@ -151,13 +151,13 @@ def scrapMarketwatch(address):
     data["Date"] = time.strftime("%Y/%m/%d %H:%M %a")
 
     try:
-        data["Ticker"] = sup.find("span",{"class": "company__ticker"}).text
+        data["Ticker"] = sup.find("span",{"class": "company__ticker"}).text.replace(' ','')
     except:
         data["datacheck"] = data["datacheck"].replace("T","-")
         print("'{}' No 'Ticker'".format(address))
 
     try:
-        data["FullName"] = sup.find("span",{"class":"company__market"}).text
+        data["FullName"] = sup.find("span",{"class":"company__market"}).text.replace(' ','')
     except:
         data["datacheck"] = data["datacheck"].replace("N","-")
         print("'{}' No 'FullName'".format(address))
@@ -231,13 +231,13 @@ def scrapBloomberg(address):
     data["Date"] = time.strftime("%Y/%m/%d %H:%M %a")
 
     try:
-        data["Ticker"] = sup.find("div",{"class": "ticker"}).text
+        data["Ticker"] = sup.find("div",{"class": "ticker"}).text.replace(' ','')
     except:
         data["datacheck"] = data["datacheck"].replace("T","-")
         print("No 'Ticker' for '{}'".format(address))
 
     try:
-        data["FullName"] = sup.find("h1",{"class":"name"}).text
+        data["FullName"] = sup.find("h1",{"class":"name"}).text.replace(' ','')
     except:
         data["datacheck"] = data["datacheck"].replace("N","-")
         print("No 'FullName' for '{}'".format(address))
@@ -281,7 +281,7 @@ def scrapBloomberg(address):
         data["datacheck"] = data["datacheck"].replace("I","-")
         print("No 'OpenInterest' for '{}'".format(address))
     '''
-    
+
     return data;
 
 def mkTranslator(text):
