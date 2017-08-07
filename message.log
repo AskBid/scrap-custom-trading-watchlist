@@ -1,0 +1,11 @@
+{'Name': 'Markit CDX North America Investment Grade', 'Value': '57.66', 'Unit': 'Spread', 'bptChange': ''}
+{'Name': 'Markit CDX North America High Yield', 'Value': '107.56', 'Unit': 'Price', 'bptChange': ''}
+{'Name': 'Markit CDX Emerging Markets', 'Value': '96.14', 'Unit': 'Price', 'bptChange': ''}
+{'Name': 'Markit MCDX (municipal CDS)', 'Value': '56.00', 'Unit': 'Spread', 'bptChange': ''}
+{'Name': 'Markit iTraxx Europe', 'Value': '51.73', 'Unit': 'Spread', 'bptChange': ''}
+{'Name': 'Markit iTraxx Europe Crossover', 'Value': '231.07', 'Unit': 'Spread', 'bptChange': ''}
+{'Name': 'Markit iTraxx Asia ex Japan Investment Grade', 'Value': '80.38', 'Unit': 'Spread', 'bptChange': ''}
+{'Name': 'Markit iTraxx Japan', 'Value': '40.68', 'Unit': 'Spread', 'bptChange': ''}
+{'Name': 'Markit iTraxx Australia', 'Value': '75.82', 'Unit': 'Spread', 'bptChange': ''}
+{'Name': 'Markit iTraxx SovX Western Europe', 'Value': '19.90', 'Unit': 'Spread', 'bptChange': ''}
+[{'Name': 'Markit iTraxx SovX Western Europe', 'Value': '19.90', 'Unit': 'Spread', 'bptChange': ''}, {'Name': 'Markit iTraxx SovX Western Europe', 'Value': '19.90', 'Unit': 'Spread', 'bptChange': ''}, {'Name': 'Markit iTraxx SovX Western Europe', 'Value': '19.90', 'Unit': 'Spread', 'bptChange': ''}, {'Name': 'Markit iTraxx SovX Western Europe', 'Value': '19.90', 'Unit': 'Spread', 'bptChange': ''}, {'Name': 'Markit iTraxx SovX Western Europe', 'Value': '19.90', 'Unit': 'Spread', 'bptChange': ''}, {'Name': 'Markit iTraxx SovX Western Europe', 'Value': '19.90', 'Unit': 'Spread', 'bptChange': ''}, {'Name': 'Markit iTraxx SovX Western Europe', 'Value': '19.90', 'Unit': 'Spread', 'bptChange': ''}, {'Name': 'Markit iTraxx SovX Western Europe', 'Value': '19.90', 'Unit': 'Spread', 'bptChange': ''}, {'Name': 'Markit iTraxx SovX Western Europe', 'Value': '19.90', 'Unit': 'Spread', 'bptChange': ''}, {'Name': 'Markit iTraxx SovX Western Europe', 'Value': '19.90', 'Unit': 'Spread', 'bptChange': ''}]

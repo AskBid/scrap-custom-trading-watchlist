@@ -1,6 +1,7 @@
 import time
 import requests
 from bs4 import BeautifulSoup as bs
+'''
 ##### start/divert all prints to a log file
 import sys
 old_stdout = sys.stdout
@@ -9,27 +10,31 @@ log_file = open("message.log","w")
 
 sys.stdout = log_file
 ##### start\divert all prints to a log file
-
+'''
 
 #data shared format between Marketwatch and Bloomberg
-dataFormatGlobal = {
-    "Ticker": "",
-    "FullName": "",
-    "Date": "",
-    "Price": "",
-    "Open": "",
-    "DayH": "",
-    "DayL": "",
-    "52H": "",
-    "52L": "",
-    "Volume": "",
-    "OpenInterest": ""}
+def getDataFormat():
+    dataFormat = {
+        "Ticker": "",
+        "FullName": "",
+        "Date": "",
+        "Price": "",
+        "Open": "",
+        "DayH": "",
+        "DayL": "",
+        "52H": "",
+        "52L": "",
+        "Volume": "",
+        "OpenInterest": ""}
+    return dataFormat
 
-dataFormatGlobalCDS = {
-    'Name': '',
-    'Value': '',
-    'Unit': '',
-    'bptChange': ''}
+def getDataFormatCDS():
+    dataFormatCDS = {
+        'Name': '',
+        'Value': '',
+        'Unit': '',
+        'bptChange': ''}
+    return dataFormatCDS
 
 def durataTranslator(text):
     text = text.replace(' ','').replace('\n','')
@@ -92,7 +97,7 @@ def scrapSovereignCDS(address):
     sovereignCDS = []
 
     for row in rows:
-        dictRow = dataFormatGlobalCDS
+        dictRow = getDataFormatCDS()
 
         name = row.find("td",{"class": lambda x: x and 'Nome' in x})
         name = name.text.replace(' ','').replace('\n','').replace('\t','')
@@ -129,26 +134,25 @@ def scrapWsj(address):
         except:
             pass
     #check finished we now have an address (srcJust) or 'none'
-
     html = requests.get(src4iframe).text
     soup = bs(html,'html.parser')
+    soup = soup.find('table',{"id": 'CdsIndexTable'})
+    soup = soup.find('tbody')
 
     #take values for all of the tables  ### crucial if website change
     try:
-        names = soup.findAll("td",{"class": lambda x: x and 'col1' in x})
-        values = soup.findAll("td",{"class": lambda x: x and 'col2' in x})
-        unit = soup.findAll("td",{"class": lambda x: x and 'col3' in x})
-        bptChange = soup.findAll("td",{"class": lambda x: x and 'col5' in x})
+        names = soup.find_all("td",{"class": lambda x: x and 'col1' in x})
+        values = soup.find_all("td",{"class": lambda x: x and 'col2' in x})
+        unit = soup.find_all("td",{"class": lambda x: x and 'col3' in x})
+        bptChange = soup.find_all("td",{"class": lambda x: x and 'col5' in x})
     except:
         print("table CDS column gathering did not work")
 
     dictCDS = []
-    dictCDSbondsBM = []   #BM as in Big Movers
-    dictCDSstockBM = []
 
-    for i in range(0,12):
+    for i in range(0,len(names)):
         if 'n.a.' not in values[i].text:
-            dictRow = dataFormatGlobalCDS
+            dictRow = getDataFormatCDS()
 
             dictRow['Name'] = names[i].text
             dictRow['Value'] = values[i].text
@@ -157,29 +161,8 @@ def scrapWsj(address):
 
             dictCDS.append(dictRow)
 
-    #tigheners/wideners bonds (last 20 rows we take first ten)
-    for i in range(-20,-10):
-        dictRow = dataFormatGlobalCDS
 
-        dictRow['Name'] = names[i].text
-        dictRow['Value'] = values[i].text
-        dictRow['Unit'] = 'Spread'
-        dictRow['bptChange'] = bptChange[i].text
-
-        dictCDSbondsBM.append(dictRow)
-
-    #tigheners/wideners bonds (last 20 rows we take first ten)
-    for i in range(-10,0):
-        dictRow = dataFormatGlobalCDS
-
-        dictRow['Name'] = names[i].text
-        dictRow['Value'] = values[i].text
-        dictRow['Unit'] = 'Spread'
-        dictRow['bptChange'] = bptChange[i].text
-
-        dictCDSstockBM.append(dictRow)
-
-    return dictCDS, dictCDSbondsBM, dictCDSstockBM  #ritorna tre liste di dizionari 'dataFormatGlobalCDS'
+    return dictCDS
 
 def scrapWgb(address):
     #for yeld curves
@@ -333,7 +316,7 @@ def scrapMarketwatch(address):
     lab = sup.find_all("small",{"class": 'kv__label'})
     val = sup.find_all("span",{"class": 'kv__value kv__primary '})
 
-    data = dataFormatGlobal
+    data = getDataFormat()
 
     if not len(lab) == len(val):
         print("'{}' labels and values mismatch".format(address))
@@ -401,7 +384,7 @@ def scrapBloomberg(address):
     lab = sup.find_all("div",{"class": lambda x: x and 'cell__label' in x})
     val = sup.find_all("div",{"class": lambda x: x and 'cell__value' in x})
 
-    data = dataFormatGlobal
+    data = getDataFormat()
 
     if not len(lab) == len(val):
         print("'{}' labels and values mismatch".format(address))
@@ -464,12 +447,33 @@ def scrapBloomberg(address):
 ##
 #\ scraping functions
 ##
-
+'''
 ##### end/divert all prints to a log file
 sys.stdout = old_stdout
 
 log_file.close()
 ##### end\divert all prints to a log file
-t = scrapCmegroup('http://www.cmegroup.com/trading/metals/base/copper.html')[1]
-for ti in t:
-    print(ti)
+'''
+
+def scrapit(address):
+    '''
+    "Date","Price","Open","DayH","DayL","52H","52L","Volume","OpenInterest","--","totalVolume","totalOpenInterest","totalBlockTrades","--"
+    '''
+    '''
+        if 'bloomberg' in address:
+            scrapBloomberg(address)
+
+        if 'marketwatch' in address:
+            scrapMarketwatch(address)
+
+        if 'cmegroup' in address:
+            scrapCmegroup(address)
+
+        if 'worldgovernmentbonds' in address and 'sovereign-cds' in address:
+            scrapSovereignCDS(address)
+
+        if 'worldgovernmentbonds' in address:
+            scrapWgb(address)
+    '''
+    if 'wsj.com' in address:
+        return str(scrapWsj(address))
