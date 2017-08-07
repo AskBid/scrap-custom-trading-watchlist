@@ -15,13 +15,16 @@ for line in f:
         thisFile = open('data/' + fileName + '.csv', 'a+')
         print(fileName)
         print(address)
-        print(scrapit.scrapit(address))
+        returned = scrapit.scrapit(address)
+        print(returned)
+
         try:
-            thisFile.write(scrapit.scrapit(address))
+            thisFile.write(returned)
             thisFile.write('\n')
             thisFile.close()
         except:
-            print('file write not working')
+            print('file write not working for {}'.format(fileName))
 
+        print('\n')
 
 f.close

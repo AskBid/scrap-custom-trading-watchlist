@@ -15,8 +15,6 @@ sys.stdout = log_file
 #data shared format between Marketwatch and Bloomberg
 def getDataFormat():
     dataFormat = {
-        "Ticker": "",
-        "FullName": "",
         "Date": "",
         "Price": "",
         "Open": "",
@@ -25,7 +23,9 @@ def getDataFormat():
         "52H": "",
         "52L": "",
         "Volume": "",
-        "OpenInterest": ""}
+        "OpenInterest": "",
+        "Ticker": "",
+        "FullName": ""}
     return dataFormat
 
 def getDataFormatCDS():
@@ -35,6 +35,19 @@ def getDataFormatCDS():
         'Unit': '',
         'bptChange': ''}
     return dataFormatCDS
+
+def getDataFormatCME():
+    dataFormatCME = {
+        "Ticker": "",
+        "last": "",
+        "priorSettle": "",
+        "open": "",
+        "high": "",
+        "low": "",
+        "volume": "",
+        "openInterest": "",
+        "blockTrades": ""}
+    return dataFormatCME
 
 def durataTranslator(text):
     text = text.replace(' ','').replace('\n','')
@@ -164,7 +177,7 @@ def scrapWsj(address):
 
     return dictCDS
 
-def scrapWgb(address):
+def scrapWorldgovernmentbonds(address):
     #for yeld curves
     r = requests.get(address)
     c = r.content
@@ -217,15 +230,7 @@ def scrapCmegroup(address):
 
         selectedCELLS = row.find_all("td",{"id": lambda x: x and 'quotesFuturesProductTable1' in x})
 
-        data = {"Ticker": "",
-                "last": "",
-                "priorSettle": "",
-                "open": "",
-                "high": "",
-                "low": "",
-                "volume": "",
-                "openInterest": "",
-                "blockTrades": ""}
+        data = getDataFormatCME()
 
         totalValues = {'totalOpenInterest': "",
                        'totalVolume': "",
@@ -326,7 +331,6 @@ def scrapMarketwatch(address):
 
     for i, key in enumerate(lab):
         scrapData[key.text.replace(" ","")] = val[i].text.replace(",","").replace("%","").replace("$","").replace("£","").replace("€","")
-    print(scrapData)
 
     data["Date"] = time.strftime("%Y/%m/%d %H:%M %a")
 
@@ -341,8 +345,16 @@ def scrapMarketwatch(address):
         print("'{}' No 'FullName'".format(address))
 
     try:
-        data["Price"] = sup.find("span",{"class":"value"}).text.replace(",","").replace(" ","")
-        int_try = float(data["Price"]) #check that an actual number was found for Price
+        priceTab = sup.find("h3",{"class": lambda x: x and 'intraday__price' in x})
+        #print(priceTab.get('class', []))
+        if priceTab.find('bg-quote') != None:
+            print('we found bg-quote')
+            bgquote = priceTab.find('bg-quote')
+            bgquote.get('class', [])
+            data["Price"] = priceTab.find('bg-quote').text.replace(",","").replace(" ","")
+        else:
+            data["Price"] = priceTab.find("span",{"class":"value"}).text.replace(",","").replace(" ","")
+        float(data["Price"]) #check that an actual number was found for Price
     except:
         print("'{}' No 'Price'".format(address))
 
@@ -374,6 +386,9 @@ def scrapMarketwatch(address):
         print("'{}' No 'OpenInterest'".format(address))
 
     return data;
+
+scrapMarketwatch('http://www.marketwatch.com/investing/future/wti%20crude?countrycode=uk')
+scrapMarketwatch('http://www.marketwatch.com/investing/future/2-year%20euro%20schatz?countrycode=de&iso=xeur')
 
 def scrapBloomberg(address):
     #creating/formatting data from scrapdata
@@ -432,15 +447,7 @@ def scrapBloomberg(address):
     try:
         data["Volume"] = scrapData["Volume"].replace(" ","")
     except:
-        print("'{}' No 'Volume'".format(address))
-
-    ''' in Bloomberg non ce mai Oi
-    try:
-        data["OpenInterest"] = scrapData["OpenInterest"].replace(" ","")
-    except:
-        data["datacheck"] = data["datacheck"].replace("I","-")
-        print("No 'OpenInterest' for '{}'".format(address))
-    '''
+        pass
 
     return data;
 
@@ -459,21 +466,21 @@ def scrapit(address):
     '''
     "Date","Price","Open","DayH","DayL","52H","52L","Volume","OpenInterest","--","totalVolume","totalOpenInterest","totalBlockTrades","--"
     '''
-    '''
-        if 'bloomberg' in address:
-            scrapBloomberg(address)
 
-        if 'marketwatch' in address:
-            scrapMarketwatch(address)
+    if 'cmegroup' in address:
+        return str(scrapCmegroup(address))
 
-        if 'cmegroup' in address:
-            scrapCmegroup(address)
+    if 'marketwatch' in address:
+        return str(scrapMarketwatch(address))
 
-        if 'worldgovernmentbonds' in address and 'sovereign-cds' in address:
-            scrapSovereignCDS(address)
+    if 'bloomberg' in address:
+        return str(scrapBloomberg(address))
 
-        if 'worldgovernmentbonds' in address:
-            scrapWgb(address)
-    '''
+    if 'worldgovernmentbonds.com/country' in address:
+        return str(scrapWorldgovernmentbonds(address))
+
+    if 'sovereign-cds' in address:
+        return str(scrapSovereignCDS(address))
+
     if 'wsj.com' in address:
         return str(scrapWsj(address))
