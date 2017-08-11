@@ -1,16 +1,5 @@
-https://www.bloomberg.com/quote/XAUUSD:CUR
-https://www.bloomberg.com/quote/XAUUSD:CUR
-https://www.bloomberg.com/quote/XAUUSD:CUR
-OGOLD.SGOLD.SOOOOOOGOLD.S
-GOLD.S
-{'Date': '2017/08/07 16:14 Mon', 'Price': '1257.61', 'Open': '1258.83', 'DayH': '1260.00', 'DayL': '1255.87', '52H': '1358.21', '52L': '1122.89', 'Volume': '', 'OpenInterest': '', 'Ticker': 'XAUUSD:CUR', 'FullName': 'XAUUSDSpotExchangeRate'}
-{'Date': '2017/08/07 16:19 Mon', 'Price': '1257.77', 'Open': '1258.83', 'DayH': '1260.00', 'DayL': '1255.87', '52H': '1358.21', '52L': '1122.89', 'Volume': '', 'OpenInterest': '', 'Ticker': 'XAUUSD:CUR', 'FullName': 'XAUUSDSpotExchangeRate'}
-{'Date': '2017/08/07 16:38 Mon', 'Price': '1257.31', 'Open': '1258.83', 'DayH': '1260.00', 'DayL': '1255.87', '52H': '1358.21', '52L': '1122.89', 'Volume': '', 'OpenInterest': '', 'Ticker': 'XAUUSD:CUR', 'FullName': 'XAUUSDSpotExchangeRate'}
-{'Date': '2017/08/07 16:40 Mon', 'Price': '1257.69', 'Open': '1258.83', 'DayH': '1260.00', 'DayL': '1255.87', '52H': '1358.21', '52L': '1122.89', 'Volume': '', 'OpenInterest': '', 'Ticker': 'XAUUSD:CUR', 'FullName': 'XAUUSDSpotExchangeRate'}
-{'Date': '2017/08/07 16:48 Mon', 'Price': '1257.48', 'Open': '1258.83', 'DayH': '1260.00', 'DayL': '1255.87', '52H': '1358.21', '52L': '1122.89', 'Volume': '', 'OpenInterest': '', 'Ticker': 'XAUUSD:CUR', 'FullName': 'XAUUSDSpotExchangeRate'}
-{'Date': '2017/08/07 16:50 Mon', 'Price': '1257.48', 'Open': '1258.83', 'DayH': '1260.00', 'DayL': '1255.87', '52H': '1358.21', '52L': '1122.89', 'Volume': '', 'OpenInterest': '', 'Ticker': 'XAUUSD:CUR', 'FullName': 'XAUUSDSpotExchangeRate'}
-{'Date': '2017/08/07 17:22 Mon', 'Price': '1257.75', 'Open': '1257.85', 'DayH': '1257.89', 'DayL': '1257.69', '52H': '1358.21', '52L': '1122.89', 'Volume': '', 'OpenInterest': '', 'Ticker': 'XAUUSD:CUR', 'FullName': 'XAUUSDSpotExchangeRate'}
-{'Date': '2017/08/07 17:27 Mon', 'Price': '1257.75', 'Open': '1257.85', 'DayH': '1257.89', 'DayL': '1257.69', '52H': '1358.21', '52L': '1122.89', 'Volume': '', 'OpenInterest': '', 'Ticker': 'XAUUSD:CUR', 'FullName': 'XAUUSDSpotExchangeRate'}
-{'Date': '2017/08/07 17:31 Mon', 'Price': '1257.75', 'Open': '1257.85', 'DayH': '1257.89', 'DayL': '1257.69', '52H': '1358.21', '52L': '1122.89', 'Volume': '', 'OpenInterest': '', 'Ticker': 'XAUUSD:CUR', 'FullName': 'XAUUSDSpotExchangeRate'}
-{'Date': '2017/08/07 17:32 Mon', 'Price': '1257.75', 'Open': '1257.85', 'DayH': '1257.89', 'DayL': '1257.69', '52H': '1358.21', '52L': '1122.89', 'Volume': '', 'OpenInterest': '', 'Ticker': 'XAUUSD:CUR', 'FullName': 'XAUUSDSpotExchangeRate'}
-{'Date': '2017/08/07 17:37 Mon', 'Price': '1257.75', 'Open': '1257.85', 'DayH': '1257.89', 'DayL': '1257.69', '52H': '1358.21', '52L': '1122.89', 'Volume': '', 'OpenInterest': '', 'Ticker': 'XAUUSD:CUR', 'FullName': 'XAUUSDSpotExchangeRate'}
+['2017/08/10 17:40 Thu', '1286.53', '1286.53', '1286.53', '1286.45', '1358.21', '1122.89', '', '', 'XAUUSD:CUR']///
+['2017/08/10 17:47 Thu', '1286.55', '1286.53', '1286.73', '1286.45', '1358.21', '1122.89', '', '', 'XAUUSD:CUR']
+['2017/08/10 18:01 Thu', '1287.03', '1286.53', '1287.32', '1286.34', '1358.21', '1122.89', '', '', 'XAUUSD:CUR']
+['2017/08/10 18:07 Thu', '1286.30', '1286.53', '1287.32', '1286.23', '1358.21', '1122.89', '', '', 'XAUUSD:CUR']
+['2017/08/10 18:23 Thu', '1286.22', '1286.53', '1287.32', '1285.78', '1358.21', '1122.89', '', '', 'XAUUSD:CUR']

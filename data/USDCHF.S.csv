@@ -1,16 +1,5 @@
-https://www.bloomberg.com/quote/USDCHF:CUR
-https://www.bloomberg.com/quote/USDCHF:CUR
-https://www.bloomberg.com/quote/USDCHF:CUR
-SUSDCHF.SUSDCHF.SSSSSSSUSDCHF.S
-USDCHF.S
-{'Date': '2017/08/07 16:14 Mon', 'Price': '0.9733', 'Open': '0.9730', 'DayH': '0.9747', 'DayL': '0.9711', '52H': '1.0344', '52L': '0.9439', 'Volume': '', 'OpenInterest': '', 'Ticker': 'USDCHF:CUR', 'FullName': 'USDCHFSpotExchangeRate'}
-{'Date': '2017/08/07 16:19 Mon', 'Price': '0.9733', 'Open': '0.9730', 'DayH': '0.9747', 'DayL': '0.9711', '52H': '1.0344', '52L': '0.9439', 'Volume': '', 'OpenInterest': '', 'Ticker': 'USDCHF:CUR', 'FullName': 'USDCHFSpotExchangeRate'}
-{'Date': '2017/08/07 16:38 Mon', 'Price': '0.9735', 'Open': '0.9730', 'DayH': '0.9747', 'DayL': '0.9711', '52H': '1.0344', '52L': '0.9439', 'Volume': '', 'OpenInterest': '', 'Ticker': 'USDCHF:CUR', 'FullName': 'USDCHFSpotExchangeRate'}
-{'Date': '2017/08/07 16:40 Mon', 'Price': '0.9735', 'Open': '0.9730', 'DayH': '0.9747', 'DayL': '0.9711', '52H': '1.0344', '52L': '0.9439', 'Volume': '', 'OpenInterest': '', 'Ticker': 'USDCHF:CUR', 'FullName': 'USDCHFSpotExchangeRate'}
-{'Date': '2017/08/07 16:48 Mon', 'Price': '0.9734', 'Open': '0.9730', 'DayH': '0.9747', 'DayL': '0.9711', '52H': '1.0344', '52L': '0.9439', 'Volume': '', 'OpenInterest': '', 'Ticker': 'USDCHF:CUR', 'FullName': 'USDCHFSpotExchangeRate'}
-{'Date': '2017/08/07 16:50 Mon', 'Price': '0.9734', 'Open': '0.9730', 'DayH': '0.9747', 'DayL': '0.9711', '52H': '1.0344', '52L': '0.9439', 'Volume': '', 'OpenInterest': '', 'Ticker': 'USDCHF:CUR', 'FullName': 'USDCHFSpotExchangeRate'}
-{'Date': '2017/08/07 17:22 Mon', 'Price': '0.9731', 'Open': '0.9730', 'DayH': '0.9738', 'DayL': '0.9721', '52H': '1.0344', '52L': '0.9439', 'Volume': '', 'OpenInterest': '', 'Ticker': 'USDCHF:CUR', 'FullName': 'USDCHFSpotExchangeRate'}
-{'Date': '2017/08/07 17:27 Mon', 'Price': '0.9731', 'Open': '0.9730', 'DayH': '0.9738', 'DayL': '0.9721', '52H': '1.0344', '52L': '0.9439', 'Volume': '', 'OpenInterest': '', 'Ticker': 'USDCHF:CUR', 'FullName': 'USDCHFSpotExchangeRate'}
-{'Date': '2017/08/07 17:30 Mon', 'Price': '0.9734', 'Open': '0.9730', 'DayH': '0.9738', 'DayL': '0.9721', '52H': '1.0344', '52L': '0.9439', 'Volume': '', 'OpenInterest': '', 'Ticker': 'USDCHF:CUR', 'FullName': 'USDCHFSpotExchangeRate'}
-{'Date': '2017/08/07 17:32 Mon', 'Price': '0.9727', 'Open': '0.9730', 'DayH': '0.9738', 'DayL': '0.9721', '52H': '1.0344', '52L': '0.9439', 'Volume': '', 'OpenInterest': '', 'Ticker': 'USDCHF:CUR', 'FullName': 'USDCHFSpotExchangeRate'}
-{'Date': '2017/08/07 17:37 Mon', 'Price': '0.9730', 'Open': '0.9730', 'DayH': '0.9738', 'DayL': '0.9721', '52H': '1.0344', '52L': '0.9439', 'Volume': '', 'OpenInterest': '', 'Ticker': 'USDCHF:CUR', 'FullName': 'USDCHFSpotExchangeRate'}
+['2017/08/10 17:40 Thu', '0.9624', '0.9626', '0.9629', '0.9623', '1.0344', '0.9439', '', '', 'USDCHF:CUR']///
+['2017/08/10 17:47 Thu', '0.9623', '0.9626', '0.9629', '0.9621', '1.0344', '0.9439', '', '', 'USDCHF:CUR']
+['2017/08/10 18:01 Thu', '0.9623', '0.9626', '0.9629', '0.9620', '1.0344', '0.9439', '', '', 'USDCHF:CUR']
+['2017/08/10 18:07 Thu', '0.9623', '0.9626', '0.9629', '0.9620', '1.0344', '0.9439', '', '', 'USDCHF:CUR']
+['2017/08/10 18:23 Thu', '0.9620', '0.9626', '0.9629', '0.9619', '1.0344', '0.9439', '', '', 'USDCHF:CUR']

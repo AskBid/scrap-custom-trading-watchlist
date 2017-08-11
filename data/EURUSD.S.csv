@@ -1,16 +1,5 @@
-https://www.bloomberg.com/quote/EURUSD:CUR
-https://www.bloomberg.com/quote/EURUSD:CUR
-https://www.bloomberg.com/quote/EURUSD:CUR
-UEURUSD.SEURUSD.SUUUUUUEURUSD.S
-EURUSD.S
-{'Date': '2017/08/07 16:14 Mon', 'Price': '1.1794', 'Open': '1.1771', 'DayH': '1.1814', 'DayL': '1.1766', '52H': '1.1910', '52L': '1.0341', 'Volume': '', 'OpenInterest': '', 'Ticker': 'EURUSD:CUR', 'FullName': 'EURUSDSpotExchangeRate'}
-{'Date': '2017/08/07 16:19 Mon', 'Price': '1.1794', 'Open': '1.1771', 'DayH': '1.1814', 'DayL': '1.1766', '52H': '1.1910', '52L': '1.0341', 'Volume': '', 'OpenInterest': '', 'Ticker': 'EURUSD:CUR', 'FullName': 'EURUSDSpotExchangeRate'}
-{'Date': '2017/08/07 16:38 Mon', 'Price': '1.1793', 'Open': '1.1771', 'DayH': '1.1814', 'DayL': '1.1766', '52H': '1.1910', '52L': '1.0341', 'Volume': '', 'OpenInterest': '', 'Ticker': 'EURUSD:CUR', 'FullName': 'EURUSDSpotExchangeRate'}
-{'Date': '2017/08/07 16:40 Mon', 'Price': '1.1793', 'Open': '1.1771', 'DayH': '1.1814', 'DayL': '1.1766', '52H': '1.1910', '52L': '1.0341', 'Volume': '', 'OpenInterest': '', 'Ticker': 'EURUSD:CUR', 'FullName': 'EURUSDSpotExchangeRate'}
-{'Date': '2017/08/07 16:48 Mon', 'Price': '1.1793', 'Open': '1.1771', 'DayH': '1.1814', 'DayL': '1.1766', '52H': '1.1910', '52L': '1.0341', 'Volume': '', 'OpenInterest': '', 'Ticker': 'EURUSD:CUR', 'FullName': 'EURUSDSpotExchangeRate'}
-{'Date': '2017/08/07 16:50 Mon', 'Price': '1.1795', 'Open': '1.1771', 'DayH': '1.1814', 'DayL': '1.1766', '52H': '1.1910', '52L': '1.0341', 'Volume': '', 'OpenInterest': '', 'Ticker': 'EURUSD:CUR', 'FullName': 'EURUSDSpotExchangeRate'}
-{'Date': '2017/08/07 17:22 Mon', 'Price': '1.1794', 'Open': '1.1795', 'DayH': '1.1797', 'DayL': '1.1792', '52H': '1.1910', '52L': '1.0341', 'Volume': '', 'OpenInterest': '', 'Ticker': 'EURUSD:CUR', 'FullName': 'EURUSDSpotExchangeRate'}
-{'Date': '2017/08/07 17:27 Mon', 'Price': '1.1795', 'Open': '1.1795', 'DayH': '1.1797', 'DayL': '1.1792', '52H': '1.1910', '52L': '1.0341', 'Volume': '', 'OpenInterest': '', 'Ticker': 'EURUSD:CUR', 'FullName': 'EURUSDSpotExchangeRate'}
-{'Date': '2017/08/07 17:30 Mon', 'Price': '1.1795', 'Open': '1.1795', 'DayH': '1.1797', 'DayL': '1.1792', '52H': '1.1910', '52L': '1.0341', 'Volume': '', 'OpenInterest': '', 'Ticker': 'EURUSD:CUR', 'FullName': 'EURUSDSpotExchangeRate'}
-{'Date': '2017/08/07 17:32 Mon', 'Price': '1.1796', 'Open': '1.1795', 'DayH': '1.1797', 'DayL': '1.1792', '52H': '1.1910', '52L': '1.0341', 'Volume': '', 'OpenInterest': '', 'Ticker': 'EURUSD:CUR', 'FullName': 'EURUSDSpotExchangeRate'}
-{'Date': '2017/08/07 17:37 Mon', 'Price': '1.1795', 'Open': '1.1795', 'DayH': '1.1797', 'DayL': '1.1792', '52H': '1.1910', '52L': '1.0341', 'Volume': '', 'OpenInterest': '', 'Ticker': 'EURUSD:CUR', 'FullName': 'EURUSDSpotExchangeRate'}
+['2017/08/10 17:40 Thu', '1.1772', '1.1772', '1.1773', '1.1768', '1.1910', '1.0341', '', '', 'EURUSD:CUR']///
+['2017/08/10 17:45 Thu', '1.1771', '1.1772', '1.1775', '1.1768', '1.1910', '1.0341', '', '', 'EURUSD:CUR']
+['2017/08/10 18:01 Thu', '1.1772', '1.1772', '1.1775', '1.1768', '1.1910', '1.0341', '', '', 'EURUSD:CUR']
+['2017/08/10 18:07 Thu', '1.1768', '1.1772', '1.1775', '1.1767', '1.1910', '1.0341', '', '', 'EURUSD:CUR']
+['2017/08/10 18:23 Thu', '1.1767', '1.1772', '1.1775', '1.1766', '1.1910', '1.0341', '', '', 'EURUSD:CUR']

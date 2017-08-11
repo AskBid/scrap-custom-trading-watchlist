@@ -1,16 +1,5 @@
-https://www.bloomberg.com/quote/DAX:IND
-https://www.bloomberg.com/quote/DAX:IND
-https://www.bloomberg.com/quote/DAX:IND
-ADAX.iDAX.iAAAAAADAX.i
-DAX.i
-{'Date': '2017/08/07 16:13 Mon', 'Price': '12257.17', 'Open': '12305.74', 'DayH': '12336.00', 'DayL': '12225.77', '52H': '12951.54', '52L': '10174.92', 'Volume': '98571008', 'OpenInterest': '', 'Ticker': 'DAX:IND', 'FullName': 'DeutscheBoerseAGGermanStockIndexDAX'}
-{'Date': '2017/08/07 16:19 Mon', 'Price': '12257.17', 'Open': '12305.74', 'DayH': '12336.00', 'DayL': '12225.77', '52H': '12951.54', '52L': '10174.92', 'Volume': '98571008', 'OpenInterest': '', 'Ticker': 'DAX:IND', 'FullName': 'DeutscheBoerseAGGermanStockIndexDAX'}
-{'Date': '2017/08/07 16:37 Mon', 'Price': '12257.17', 'Open': '12305.74', 'DayH': '12336.00', 'DayL': '12225.77', '52H': '12951.54', '52L': '10174.92', 'Volume': '98571008', 'OpenInterest': '', 'Ticker': 'DAX:IND', 'FullName': 'DeutscheBoerseAGGermanStockIndexDAX'}
-{'Date': '2017/08/07 16:39 Mon', 'Price': '12257.17', 'Open': '12305.74', 'DayH': '12336.00', 'DayL': '12225.77', '52H': '12951.54', '52L': '10174.92', 'Volume': '98571008', 'OpenInterest': '', 'Ticker': 'DAX:IND', 'FullName': 'DeutscheBoerseAGGermanStockIndexDAX'}
-{'Date': '2017/08/07 16:48 Mon', 'Price': '12257.17', 'Open': '12305.74', 'DayH': '12336.00', 'DayL': '12225.77', '52H': '12951.54', '52L': '10174.92', 'Volume': '98571008', 'OpenInterest': '', 'Ticker': 'DAX:IND', 'FullName': 'DeutscheBoerseAGGermanStockIndexDAX'}
-{'Date': '2017/08/07 16:50 Mon', 'Price': '12257.17', 'Open': '12305.74', 'DayH': '12336.00', 'DayL': '12225.77', '52H': '12951.54', '52L': '10174.92', 'Volume': '98571008', 'OpenInterest': '', 'Ticker': 'DAX:IND', 'FullName': 'DeutscheBoerseAGGermanStockIndexDAX'}
-{'Date': '2017/08/07 17:21 Mon', 'Price': '12257.17', 'Open': '12305.74', 'DayH': '12336.00', 'DayL': '12225.77', '52H': '12951.54', '52L': '10174.92', 'Volume': '98571008', 'OpenInterest': '', 'Ticker': 'DAX:IND', 'FullName': 'DeutscheBoerseAGGermanStockIndexDAX'}
-{'Date': '2017/08/07 17:27 Mon', 'Price': '12257.17', 'Open': '12305.74', 'DayH': '12336.00', 'DayL': '12225.77', '52H': '12951.54', '52L': '10174.92', 'Volume': '98571008', 'OpenInterest': '', 'Ticker': 'DAX:IND', 'FullName': 'DeutscheBoerseAGGermanStockIndexDAX'}
-{'Date': '2017/08/07 17:30 Mon', 'Price': '12257.17', 'Open': '12305.74', 'DayH': '12336.00', 'DayL': '12225.77', '52H': '12951.54', '52L': '10174.92', 'Volume': '98571008', 'OpenInterest': '', 'Ticker': 'DAX:IND', 'FullName': 'DeutscheBoerseAGGermanStockIndexDAX'}
-{'Date': '2017/08/07 17:32 Mon', 'Price': '12257.17', 'Open': '12305.74', 'DayH': '12336.00', 'DayL': '12225.77', '52H': '12951.54', '52L': '10174.92', 'Volume': '98571008', 'OpenInterest': '', 'Ticker': 'DAX:IND', 'FullName': 'DeutscheBoerseAGGermanStockIndexDAX'}
-{'Date': '2017/08/07 17:37 Mon', 'Price': '12257.17', 'Open': '12305.74', 'DayH': '12336.00', 'DayL': '12225.77', '52H': '12951.54', '52L': '10174.92', 'Volume': '98571008', 'OpenInterest': '', 'Ticker': 'DAX:IND', 'FullName': 'DeutscheBoerseAGGermanStockIndexDAX'}
+['2017/08/10 17:39 Thu', '12014.30', '12158.69', '12158.92', '11993.73', '12951.54', '10174.92', '118225704', '', 'DAX:IND']///
+['2017/08/10 17:45 Thu', '12014.30', '12158.69', '12158.92', '11993.73', '12951.54', '10174.92', '118225704', '', 'DAX:IND']
+['2017/08/10 18:01 Thu', '12014.30', '12158.69', '12158.92', '11993.73', '12951.54', '10174.92', '118225704', '', 'DAX:IND']
+['2017/08/10 18:07 Thu', '12014.30', '12158.69', '12158.92', '11993.73', '12951.54', '10174.92', '118225704', '', 'DAX:IND']
+['2017/08/10 18:23 Thu', '12014.30', '12158.69', '12158.92', '11993.73', '12951.54', '10174.92', '118225704', '', 'DAX:IND']

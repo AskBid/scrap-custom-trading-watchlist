@@ -1,15 +1,5 @@
-http://www.marketwatch.com/investing/future/hang%20seng%20futures?countrycode=hk
-http://www.marketwatch.com/investing/future/hang%20seng%20futures?countrycode=hk
-http://www.marketwatch.com/investing/future/hang%20seng%20futures?countrycode=hk
-AHANGSENG.FHANGSENG.FAAAAAAHANGSENG.F
-HANGSENG.F
-{'Date': '2017/08/07 16:13 Mon', 'Price': '27613.00', 'Open': 'HK27576.00', 'DayH': '27720.000', 'DayL': '27560.000', '52H': '27720.000', '52L': '25063.000', 'Volume': '60500', 'OpenInterest': '147403', 'Ticker': 'HSIQ7', 'FullName': 'HKGFutures'}
-{'Date': '2017/08/07 16:18 Mon', 'Price': '27613.00', 'Open': 'HK27576.00', 'DayH': '27720.000', 'DayL': '27560.000', '52H': '27720.000', '52L': '25063.000', 'Volume': '60500', 'OpenInterest': '147403', 'Ticker': 'HSIQ7', 'FullName': 'HKGFutures'}
-{'Date': '2017/08/07 16:37 Mon', 'Price': '27613.00', 'Open': 'HK27576.00', 'DayH': '27720.000', 'DayL': '27560.000', '52H': '27720.000', '52L': '25063.000', 'Volume': 60500, 'OpenInterest': '147403', 'Ticker': 'HSIQ7', 'FullName': 'HKGFutures'}
-{'Date': '2017/08/07 16:39 Mon', 'Price': '27613.00', 'Open': 'HK27576.00', 'DayH': '27720.000', 'DayL': '27560.000', '52H': '27720.000', '52L': '25063.000', 'Volume': 60500, 'OpenInterest': '147403', 'Ticker': 'HSIQ7', 'FullName': 'HKGFutures'}
-{'Date': '2017/08/07 16:48 Mon', 'Price': '27613.00', 'Open': 'HK27576.00', 'DayH': '27720.000', 'DayL': '27560.000', '52H': '27720.000', '52L': '25063.000', 'Volume': '60500', 'OpenInterest': '147403', 'Ticker': 'HSIQ7', 'FullName': 'HKGFutures'}
-{'Date': '2017/08/07 16:49 Mon', 'Price': '27613.00', 'Open': 'HK27576.00', 'DayH': '27720.000', 'DayL': '27560.000', '52H': '27720.000', '52L': '25063.000', 'Volume': '60500', 'OpenInterest': '147403', 'Ticker': 'HSIQ7', 'FullName': 'HKGFutures'}
-{'Date': '2017/08/07 17:21 Mon', 'Price': '27613.00', 'Open': 'HK27576.00', 'DayH': '27720.000', 'DayL': '27560.000', '52H': '27720.000', '52L': '25063.000', 'Volume': '60500', 'OpenInterest': '147403', 'Ticker': 'HSIQ7', 'FullName': 'HKGFutures'}
-{'Date': '2017/08/07 17:27 Mon', 'Price': '27613.00', 'Open': 'HK27576.00', 'DayH': '27720.000', 'DayL': '27560.000', '52H': '27720.000', '52L': '25063.000', 'Volume': '60500', 'OpenInterest': '147403', 'Ticker': 'HSIQ7', 'FullName': 'HKGFutures'}
-{'Date': '2017/08/07 17:30 Mon', 'Price': '27613.00', 'Open': 'HK27576.00', 'DayH': '27720.000', 'DayL': '27560.000', '52H': '27720.000', '52L': '25063.000', 'Volume': '60500', 'OpenInterest': '147403', 'Ticker': 'HSIQ7', 'FullName': 'HKGFutures'}
-{'Date': '2017/08/07 17:37 Mon', 'Price': '27613.00', 'Open': 'HK27576.00', 'DayH': '27720.000', 'DayL': '27560.000', '52H': '27720.000', '52L': '25063.000', 'Volume': '60500', 'OpenInterest': '147403', 'Ticker': 'HSIQ7', 'FullName': 'HKGFutures'}
+['2017/08/10 17:39 Thu', '27383.00', '27745.00', '27766.000', '27214.000', '27808.000', '25063.000', '148000', '152260', 'HSIQ7']///
+['2017/08/10 17:44 Thu', '27383.00', '27745.00', '27766.000', '27214.000', '27808.000', '25063.000', '148000', '152260', 'HSIQ7']
+['2017/08/10 18:01 Thu', '27383.00', '27745.00', '27766.000', '27214.000', '27808.000', '25063.000', '148000', '152260', 'HSIQ7']
+['2017/08/10 18:07 Thu', '27383.00', '27745.00', '27766.000', '27214.000', '27808.000', '25063.000', '148000', '152260', 'HSIQ7']
+['2017/08/10 18:22 Thu', '27383.00', '27745.00', '27766.000', '27214.000', '27808.000', '25063.000', '148000', '152260', 'HSIQ7']

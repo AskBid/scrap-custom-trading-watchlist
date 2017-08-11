@@ -1,16 +1,5 @@
-https://www.bloomberg.com/quote/UKX:IND
-https://www.bloomberg.com/quote/UKX:IND
-https://www.bloomberg.com/quote/UKX:IND
-TFTSE.iFTSE.iTTTTTTFTSE.i
-FTSE.i
-{'Date': '2017/08/07 16:13 Mon', 'Price': '7531.94', 'Open': '7511.71', 'DayH': '7533.74', 'DayL': '7511.71', '52H': '7598.99', '52L': '6654.48', 'Volume': '776764544', 'OpenInterest': '', 'Ticker': 'UKX:IND', 'FullName': 'FTSE100Index'}
-{'Date': '2017/08/07 16:19 Mon', 'Price': '7531.94', 'Open': '7511.71', 'DayH': '7533.74', 'DayL': '7511.71', '52H': '7598.99', '52L': '6654.48', 'Volume': '776764544', 'OpenInterest': '', 'Ticker': 'UKX:IND', 'FullName': 'FTSE100Index'}
-{'Date': '2017/08/07 16:37 Mon', 'Price': '7531.94', 'Open': '7511.71', 'DayH': '7533.74', 'DayL': '7511.71', '52H': '7598.99', '52L': '6654.48', 'Volume': '776764544', 'OpenInterest': '', 'Ticker': 'UKX:IND', 'FullName': 'FTSE100Index'}
-{'Date': '2017/08/07 16:39 Mon', 'Price': '7531.94', 'Open': '7511.71', 'DayH': '7533.74', 'DayL': '7511.71', '52H': '7598.99', '52L': '6654.48', 'Volume': '776764544', 'OpenInterest': '', 'Ticker': 'UKX:IND', 'FullName': 'FTSE100Index'}
-{'Date': '2017/08/07 16:48 Mon', 'Price': '7531.94', 'Open': '7511.71', 'DayH': '7533.74', 'DayL': '7511.71', '52H': '7598.99', '52L': '6654.48', 'Volume': '776764544', 'OpenInterest': '', 'Ticker': 'UKX:IND', 'FullName': 'FTSE100Index'}
-{'Date': '2017/08/07 16:49 Mon', 'Price': '7531.94', 'Open': '7511.71', 'DayH': '7533.74', 'DayL': '7511.71', '52H': '7598.99', '52L': '6654.48', 'Volume': '776764544', 'OpenInterest': '', 'Ticker': 'UKX:IND', 'FullName': 'FTSE100Index'}
-{'Date': '2017/08/07 17:21 Mon', 'Price': '7531.94', 'Open': '7511.71', 'DayH': '7533.74', 'DayL': '7511.71', '52H': '7598.99', '52L': '6654.48', 'Volume': '776764544', 'OpenInterest': '', 'Ticker': 'UKX:IND', 'FullName': 'FTSE100Index'}
-{'Date': '2017/08/07 17:27 Mon', 'Price': '7531.94', 'Open': '7511.71', 'DayH': '7533.74', 'DayL': '7511.71', '52H': '7598.99', '52L': '6654.48', 'Volume': '776764544', 'OpenInterest': '', 'Ticker': 'UKX:IND', 'FullName': 'FTSE100Index'}
-{'Date': '2017/08/07 17:30 Mon', 'Price': '7531.94', 'Open': '7511.71', 'DayH': '7533.74', 'DayL': '7511.71', '52H': '7598.99', '52L': '6654.48', 'Volume': '776764544', 'OpenInterest': '', 'Ticker': 'UKX:IND', 'FullName': 'FTSE100Index'}
-{'Date': '2017/08/07 17:32 Mon', 'Price': '7531.94', 'Open': '7511.71', 'DayH': '7533.74', 'DayL': '7511.71', '52H': '7598.99', '52L': '6654.48', 'Volume': '776764544', 'OpenInterest': '', 'Ticker': 'UKX:IND', 'FullName': 'FTSE100Index'}
-{'Date': '2017/08/07 17:37 Mon', 'Price': '7531.94', 'Open': '7511.71', 'DayH': '7533.74', 'DayL': '7511.71', '52H': '7598.99', '52L': '6654.48', 'Volume': '776764544', 'OpenInterest': '', 'Ticker': 'UKX:IND', 'FullName': 'FTSE100Index'}
+['2017/08/10 17:39 Thu', '7389.94', '7498.06', '7498.06', '7376.66', '7598.99', '6654.48', '735328576', '', 'UKX:IND']///
+['2017/08/10 17:44 Thu', '7389.94', '7498.06', '7498.06', '7376.66', '7598.99', '6654.48', '735328576', '', 'UKX:IND']
+['2017/08/10 18:01 Thu', '7389.94', '7498.06', '7498.06', '7376.66', '7598.99', '6654.48', '735328576', '', 'UKX:IND']
+['2017/08/10 18:07 Thu', '7389.94', '7498.06', '7498.06', '7376.66', '7598.99', '6654.48', '735328576', '', 'UKX:IND']
+['2017/08/10 18:22 Thu', '7389.94', '7498.06', '7498.06', '7376.66', '7598.99', '6654.48', '735328576', '', 'UKX:IND']

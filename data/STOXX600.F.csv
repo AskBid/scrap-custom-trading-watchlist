@@ -1,15 +1,5 @@
-http://www.marketwatch.com/investing/future/stoxx%20600%20futures?countrycode=de&iso=xeur
-http://www.marketwatch.com/investing/future/stoxx%20600%20futures?countrycode=de&iso=xeur
-http://www.marketwatch.com/investing/future/stoxx%20600%20futures?countrycode=de&iso=xeur
-TSTOXX600.FSTOXX600.FTTTTTTSTOXX600.F
-STOXX600.F
-{'Date': '2017/08/07 16:13 Mon', 'Price': '380.80', 'Open': '381.70', 'DayH': '382.20', 'DayL': '380.30', '52H': '392.50', '52L': '369.70', 'Volume': '21800', 'OpenInterest': '271760', 'Ticker': 'FXXPU7', 'FullName': 'Germany:Eurex'}
-{'Date': '2017/08/07 16:19 Mon', 'Price': '380.80', 'Open': '381.70', 'DayH': '382.20', 'DayL': '380.30', '52H': '392.50', '52L': '369.70', 'Volume': '21800', 'OpenInterest': '271760', 'Ticker': 'FXXPU7', 'FullName': 'Germany:Eurex'}
-{'Date': '2017/08/07 16:37 Mon', 'Price': '380.80', 'Open': '381.70', 'DayH': '382.20', 'DayL': '380.30', '52H': '392.50', '52L': '369.70', 'Volume': 21800, 'OpenInterest': '271760', 'Ticker': 'FXXPU7', 'FullName': 'Germany:Eurex'}
-{'Date': '2017/08/07 16:39 Mon', 'Price': '380.80', 'Open': '381.70', 'DayH': '382.20', 'DayL': '380.30', '52H': '392.50', '52L': '369.70', 'Volume': 21800, 'OpenInterest': '271760', 'Ticker': 'FXXPU7', 'FullName': 'Germany:Eurex'}
-{'Date': '2017/08/07 16:48 Mon', 'Price': '380.80', 'Open': '381.70', 'DayH': '382.20', 'DayL': '380.30', '52H': '392.50', '52L': '369.70', 'Volume': '21800', 'OpenInterest': '271760', 'Ticker': 'FXXPU7', 'FullName': 'Germany:Eurex'}
-{'Date': '2017/08/07 16:49 Mon', 'Price': '380.80', 'Open': '381.70', 'DayH': '382.20', 'DayL': '380.30', '52H': '392.50', '52L': '369.70', 'Volume': '21800', 'OpenInterest': '271760', 'Ticker': 'FXXPU7', 'FullName': 'Germany:Eurex'}
-{'Date': '2017/08/07 17:21 Mon', 'Price': '380.80', 'Open': '381.70', 'DayH': '382.20', 'DayL': '380.30', '52H': '392.50', '52L': '369.70', 'Volume': '21800', 'OpenInterest': '271760', 'Ticker': 'FXXPU7', 'FullName': 'Germany:Eurex'}
-{'Date': '2017/08/07 17:27 Mon', 'Price': '380.80', 'Open': '381.70', 'DayH': '382.20', 'DayL': '380.30', '52H': '392.50', '52L': '369.70', 'Volume': '21800', 'OpenInterest': '271760', 'Ticker': 'FXXPU7', 'FullName': 'Germany:Eurex'}
-{'Date': '2017/08/07 17:30 Mon', 'Price': '380.80', 'Open': '381.70', 'DayH': '382.20', 'DayL': '380.30', '52H': '392.50', '52L': '369.70', 'Volume': '21800', 'OpenInterest': '271760', 'Ticker': 'FXXPU7', 'FullName': 'Germany:Eurex'}
-{'Date': '2017/08/07 17:37 Mon', 'Price': '380.80', 'Open': '381.70', 'DayH': '382.20', 'DayL': '380.30', '52H': '392.50', '52L': '369.70', 'Volume': '21800', 'OpenInterest': '271760', 'Ticker': 'FXXPU7', 'FullName': 'Germany:Eurex'}
+['2017/08/10 17:39 Thu', '373.50', '378.90', '379.00', '373.40', '392.50', '369.70', '33700', '268867', 'FXXPU7']///
+['2017/08/10 17:44 Thu', '373.50', '378.90', '379.00', '373.40', '392.50', '369.70', '33700', '268867', 'FXXPU7']
+['2017/08/10 18:01 Thu', '373.50', '378.90', '379.00', '373.40', '392.50', '369.70', '33700', '268867', 'FXXPU7']
+['2017/08/10 18:07 Thu', '373.50', '378.90', '379.00', '373.40', '392.50', '369.70', '33700', '268867', 'FXXPU7']
+['2017/08/10 18:23 Thu', '373.50', '378.90', '379.00', '373.40', '392.50', '369.70', '33700', '268867', 'FXXPU7']

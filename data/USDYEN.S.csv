@@ -1,16 +1,5 @@
-https://www.bloomberg.com/quote/USDJPY:CUR
-https://www.bloomberg.com/quote/USDJPY:CUR
-https://www.bloomberg.com/quote/USDJPY:CUR
-SUSDYEN.SUSDYEN.SSSSSSSUSDYEN.S
-USDYEN.S
-{'Date': '2017/08/07 16:14 Mon', 'Price': '110.73', 'Open': '110.73', 'DayH': '110.92', 'DayL': '110.65', '52H': '118.66', '52L': '99.54', 'Volume': '', 'OpenInterest': '', 'Ticker': 'USDJPY:CUR', 'FullName': 'USDJPYSpotExchangeRate'}
-{'Date': '2017/08/07 16:19 Mon', 'Price': '110.73', 'Open': '110.73', 'DayH': '110.92', 'DayL': '110.65', '52H': '118.66', '52L': '99.54', 'Volume': '', 'OpenInterest': '', 'Ticker': 'USDJPY:CUR', 'FullName': 'USDJPYSpotExchangeRate'}
-{'Date': '2017/08/07 16:38 Mon', 'Price': '110.77', 'Open': '110.73', 'DayH': '110.92', 'DayL': '110.65', '52H': '118.66', '52L': '99.54', 'Volume': '', 'OpenInterest': '', 'Ticker': 'USDJPY:CUR', 'FullName': 'USDJPYSpotExchangeRate'}
-{'Date': '2017/08/07 16:40 Mon', 'Price': '110.77', 'Open': '110.73', 'DayH': '110.92', 'DayL': '110.65', '52H': '118.66', '52L': '99.54', 'Volume': '', 'OpenInterest': '', 'Ticker': 'USDJPY:CUR', 'FullName': 'USDJPYSpotExchangeRate'}
-{'Date': '2017/08/07 16:48 Mon', 'Price': '110.77', 'Open': '110.73', 'DayH': '110.92', 'DayL': '110.65', '52H': '118.66', '52L': '99.54', 'Volume': '', 'OpenInterest': '', 'Ticker': 'USDJPY:CUR', 'FullName': 'USDJPYSpotExchangeRate'}
-{'Date': '2017/08/07 16:50 Mon', 'Price': '110.77', 'Open': '110.73', 'DayH': '110.92', 'DayL': '110.65', '52H': '118.66', '52L': '99.54', 'Volume': '', 'OpenInterest': '', 'Ticker': 'USDJPY:CUR', 'FullName': 'USDJPYSpotExchangeRate'}
-{'Date': '2017/08/07 17:22 Mon', 'Price': '110.76', 'Open': '110.75', 'DayH': '110.79', 'DayL': '110.73', '52H': '118.66', '52L': '99.54', 'Volume': '', 'OpenInterest': '', 'Ticker': 'USDJPY:CUR', 'FullName': 'USDJPYSpotExchangeRate'}
-{'Date': '2017/08/07 17:27 Mon', 'Price': '110.76', 'Open': '110.75', 'DayH': '110.79', 'DayL': '110.73', '52H': '118.66', '52L': '99.54', 'Volume': '', 'OpenInterest': '', 'Ticker': 'USDJPY:CUR', 'FullName': 'USDJPYSpotExchangeRate'}
-{'Date': '2017/08/07 17:30 Mon', 'Price': '110.76', 'Open': '110.75', 'DayH': '110.79', 'DayL': '110.73', '52H': '118.66', '52L': '99.54', 'Volume': '', 'OpenInterest': '', 'Ticker': 'USDJPY:CUR', 'FullName': 'USDJPYSpotExchangeRate'}
-{'Date': '2017/08/07 17:32 Mon', 'Price': '110.77', 'Open': '110.75', 'DayH': '110.79', 'DayL': '110.73', '52H': '118.66', '52L': '99.54', 'Volume': '', 'OpenInterest': '', 'Ticker': 'USDJPY:CUR', 'FullName': 'USDJPYSpotExchangeRate'}
-{'Date': '2017/08/07 17:37 Mon', 'Price': '110.77', 'Open': '110.75', 'DayH': '110.79', 'DayL': '110.73', '52H': '118.66', '52L': '99.54', 'Volume': '', 'OpenInterest': '', 'Ticker': 'USDJPY:CUR', 'FullName': 'USDJPYSpotExchangeRate'}
+['2017/08/10 17:40 Thu', '109.15', '109.20', '109.20', '109.14', '118.66', '99.54', '', '', 'USDJPY:CUR']///
+['2017/08/10 17:45 Thu', '109.13', '109.20', '109.20', '109.12', '118.66', '99.54', '', '', 'USDJPY:CUR']
+['2017/08/10 18:01 Thu', '109.14', '109.20', '109.20', '109.12', '118.66', '99.54', '', '', 'USDJPY:CUR']
+['2017/08/10 18:07 Thu', '109.18', '109.20', '109.20', '109.12', '118.66', '99.54', '', '', 'USDJPY:CUR']
+['2017/08/10 18:23 Thu', '109.16', '109.20', '109.20', '109.12', '118.66', '99.54', '', '', 'USDJPY:CUR']

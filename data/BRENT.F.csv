@@ -1,15 +1,5 @@
-http://www.marketwatch.com/investing/future/brent%20crude?countrycode=uk
-http://www.marketwatch.com/investing/future/brent%20crude?countrycode=uk
-http://www.marketwatch.com/investing/future/brent%20crude?countrycode=uk
-RBRENT.FBRENT.FRRRRRRBRENT.F
-BRENT.F
-{'Date': '2017/08/07 16:14 Mon', 'Price': '', 'Open': '52.39', 'DayH': '52.53', 'DayL': '51.37', '52H': '60.13', '52L': '44.88', 'Volume': '254600', 'OpenInterest': '465687', 'Ticker': 'LCOV7', 'FullName': 'U.K.ICEFuturesEurope'}
-{'Date': '2017/08/07 16:19 Mon', 'Price': '', 'Open': '52.39', 'DayH': '52.53', 'DayL': '51.37', '52H': '60.13', '52L': '44.88', 'Volume': '254700', 'OpenInterest': '465687', 'Ticker': 'LCOV7', 'FullName': 'U.K.ICEFuturesEurope'}
-{'Date': '2017/08/07 16:38 Mon', 'Price': '', 'Open': '52.39', 'DayH': '52.53', 'DayL': '51.37', '52H': '60.13', '52L': '44.88', 'Volume': 255000, 'OpenInterest': '465687', 'Ticker': 'LCOV7', 'FullName': 'U.K.ICEFuturesEurope'}
-{'Date': '2017/08/07 16:40 Mon', 'Price': '', 'Open': '52.39', 'DayH': '52.53', 'DayL': '51.37', '52H': '60.13', '52L': '44.88', 'Volume': 255000, 'OpenInterest': '465687', 'Ticker': 'LCOV7', 'FullName': 'U.K.ICEFuturesEurope'}
-{'Date': '2017/08/07 16:49 Mon', 'Price': '', 'Open': '52.39', 'DayH': '52.53', 'DayL': '51.37', '52H': '60.13', '52L': '44.88', 'Volume': '255100', 'OpenInterest': '465687', 'Ticker': 'LCOV7', 'FullName': 'U.K.ICEFuturesEurope'}
-{'Date': '2017/08/07 16:50 Mon', 'Price': '', 'Open': '52.39', 'DayH': '52.53', 'DayL': '51.37', '52H': '60.13', '52L': '44.88', 'Volume': '255100', 'OpenInterest': '465687', 'Ticker': 'LCOV7', 'FullName': 'U.K.ICEFuturesEurope'}
-{'Date': '2017/08/07 17:22 Mon', 'Price': '', 'Open': '52.39', 'DayH': '52.53', 'DayL': '51.37', '52H': '60.13', '52L': '44.88', 'Volume': '255600', 'OpenInterest': '465687', 'Ticker': 'LCOV7', 'FullName': 'U.K.ICEFuturesEurope'}
-{'Date': '2017/08/07 17:27 Mon', 'Price': '52.28', 'Open': '52.39', 'DayH': '52.53', 'DayL': '51.37', '52H': '60.13', '52L': '44.88', 'Volume': '255600', 'OpenInterest': '465687', 'Ticker': 'LCOV7', 'FullName': 'U.K.ICEFuturesEurope'}
-{'Date': '2017/08/07 17:31 Mon', 'Price': '52.28', 'Open': '52.39', 'DayH': '52.53', 'DayL': '51.37', '52H': '60.13', '52L': '44.88', 'Volume': '255600', 'OpenInterest': '465687', 'Ticker': 'LCOV7', 'FullName': 'U.K.ICEFuturesEurope'}
-{'Date': '2017/08/07 17:37 Mon', 'Price': '52.21', 'Open': '52.39', 'DayH': '52.53', 'DayL': '51.37', '52H': '60.13', '52L': '44.88', 'Volume': '255700', 'OpenInterest': '465687', 'Ticker': 'LCOV7', 'FullName': 'U.K.ICEFuturesEurope'}
+['2017/08/10 17:40 Thu', '51.83', '52.72', '53.64', '51.67', '60.13', '44.88', '439600', '429322', 'LCOV7']///
+['2017/08/10 17:47 Thu', '51.83', '52.72', '53.64', '51.67', '60.13', '44.88', '439600', '429322', 'LCOV7']
+['2017/08/10 18:02 Thu', '51.83', '52.72', '53.64', '51.67', '60.13', '44.88', '439600', '429322', 'LCOV7']
+['2017/08/10 18:07 Thu', '51.83', '52.72', '53.64', '51.67', '60.13', '44.88', '439600', '429322', 'LCOV7']
+['2017/08/10 18:23 Thu', '51.82', '52.72', '53.64', '51.67', '60.13', '44.88', '439700', '429322', 'LCOV7']

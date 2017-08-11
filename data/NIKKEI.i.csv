@@ -1,15 +1,5 @@
-http://www.marketwatch.com/investing/index/nik?countrycode=jp
-http://www.marketwatch.com/investing/index/nik?countrycode=jp
-http://www.marketwatch.com/investing/index/nik?countrycode=jp
-INIKKEI.iNIKKEI.iIIIIIINIKKEI.i
-NIKKEI.i
-{'Date': '2017/08/07 16:13 Mon', 'Price': '20055.89', 'Open': '20059.29', 'DayH': '20085.90', 'DayL': '20037.40', '52H': '20318.11', '52L': '16111.81', 'Volume': '', 'OpenInterest': '', 'Ticker': 'NIK', 'FullName': 'NikkeiIdx'}
-{'Date': '2017/08/07 16:19 Mon', 'Price': '20055.89', 'Open': '20059.29', 'DayH': '20085.90', 'DayL': '20037.40', '52H': '20318.11', '52L': '16111.81', 'Volume': '', 'OpenInterest': '', 'Ticker': 'NIK', 'FullName': 'NikkeiIdx'}
-{'Date': '2017/08/07 16:37 Mon', 'Price': '20055.89', 'Open': '20059.29', 'DayH': '20085.90', 'DayL': '20037.40', '52H': '20318.11', '52L': '16111.81', 'Volume': '', 'OpenInterest': '', 'Ticker': 'NIK', 'FullName': 'NikkeiIdx'}
-{'Date': '2017/08/07 16:39 Mon', 'Price': '20055.89', 'Open': '20059.29', 'DayH': '20085.90', 'DayL': '20037.40', '52H': '20318.11', '52L': '16111.81', 'Volume': '', 'OpenInterest': '', 'Ticker': 'NIK', 'FullName': 'NikkeiIdx'}
-{'Date': '2017/08/07 16:48 Mon', 'Price': '20055.89', 'Open': '20059.29', 'DayH': '20085.90', 'DayL': '20037.40', '52H': '20318.11', '52L': '16111.81', 'Volume': '', 'OpenInterest': '', 'Ticker': 'NIK', 'FullName': 'NikkeiIdx'}
-{'Date': '2017/08/07 16:49 Mon', 'Price': '20055.89', 'Open': '20059.29', 'DayH': '20085.90', 'DayL': '20037.40', '52H': '20318.11', '52L': '16111.81', 'Volume': '', 'OpenInterest': '', 'Ticker': 'NIK', 'FullName': 'NikkeiIdx'}
-{'Date': '2017/08/07 17:21 Mon', 'Price': '20055.89', 'Open': '20059.29', 'DayH': '20085.90', 'DayL': '20037.40', '52H': '20318.11', '52L': '16111.81', 'Volume': '', 'OpenInterest': '', 'Ticker': 'NIK', 'FullName': 'NikkeiIdx'}
-{'Date': '2017/08/07 17:27 Mon', 'Price': '20055.89', 'Open': '20059.29', 'DayH': '20085.90', 'DayL': '20037.40', '52H': '20318.11', '52L': '16111.81', 'Volume': '', 'OpenInterest': '', 'Ticker': 'NIK', 'FullName': 'NikkeiIdx'}
-{'Date': '2017/08/07 17:30 Mon', 'Price': '20055.89', 'Open': '20059.29', 'DayH': '20085.90', 'DayL': '20037.40', '52H': '20318.11', '52L': '16111.81', 'Volume': '', 'OpenInterest': '', 'Ticker': 'NIK', 'FullName': 'NikkeiIdx'}
-{'Date': '2017/08/07 17:37 Mon', 'Price': '20055.89', 'Open': '20059.29', 'DayH': '20085.90', 'DayL': '20037.40', '52H': '20318.11', '52L': '16111.81', 'Volume': '', 'OpenInterest': '', 'Ticker': 'NIK', 'FullName': 'NikkeiIdx'}
+['2017/08/10 17:39 Thu', '19729.74', '19792.45', '19829.88', '19685.83', '20318.11', '16111.81', '', '', 'NIK']///
+['2017/08/10 17:44 Thu', '19729.74', '19792.45', '19829.88', '19685.83', '20318.11', '16111.81', '', '', 'NIK']
+['2017/08/10 18:01 Thu', '19729.74', '19792.45', '19829.88', '19685.83', '20318.11', '16111.81', '', '', 'NIK']
+['2017/08/10 18:07 Thu', '19729.74', '19792.45', '19829.88', '19685.83', '20318.11', '16111.81', '', '', 'NIK']
+['2017/08/10 18:22 Thu', '19729.74', '19792.45', '19829.88', '19685.83', '20318.11', '16111.81', '', '', 'NIK']

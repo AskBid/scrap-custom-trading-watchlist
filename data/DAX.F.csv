@@ -1,15 +1,5 @@
-http://www.marketwatch.com/investing/future/dax%20futures?countrycode=de&iso=xeur
-http://www.marketwatch.com/investing/future/dax%20futures?countrycode=de&iso=xeur
-http://www.marketwatch.com/investing/future/dax%20futures?countrycode=de&iso=xeur
-ADAX.FDAX.FAAAAAADAX.F
-DAX.F
-{'Date': '2017/08/07 16:13 Mon', 'Price': '12241.00', 'Open': '12296.00', 'DayH': '12331.00', 'DayL': '12214.50', '52H': '12948.50', '52L': '11439.00', 'Volume': '50500', 'OpenInterest': '116579', 'Ticker': 'FDXU7', 'FullName': 'Germany:Eurex'}
-{'Date': '2017/08/07 16:19 Mon', 'Price': '12241.00', 'Open': '12296.00', 'DayH': '12331.00', 'DayL': '12214.50', '52H': '12948.50', '52L': '11439.00', 'Volume': '50600', 'OpenInterest': '116579', 'Ticker': 'FDXU7', 'FullName': 'Germany:Eurex'}
-{'Date': '2017/08/07 16:37 Mon', 'Price': '12241.00', 'Open': '12296.00', 'DayH': '12331.00', 'DayL': '12214.50', '52H': '12948.50', '52L': '11439.00', 'Volume': 50600, 'OpenInterest': '116579', 'Ticker': 'FDXU7', 'FullName': 'Germany:Eurex'}
-{'Date': '2017/08/07 16:39 Mon', 'Price': '12241.00', 'Open': '12296.00', 'DayH': '12331.00', 'DayL': '12214.50', '52H': '12948.50', '52L': '11439.00', 'Volume': 50600, 'OpenInterest': '116579', 'Ticker': 'FDXU7', 'FullName': 'Germany:Eurex'}
-{'Date': '2017/08/07 16:48 Mon', 'Price': '12241.00', 'Open': '12296.00', 'DayH': '12331.00', 'DayL': '12214.50', '52H': '12948.50', '52L': '11439.00', 'Volume': '50600', 'OpenInterest': '116579', 'Ticker': 'FDXU7', 'FullName': 'Germany:Eurex'}
-{'Date': '2017/08/07 16:50 Mon', 'Price': '12241.00', 'Open': '12296.00', 'DayH': '12331.00', 'DayL': '12214.50', '52H': '12948.50', '52L': '11439.00', 'Volume': '50600', 'OpenInterest': '116579', 'Ticker': 'FDXU7', 'FullName': 'Germany:Eurex'}
-{'Date': '2017/08/07 17:22 Mon', 'Price': '12241.00', 'Open': '12296.00', 'DayH': '12331.00', 'DayL': '12214.50', '52H': '12948.50', '52L': '11439.00', 'Volume': '50600', 'OpenInterest': '116579', 'Ticker': 'FDXU7', 'FullName': 'Germany:Eurex'}
-{'Date': '2017/08/07 17:27 Mon', 'Price': '12241.00', 'Open': '12296.00', 'DayH': '12331.00', 'DayL': '12214.50', '52H': '12948.50', '52L': '11439.00', 'Volume': '50600', 'OpenInterest': '116579', 'Ticker': 'FDXU7', 'FullName': 'Germany:Eurex'}
-{'Date': '2017/08/07 17:30 Mon', 'Price': '12241.00', 'Open': '12296.00', 'DayH': '12331.00', 'DayL': '12214.50', '52H': '12948.50', '52L': '11439.00', 'Volume': '50600', 'OpenInterest': '116579', 'Ticker': 'FDXU7', 'FullName': 'Germany:Eurex'}
-{'Date': '2017/08/07 17:37 Mon', 'Price': '12241.00', 'Open': '12296.00', 'DayH': '12331.00', 'DayL': '12214.50', '52H': '12948.50', '52L': '11439.00', 'Volume': '50600', 'OpenInterest': '116579', 'Ticker': 'FDXU7', 'FullName': 'Germany:Eurex'}
+['2017/08/10 17:39 Thu', '11949.50', '12131.50', '12157.50', '11942.00', '12948.50', '11439.00', '104800', '117411', 'FDXU7']///
+['2017/08/10 17:45 Thu', '11949.50', '12131.50', '12157.50', '11942.00', '12948.50', '11439.00', '104800', '117411', 'FDXU7']
+['2017/08/10 18:01 Thu', '11949.50', '12131.50', '12157.50', '11942.00', '12948.50', '11439.00', '104800', '117411', 'FDXU7']
+['2017/08/10 18:07 Thu', '11949.50', '12131.50', '12157.50', '11942.00', '12948.50', '11439.00', '104800', '117411', 'FDXU7']
+['2017/08/10 18:23 Thu', '11949.50', '12131.50', '12157.50', '11942.00', '12948.50', '11439.00', '104800', '117411', 'FDXU7']

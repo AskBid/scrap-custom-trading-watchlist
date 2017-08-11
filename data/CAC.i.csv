@@ -1,14 +1,5 @@
-https://www.bloomberg.com/quote/CAC:IND
-ACAC.iCAC.iAAAAAACAC.i
-CAC.i
-{'Date': '2017/08/07 16:13 Mon', 'Price': '5207.89', 'Open': '5210.73', 'DayH': '5220.59', 'DayL': '5195.26', '52H': '5442.10', '52L': '4310.88', 'Volume': '80997504', 'OpenInterest': '', 'Ticker': 'CAC:IND', 'FullName': 'CAC40Index'}
-{'Date': '2017/08/07 16:19 Mon', 'Price': '5207.89', 'Open': '5210.73', 'DayH': '5220.59', 'DayL': '5195.26', '52H': '5442.10', '52L': '4310.88', 'Volume': '80997504', 'OpenInterest': '', 'Ticker': 'CAC:IND', 'FullName': 'CAC40Index'}
-{'Date': '2017/08/07 16:37 Mon', 'Price': '5207.89', 'Open': '5210.73', 'DayH': '5220.59', 'DayL': '5195.26', '52H': '5442.10', '52L': '4310.88', 'Volume': '80997504', 'OpenInterest': '', 'Ticker': 'CAC:IND', 'FullName': 'CAC40Index'}
-{'Date': '2017/08/07 16:39 Mon', 'Price': '5207.89', 'Open': '5210.73', 'DayH': '5220.59', 'DayL': '5195.26', '52H': '5442.10', '52L': '4310.88', 'Volume': '80997504', 'OpenInterest': '', 'Ticker': 'CAC:IND', 'FullName': 'CAC40Index'}
-{'Date': '2017/08/07 16:48 Mon', 'Price': '5207.89', 'Open': '5210.73', 'DayH': '5220.59', 'DayL': '5195.26', '52H': '5442.10', '52L': '4310.88', 'Volume': '80997504', 'OpenInterest': '', 'Ticker': 'CAC:IND', 'FullName': 'CAC40Index'}
-{'Date': '2017/08/07 16:49 Mon', 'Price': '5207.89', 'Open': '5210.73', 'DayH': '5220.59', 'DayL': '5195.26', '52H': '5442.10', '52L': '4310.88', 'Volume': '80997504', 'OpenInterest': '', 'Ticker': 'CAC:IND', 'FullName': 'CAC40Index'}
-{'Date': '2017/08/07 17:21 Mon', 'Price': '5207.89', 'Open': '5210.73', 'DayH': '5220.59', 'DayL': '5195.26', '52H': '5442.10', '52L': '4310.88', 'Volume': '80997504', 'OpenInterest': '', 'Ticker': 'CAC:IND', 'FullName': 'CAC40Index'}
-{'Date': '2017/08/07 17:27 Mon', 'Price': '5207.89', 'Open': '5210.73', 'DayH': '5220.59', 'DayL': '5195.26', '52H': '5442.10', '52L': '4310.88', 'Volume': '80997504', 'OpenInterest': '', 'Ticker': 'CAC:IND', 'FullName': 'CAC40Index'}
-{'Date': '2017/08/07 17:30 Mon', 'Price': '5207.89', 'Open': '5210.73', 'DayH': '5220.59', 'DayL': '5195.26', '52H': '5442.10', '52L': '4310.88', 'Volume': '80997504', 'OpenInterest': '', 'Ticker': 'CAC:IND', 'FullName': 'CAC40Index'}
-{'Date': '2017/08/07 17:32 Mon', 'Price': '5207.89', 'Open': '5210.73', 'DayH': '5220.59', 'DayL': '5195.26', '52H': '5442.10', '52L': '4310.88', 'Volume': '80997504', 'OpenInterest': '', 'Ticker': 'CAC:IND', 'FullName': 'CAC40Index'}
-{'Date': '2017/08/07 17:37 Mon', 'Price': '5207.89', 'Open': '5210.73', 'DayH': '5220.59', 'DayL': '5195.26', '52H': '5442.10', '52L': '4310.88', 'Volume': '80997504', 'OpenInterest': '', 'Ticker': 'CAC:IND', 'FullName': 'CAC40Index'}
+['2017/08/10 17:39 Thu', '5115.23', '5140.99', '5148.47', '5096.19', '5442.10', '4310.88', '74014088', '', 'CAC:IND']///
+['2017/08/10 17:44 Thu', '5115.23', '5140.99', '5148.47', '5096.19', '5442.10', '4310.88', '74014088', '', 'CAC:IND']
+['2017/08/10 18:01 Thu', '5115.23', '5140.99', '5148.47', '5096.19', '5442.10', '4310.88', '74014088', '', 'CAC:IND']
+['2017/08/10 18:07 Thu', '5115.23', '5140.99', '5148.47', '5096.19', '5442.10', '4310.88', '74014088', '', 'CAC:IND']
+['2017/08/10 18:22 Thu', '5115.23', '5140.99', '5148.47', '5096.19', '5442.10', '4310.88', '74014088', '', 'CAC:IND']

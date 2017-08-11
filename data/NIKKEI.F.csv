@@ -1,15 +1,5 @@
-http://www.marketwatch.com/investing/future/nikkei%20futures
-http://www.marketwatch.com/investing/future/nikkei%20futures
-http://www.marketwatch.com/investing/future/nikkei%20futures
-INIKKEI.FNIKKEI.FIIIIIINIKKEI.F
-NIKKEI.F
-{'Date': '2017/08/07 16:13 Mon', 'Price': '', 'Open': '¥20050', 'DayH': '20090', 'DayL': '20020', '52H': '20285', '52L': '18325', 'Volume': '15300', 'OpenInterest': '55923', 'Ticker': 'NIYU7', 'FullName': 'U.S.:CME'}
-{'Date': '2017/08/07 16:19 Mon', 'Price': '20045', 'Open': '¥20050', 'DayH': '20090', 'DayL': '20020', '52H': '20285', '52L': '18325', 'Volume': '15400', 'OpenInterest': '55923', 'Ticker': 'NIYU7', 'FullName': 'U.S.:CME'}
-{'Date': '2017/08/07 16:37 Mon', 'Price': '', 'Open': '¥20050', 'DayH': '20090', 'DayL': '20020', '52H': '20285', '52L': '18325', 'Volume': 15600, 'OpenInterest': '55923', 'Ticker': 'NIYU7', 'FullName': 'U.S.:CME'}
-{'Date': '2017/08/07 16:39 Mon', 'Price': '', 'Open': '¥20050', 'DayH': '20090', 'DayL': '20020', '52H': '20285', '52L': '18325', 'Volume': 15600, 'OpenInterest': '55923', 'Ticker': 'NIYU7', 'FullName': 'U.S.:CME'}
-{'Date': '2017/08/07 16:48 Mon', 'Price': '', 'Open': '¥20050', 'DayH': '20090', 'DayL': '20020', '52H': '20285', '52L': '18325', 'Volume': '15600', 'OpenInterest': '55923', 'Ticker': 'NIYU7', 'FullName': 'U.S.:CME'}
-{'Date': '2017/08/07 16:49 Mon', 'Price': '', 'Open': '¥20050', 'DayH': '20090', 'DayL': '20020', '52H': '20285', '52L': '18325', 'Volume': '15600', 'OpenInterest': '55923', 'Ticker': 'NIYU7', 'FullName': 'U.S.:CME'}
-{'Date': '2017/08/07 17:21 Mon', 'Price': '', 'Open': '¥20050', 'DayH': '20090', 'DayL': '20020', '52H': '20285', '52L': '18325', 'Volume': '15600', 'OpenInterest': '55923', 'Ticker': 'NIYU7', 'FullName': 'U.S.:CME'}
-{'Date': '2017/08/07 17:27 Mon', 'Price': '20045', 'Open': '¥20050', 'DayH': '20090', 'DayL': '20020', '52H': '20285', '52L': '18325', 'Volume': '15600', 'OpenInterest': '55923', 'Ticker': 'NIYU7', 'FullName': 'U.S.:CME'}
-{'Date': '2017/08/07 17:30 Mon', 'Price': '20045', 'Open': '¥20050', 'DayH': '20090', 'DayL': '20020', '52H': '20285', '52L': '18325', 'Volume': '15600', 'OpenInterest': '55923', 'Ticker': 'NIYU7', 'FullName': 'U.S.:CME'}
-{'Date': '2017/08/07 17:37 Mon', 'Price': '20045', 'Open': '¥20050', 'DayH': '20090', 'DayL': '20020', '52H': '20285', '52L': '18325', 'Volume': '15600', 'OpenInterest': '55923', 'Ticker': 'NIYU7', 'FullName': 'U.S.:CME'}
+['2017/08/10 17:39 Thu', '19365', '19770', '19810', '19350', '20285', '18325', '51100', '55788', 'NIYU7']///
+['2017/08/10 17:44 Thu', '19365', '19770', '19810', '19350', '20285', '18325', '51100', '55788', 'NIYU7']
+['2017/08/10 18:01 Thu', '19365', '19770', '19810', '19350', '20285', '18325', '51100', '55788', 'NIYU7']
+['2017/08/10 18:07 Thu', '19365', '19770', '19810', '19350', '20285', '18325', '51100', '55788', 'NIYU7']
+['2017/08/10 18:22 Thu', '19350', '19350', '19360', '19340', '20285', '18325', '264', '55788', 'NIYU7']

@@ -1,7 +1,7 @@
 import time
 import requests
 from bs4 import BeautifulSoup as bs
-'''
+
 ##### start/divert all prints to a log file
 import sys
 old_stdout = sys.stdout
@@ -10,8 +10,8 @@ log_file = open("message.log","w")
 
 sys.stdout = log_file
 ##### start\divert all prints to a log file
-'''
 
+dateFormat = '%Y/%m/%d %H:%M %a'
 #data shared format between Marketwatch and Bloomberg
 def getDataFormat():
     dataFormat = {
@@ -24,8 +24,7 @@ def getDataFormat():
         "52L": "",
         "Volume": "",
         "OpenInterest": "",
-        "Ticker": "",
-        "FullName": ""}
+        "Ticker": ""}
     return dataFormat
 
 def getDataFormatCDS():
@@ -48,6 +47,13 @@ def getDataFormatCME():
         "openInterest": "",
         "blockTrades": ""}
     return dataFormatCME
+
+def makeDicArr(dic):
+    arr = []
+    for key in dic:
+        arr.append(dic[key])
+
+    return arr
 
 def durataTranslator(text):
     text = text.replace(' ','').replace('\n','')
@@ -107,7 +113,7 @@ def scrapSovereignCDS(address):
     table = table.find('tbody')
     rows = table.find_all("tr")
 
-    sovereignCDS = []
+    sovereignCDS = [time.strftime(dateFormat)]
 
     for row in rows:
         dictRow = getDataFormatCDS()
@@ -161,7 +167,7 @@ def scrapWsj(address):
     except:
         print("table CDS column gathering did not work")
 
-    dictCDS = []
+    dictCDS = [time.strftime(dateFormat)]
 
     for i in range(0,len(names)):
         if 'n.a.' not in values[i].text:
@@ -207,7 +213,7 @@ def scrapWorldgovernmentbonds(address):
             maturity.append(durataTranslator(selectedCELLS[1].text))
             yields.append(float(selectedCELLS[yieldIndex].text.replace('%','')))
 
-    return maturity, yields
+    return time.strftime(dateFormat), maturity, yields
 
 def scrapCmegroup(address):
     maxRows = 30,
@@ -254,11 +260,11 @@ def scrapCmegroup(address):
             for key in data:
                 if key == label: ## if one of the label from the dictonary matches any of the labe just gathrrd, then add value to that key
                     try:
-                        stringValue = cell.text.replace("-","").replace(",","")
+                        stringValue = cell.text.replace("-","").replace(",","").replace("'",".")
                         if stringValue != "":
                             float(stringValue)
                     except:
-                        print("'{}' No 'float' CME".format(address))
+                        print("'{}' No 'float' CME with {}".format(address,stringValue))
 
                     data[key] = stringValue
 
@@ -273,19 +279,15 @@ def scrapCmegroup(address):
     tableSup = sup.find("tbody")
     rows = tableSup.find_all("tr")
 
-    totalOpenInterest = ''
-    totalVolume = ''
-    totalBlockTrades = ''
-
     colNumOpenInterest = 10     ### crucial if website change
     colNumVolume = 3     ### crucial if website change
     colNumBlockTrades = 4     ### crucial if website change
 
     if rows[-1].find('th').text == 'Totals':   ##last row of the table
         cells = rows[-1].find_all('td')
-        totalOpenInterest = cells[colNumOpenInterest].text.replace(',','')
-        totalVolume = cells[colNumVolume].text.replace(',','')
-        totalBlockTrades = cells[colNumBlockTrades].text.replace(',','')
+        totalValues['totalOpenInterest'] = cells[colNumOpenInterest].text.replace(',','')
+        totalValues['totalVolume'] = cells[colNumVolume].text.replace(',','')
+        totalValues['totalBlockTrades'] = cells[colNumBlockTrades].text.replace(',','')
     else:
         print("'{}' No 'Totals' CME tag was found".format(address))
     #// from now if switch is on we scrap OpenInterest and maybe OIchange for each month
@@ -309,8 +311,19 @@ def scrapCmegroup(address):
                             cells = row.find_all('td')
                             dic['openInterest'] = cells[colNumOpenInterest].text.replace(',','')
                             dic['blockTrades'] = cells[colNumBlockTrades].text.replace(',','')
+    maxVol = 0
+    maxDic = {}
+    for dic in table:
+        if int(dic['volume']) > maxVol:
+            maxVol = int(dic['volume'])
+            maxDic = dic
 
-    return totalValues, table  #ritorna un piccolo dizionario ed una lista di dizionari (un dizionari for every expiry)
+    arrTable = []
+    for dic in table:
+        arr = makeDicArr(dic)
+        arrTable.append(arr)
+
+    return makeDicArr(totalValues), arrTable, makeDicArr(maxDic)  #ritorna un piccolo dizionario ed una lista di dizionari (un dizionari for every expiry)
 
 def scrapMarketwatch(address):
     #creating formatting data from scrapdata
@@ -328,11 +341,12 @@ def scrapMarketwatch(address):
         return data
 
     scrapData = {}
-
+    #we create a dictionary of scraped data with labels as key and val as values
     for i, key in enumerate(lab):
-        scrapData[key.text.replace(" ","")] = val[i].text.replace(",","").replace("%","").replace("$","").replace("£","").replace("€","")
+        scrapData[key.text.replace(" ","")] = val[i].text.replace(",","").replace("%","").replace("$","").replace("£","").replace("€","").replace("¥","").replace("HK","").replace("¢","")
 
-    data["Date"] = time.strftime("%Y/%m/%d %H:%M %a")
+
+    data["Date"] = time.strftime(dateFormat)
 
     try:
         data["Ticker"] = sup.find("span",{"class": "company__ticker"}).text.replace(' ','')
@@ -340,18 +354,14 @@ def scrapMarketwatch(address):
         print("'{}' No 'Ticker'".format(address))
 
     try:
-        data["FullName"] = sup.find("span",{"class":"company__market"}).text.replace(' ','')
-    except:
-        print("'{}' No 'FullName'".format(address))
-
-    try:
         priceTab = sup.find("h3",{"class": lambda x: x and 'intraday__price' in x})
-        #print(priceTab.get('class', []))
         if priceTab.find('bg-quote') != None:
-            print('we found bg-quote')
             bgquote = priceTab.find('bg-quote')
-            bgquote.get('class', [])
-            data["Price"] = priceTab.find('bg-quote').text.replace(",","").replace(" ","")
+            data["Price"] = bgquote.text.replace(",","").replace(" ","")
+            if data["Price"] == '' or data["Price"] == None:
+                data["Price"] = bgquote.get('data-last-raw', [])
+                print(bgquote.get('data-last-raw', []))
+                print(bgquote)
         else:
             data["Price"] = priceTab.find("span",{"class":"value"}).text.replace(",","").replace(" ","")
         float(data["Price"]) #check that an actual number was found for Price
@@ -378,17 +388,16 @@ def scrapMarketwatch(address):
     try:
         data["Volume"] = str(mkTranslator(sup.find("span",{"class":"volume last-value"}).text))
     except:
-        print("'{}' No 'Volume'".format(address))
+        if 'index' not in address:
+            print("'{}' No 'Volume'".format(address))
 
     try:
         data["OpenInterest"] = scrapData["OpenInterest"].replace(" ","")
     except:
-        print("'{}' No 'OpenInterest'".format(address))
+        if 'index' not in address:
+            print("'{}' No 'OpenInterest'".format(address))
 
-    return data;
-
-scrapMarketwatch('http://www.marketwatch.com/investing/future/wti%20crude?countrycode=uk')
-scrapMarketwatch('http://www.marketwatch.com/investing/future/2-year%20euro%20schatz?countrycode=de&iso=xeur')
+    return makeDicArr(data);
 
 def scrapBloomberg(address):
     #creating/formatting data from scrapdata
@@ -408,19 +417,14 @@ def scrapBloomberg(address):
     scrapData = {}
     #we create a dictionary of scraped data with labels as key and val as values
     for i, key in enumerate(lab):
-        scrapData[key.text.replace(" ","")] = val[i].text.replace(",","").replace("%","").replace("$","").replace("£","").replace("€","")
+        scrapData[key.text.replace(" ","")] = val[i].text.replace(",","").replace("%","").replace("$","").replace("£","").replace("€","").replace("¥","").replace("HK","").replace("¢","")
 
-    data["Date"] = time.strftime("%Y/%m/%d %H:%M %a")
+    data["Date"] = time.strftime(dateFormat)
 
     try:
         data["Ticker"] = sup.find("div",{"class": "ticker"}).text.replace(' ','')
     except:
         print('{}' "No 'Ticker'".format(address))
-
-    try:
-        data["FullName"] = sup.find("h1",{"class":"name"}).text.replace(' ','')
-    except:
-        print("'{}' No 'FullName'".format(address))
 
     try:
         data["Price"] = sup.find("div",{"class":"price"}).text.replace(",","").replace(" ","")
@@ -448,27 +452,16 @@ def scrapBloomberg(address):
         data["Volume"] = scrapData["Volume"].replace(" ","")
     except:
         pass
-
-    return data;
+    return makeDicArr(data);
 
 ##
 #\ scraping functions
 ##
-'''
-##### end/divert all prints to a log file
-sys.stdout = old_stdout
 
-log_file.close()
-##### end\divert all prints to a log file
-'''
 
-def scrapit(address):
-    '''
-    "Date","Price","Open","DayH","DayL","52H","52L","Volume","OpenInterest","--","totalVolume","totalOpenInterest","totalBlockTrades","--"
-    '''
-
+def selector(address):
     if 'cmegroup' in address:
-        return str(scrapCmegroup(address))
+        return scrapCmegroup(address)
 
     if 'marketwatch' in address:
         return str(scrapMarketwatch(address))
@@ -484,3 +477,42 @@ def scrapit(address):
 
     if 'wsj.com' in address:
         return str(scrapWsj(address))
+
+
+f = open('macrowatchlist.csv', 'r')
+for line in f:
+
+    if line.split(',')[0] != "": #avoids empty rows
+        fileName = line.split(',')[0]
+        address = line.split(',')[1]
+        addressFutures = line.split(',')[2]
+
+        thisFile = open('data/' + fileName + '.csv', 'a+')
+
+        returned = selector(address)
+        returnedFutures = selector(addressFutures)
+
+
+        try:
+            if len(address) > 7:
+                thisFile.write(str(returned))
+            if len(addressFutures) > 7:
+                thisFile.write('//')
+                thisFile.write(str(returnedFutures[0]) + '//')
+                thisFile.write(str(returnedFutures[1]) + '//')
+                thisFile.write(str(returnedFutures[2]))
+                thisFile.write('\n')
+                thisFile.close()
+            else:
+                thisFile.write('\n')
+                thisFile.close()
+        except:
+            print('file write not working for {}'.format(fileName))
+
+f.close
+
+##### end/divert all prints to a log file
+sys.stdout = old_stdout
+
+log_file.close()
+##### end\divert all prints to a log file

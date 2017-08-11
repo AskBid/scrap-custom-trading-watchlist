@@ -1,15 +1,5 @@
-http://www.marketwatch.com/investing/future/5-year%20euro%20bob?countrycode=de&iso=xeur
-http://www.marketwatch.com/investing/future/5-year%20euro%20bob?countrycode=de&iso=xeur
-http://www.marketwatch.com/investing/future/5-year%20euro%20bob?countrycode=de&iso=xeur
-EGER5.FGER5.FEEEEEEGER5.F
-GER5.F
-{'Date': '2017/08/07 16:14 Mon', 'Price': '132.41', 'Open': '132.35', 'DayH': '132.46', 'DayL': '132.24', '52H': '133.52', '52L': '131.30', 'Volume': '208900', 'OpenInterest': '1293297', 'Ticker': 'FGBMU7', 'FullName': 'Germany:Eurex'}
-{'Date': '2017/08/07 16:19 Mon', 'Price': '132.42', 'Open': '132.35', 'DayH': '132.46', 'DayL': '132.24', '52H': '133.52', '52L': '131.30', 'Volume': '209000', 'OpenInterest': '1293297', 'Ticker': 'FGBMU7', 'FullName': 'Germany:Eurex'}
-{'Date': '2017/08/07 16:38 Mon', 'Price': '132.42', 'Open': '132.35', 'DayH': '132.46', 'DayL': '132.24', '52H': '133.52', '52L': '131.30', 'Volume': 209000, 'OpenInterest': '1293297', 'Ticker': 'FGBMU7', 'FullName': 'Germany:Eurex'}
-{'Date': '2017/08/07 16:40 Mon', 'Price': '132.42', 'Open': '132.35', 'DayH': '132.46', 'DayL': '132.24', '52H': '133.52', '52L': '131.30', 'Volume': 209000, 'OpenInterest': '1293297', 'Ticker': 'FGBMU7', 'FullName': 'Germany:Eurex'}
-{'Date': '2017/08/07 16:48 Mon', 'Price': '132.42', 'Open': '132.35', 'DayH': '132.46', 'DayL': '132.24', '52H': '133.52', '52L': '131.30', 'Volume': '209000', 'OpenInterest': '1293297', 'Ticker': 'FGBMU7', 'FullName': 'Germany:Eurex'}
-{'Date': '2017/08/07 16:50 Mon', 'Price': '132.42', 'Open': '132.35', 'DayH': '132.46', 'DayL': '132.24', '52H': '133.52', '52L': '131.30', 'Volume': '209000', 'OpenInterest': '1293297', 'Ticker': 'FGBMU7', 'FullName': 'Germany:Eurex'}
-{'Date': '2017/08/07 17:22 Mon', 'Price': '132.42', 'Open': '132.35', 'DayH': '132.46', 'DayL': '132.24', '52H': '133.52', '52L': '131.30', 'Volume': '209000', 'OpenInterest': '1293297', 'Ticker': 'FGBMU7', 'FullName': 'Germany:Eurex'}
-{'Date': '2017/08/07 17:27 Mon', 'Price': '132.42', 'Open': '132.35', 'DayH': '132.46', 'DayL': '132.24', '52H': '133.52', '52L': '131.30', 'Volume': '209000', 'OpenInterest': '1293297', 'Ticker': 'FGBMU7', 'FullName': 'Germany:Eurex'}
-{'Date': '2017/08/07 17:30 Mon', 'Price': '132.42', 'Open': '132.35', 'DayH': '132.46', 'DayL': '132.24', '52H': '133.52', '52L': '131.30', 'Volume': '209000', 'OpenInterest': '1293297', 'Ticker': 'FGBMU7', 'FullName': 'Germany:Eurex'}
-{'Date': '2017/08/07 17:37 Mon', 'Price': '132.42', 'Open': '132.35', 'DayH': '132.46', 'DayL': '132.24', '52H': '133.52', '52L': '131.30', 'Volume': '209000', 'OpenInterest': '1293297', 'Ticker': 'FGBMU7', 'FullName': 'Germany:Eurex'}
+['2017/08/10 17:40 Thu', '132.69', '132.59', '132.71', '132.54', '133.52', '131.30', '236700', '1298565', 'FGBMU7']///
+['2017/08/10 17:45 Thu', '132.69', '132.59', '132.71', '132.54', '133.52', '131.30', '236700', '1298565', 'FGBMU7']
+['2017/08/10 18:01 Thu', '132.69', '132.59', '132.71', '132.54', '133.52', '131.30', '236700', '1298565', 'FGBMU7']
+['2017/08/10 18:07 Thu', '132.69', '132.59', '132.71', '132.54', '133.52', '131.30', '236700', '1298565', 'FGBMU7']
+['2017/08/10 18:23 Thu', '132.69', '132.59', '132.71', '132.54', '133.52', '131.30', '236700', '1298565', 'FGBMU7']

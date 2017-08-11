@@ -1,15 +1,5 @@
-http://www.marketwatch.com/investing/index/hsi?countrycode=hk
-http://www.marketwatch.com/investing/index/hsi?countrycode=hk
-http://www.marketwatch.com/investing/index/hsi?countrycode=hk
-AHANGSENG.iHANGSENG.iAAAAAAHANGSENG.i
-HANGSENG.i
-{'Date': '2017/08/07 16:13 Mon', 'Price': '27690.36', 'Open': '27665.71', 'DayH': '27731.92', 'DayL': '27629.20', '52H': '27747.35', '52L': '21488.82', 'Volume': '', 'OpenInterest': '', 'Ticker': 'HSI', 'FullName': 'HangSengInd'}
-{'Date': '2017/08/07 16:18 Mon', 'Price': '27690.36', 'Open': '27665.71', 'DayH': '27731.92', 'DayL': '27629.20', '52H': '27747.35', '52L': '21488.82', 'Volume': '', 'OpenInterest': '', 'Ticker': 'HSI', 'FullName': 'HangSengInd'}
-{'Date': '2017/08/07 16:37 Mon', 'Price': '27690.36', 'Open': '27665.71', 'DayH': '27731.92', 'DayL': '27629.20', '52H': '27747.35', '52L': '21488.82', 'Volume': '', 'OpenInterest': '', 'Ticker': 'HSI', 'FullName': 'HangSengInd'}
-{'Date': '2017/08/07 16:39 Mon', 'Price': '27690.36', 'Open': '27665.71', 'DayH': '27731.92', 'DayL': '27629.20', '52H': '27747.35', '52L': '21488.82', 'Volume': '', 'OpenInterest': '', 'Ticker': 'HSI', 'FullName': 'HangSengInd'}
-{'Date': '2017/08/07 16:48 Mon', 'Price': '27690.36', 'Open': '27665.71', 'DayH': '27731.92', 'DayL': '27629.20', '52H': '27747.35', '52L': '21488.82', 'Volume': '', 'OpenInterest': '', 'Ticker': 'HSI', 'FullName': 'HangSengInd'}
-{'Date': '2017/08/07 16:49 Mon', 'Price': '27690.36', 'Open': '27665.71', 'DayH': '27731.92', 'DayL': '27629.20', '52H': '27747.35', '52L': '21488.82', 'Volume': '', 'OpenInterest': '', 'Ticker': 'HSI', 'FullName': 'HangSengInd'}
-{'Date': '2017/08/07 17:21 Mon', 'Price': '27690.36', 'Open': '27665.71', 'DayH': '27731.92', 'DayL': '27629.20', '52H': '27747.35', '52L': '21488.82', 'Volume': '', 'OpenInterest': '', 'Ticker': 'HSI', 'FullName': 'HangSengInd'}
-{'Date': '2017/08/07 17:27 Mon', 'Price': '27690.36', 'Open': '27665.71', 'DayH': '27731.92', 'DayL': '27629.20', '52H': '27747.35', '52L': '21488.82', 'Volume': '', 'OpenInterest': '', 'Ticker': 'HSI', 'FullName': 'HangSengInd'}
-{'Date': '2017/08/07 17:30 Mon', 'Price': '27690.36', 'Open': '27665.71', 'DayH': '27731.92', 'DayL': '27629.20', '52H': '27747.35', '52L': '21488.82', 'Volume': '', 'OpenInterest': '', 'Ticker': 'HSI', 'FullName': 'HangSengInd'}
-{'Date': '2017/08/07 17:37 Mon', 'Price': '27690.36', 'Open': '27665.71', 'DayH': '27731.92', 'DayL': '27629.20', '52H': '27747.35', '52L': '21488.82', 'Volume': '', 'OpenInterest': '', 'Ticker': 'HSI', 'FullName': 'HangSengInd'}
+['2017/08/10 17:39 Thu', '27444.00', '27791.36', '27791.36', '27267.03', '27876.12', '21488.82', '', '', 'HSI']///
+['2017/08/10 17:44 Thu', '27444.00', '27791.36', '27791.36', '27267.03', '27876.12', '21488.82', '', '', 'HSI']
+['2017/08/10 18:01 Thu', '27444.00', '27791.36', '27791.36', '27267.03', '27876.12', '21488.82', '', '', 'HSI']
+['2017/08/10 18:07 Thu', '27444.00', '27791.36', '27791.36', '27267.03', '27876.12', '21488.82', '', '', 'HSI']
+['2017/08/10 18:22 Thu', '27444.00', '27791.36', '27791.36', '27267.03', '27876.12', '21488.82', '', '', 'HSI']
