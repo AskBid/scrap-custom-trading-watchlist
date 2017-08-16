@@ -478,38 +478,41 @@ def selector(address):
     if 'wsj.com' in address:
         return str(scrapWsj(address))
 
+def writeit(csvFile):
+    f = open(csvFile, 'r')
+    for line in f:
 
-f = open('macrowatchlist.csv', 'r')
-for line in f:
+        if line.split(',')[0] != "": #avoids empty rows
+            fileName = line.split(',')[0]
+            address = line.split(',')[1]
+            addressFutures = line.split(',')[2]
 
-    if line.split(',')[0] != "": #avoids empty rows
-        fileName = line.split(',')[0]
-        address = line.split(',')[1]
-        addressFutures = line.split(',')[2]
+            thisFile = open('data/' + fileName + '.csv', 'a+')
 
-        thisFile = open('data/' + fileName + '.csv', 'a+')
-
-        returned = selector(address)
-        returnedFutures = selector(addressFutures)
+            returned = selector(address)
+            returnedFutures = selector(addressFutures)
 
 
-        try:
-            if len(address) > 7:
-                thisFile.write(str(returned))
-            if len(addressFutures) > 7:
-                thisFile.write('//')
-                thisFile.write(str(returnedFutures[0]) + '//')
-                thisFile.write(str(returnedFutures[1]) + '//')
-                thisFile.write(str(returnedFutures[2]))
-                thisFile.write('\n')
-                thisFile.close()
-            else:
-                thisFile.write('\n')
-                thisFile.close()
-        except:
-            print('file write not working for {}'.format(fileName))
+            try:
+                if len(address) > 7:
+                    thisFile.write(str(returned))
+                if len(addressFutures) > 7:
+                    thisFile.write('//')
+                    thisFile.write(str(returnedFutures[0]) + '//')
+                    thisFile.write(str(returnedFutures[1]) + '//')
+                    thisFile.write(str(returnedFutures[2]))
+                    thisFile.write('\n')
+                    thisFile.close()
+                else:
+                    thisFile.write('\n')
+                    thisFile.close()
+            except:
+                print('file write not working for {}'.format(fileName))
 
-f.close
+    f.close
+
+if __name__ == '__main__':
+    writeit('macrowatchlist.csv')
 
 ##### end/divert all prints to a log file
 sys.stdout = old_stdout
