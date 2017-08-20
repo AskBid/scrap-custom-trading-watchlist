@@ -17,6 +17,7 @@ def getDataFormat():
     dataFormat = {
         "Date": "",
         "Price": "",
+        "Close": "",
         "Open": "",
         "DayH": "",
         "DayL": "",
@@ -343,7 +344,7 @@ def scrapMarketwatch(address):
     scrapData = {}
     #we create a dictionary of scraped data with labels as key and val as values
     for i, key in enumerate(lab):
-        scrapData[key.text.replace(" ","")] = val[i].text.replace(",","").replace("%","").replace("$","").replace("£","").replace("€","").replace("¥","").replace("HK","").replace("¢","")
+        scrapData[key.text.replace(" ","")] = val[i].text.replace(",","").replace("%","").replace("$","").replace("£","").replace("€","").replace("¥","").replace("HK","").replace("¢","").replace("\n","")
 
 
     data["Date"] = time.strftime(dateFormat)
@@ -369,9 +370,15 @@ def scrapMarketwatch(address):
         print("'{}' No 'Price'".format(address))
 
     try:
+        div = sup.find("div",{"class": lambda x: x and 'intraday__close' in x})
+        data["Close"] = div.find('tbody').text.replace(",","").replace("%","").replace("$","").replace("£","").replace("€","").replace("¥","").replace("HK","").replace("¢","").replace("\n","")
+    except:
+        print("'{}' No 'Close'".format(address))
+
+    try:
         data["Open"] = scrapData["Open"].replace(" ","")
     except:
-        print("'{}' No 'Open'".format(address))
+        print("'{}' No 'Close'".format(address))
 
     try:
         data["DayH"] = scrapData["DayRange"].replace(" - ",";;").replace(" ","").split(";;")[1]
@@ -417,7 +424,7 @@ def scrapBloomberg(address):
     scrapData = {}
     #we create a dictionary of scraped data with labels as key and val as values
     for i, key in enumerate(lab):
-        scrapData[key.text.replace(" ","")] = val[i].text.replace(",","").replace("%","").replace("$","").replace("£","").replace("€","").replace("¥","").replace("HK","").replace("¢","")
+        scrapData[key.text.replace(" ","")] = val[i].text.replace(",","").replace("%","").replace("$","").replace("£","").replace("€","").replace("¥","").replace("HK","").replace("¢","").replace("\n","")
 
     data["Date"] = time.strftime(dateFormat)
 
@@ -435,6 +442,11 @@ def scrapBloomberg(address):
         data["Open"] = scrapData["Open"].replace(" ","")
     except:
         print("'{}' No 'Open'".format(address))
+
+    try:
+        data["Close"] = scrapData["PreviousClose"].replace(" ","")
+    except:
+        print("'{}' No 'Close'".format(address))
 
     try:
         data["DayH"] = scrapData["DayRange"].replace(" - ",";;").replace(" ","").split(";;")[1]
@@ -460,6 +472,9 @@ def scrapBloomberg(address):
 
 
 def selector(address):
+    if address == '':
+        return '[]'
+
     if 'cmegroup' in address:
         return scrapCmegroup(address)
 
@@ -482,7 +497,7 @@ def writeit(csvFile):
     f = open(csvFile, 'r')
     for line in f:
 
-        if line.split(',')[0] != "": #avoids empty rows
+        if line.split(',')[0] != "": #avoids completely empty rows in spreadsheet
             fileName = line.split(',')[0]
             address = line.split(',')[1]
             addressFutures = line.split(',')[2]
