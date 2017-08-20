@@ -1,17 +1,48 @@
 import time
 import requests
 from bs4 import BeautifulSoup as bs
+import sys
+import os, errno
+
+
+
+dateFormat = '%Y-%m-%d %H:%M %a'
+date = time.strftime(dateFormat)
+hour = time.strftime('%H')
+
+periodStart = int(int(hour)/2)*2
+periodEnd = periodStart+2
+period = str(periodStart) + '-' + str(periodEnd)
+
+try:
+    os.makedirs("logs/logs_" + period)
+except OSError as e:
+    if e.errno != errno.EEXIST:
+        raise
+
+# 01 +-0.5~
+# 03 +-0.5~
+# 05 +-0.5~
+# 07 +-0.5~
+# 09 +-0.5~
+# 11 +-0.5~
+# 13 +-0.5~
+# 15 +-0.5~
+# 17 +-0.5~
+# 19 +-0.5~
+# 21 +-0.5~
+# 23 +-0.5~
+
 
 ##### start/divert all prints to a log file
-import sys
 old_stdout = sys.stdout
 
-log_file = open("message.log","w")
+log_file = open("logs/logs_" + period + "/" + date + ".log","a+")
 
 sys.stdout = log_file
 ##### start\divert all prints to a log file
 
-dateFormat = '%Y/%m/%d %H:%M %a'
+
 #data shared format between Marketwatch and Bloomberg
 def getDataFormat():
     dataFormat = {
@@ -114,7 +145,7 @@ def scrapSovereignCDS(address):
     table = table.find('tbody')
     rows = table.find_all("tr")
 
-    sovereignCDS = [time.strftime(dateFormat)]
+    sovereignCDS = [date]
 
     for row in rows:
         dictRow = getDataFormatCDS()
@@ -168,7 +199,7 @@ def scrapWsj(address):
     except:
         print("table CDS column gathering did not work")
 
-    dictCDS = [time.strftime(dateFormat)]
+    dictCDS = [date]
 
     for i in range(0,len(names)):
         if 'n.a.' not in values[i].text:
@@ -214,7 +245,7 @@ def scrapWorldgovernmentbonds(address):
             maturity.append(durataTranslator(selectedCELLS[1].text))
             yields.append(float(selectedCELLS[yieldIndex].text.replace('%','')))
 
-    return time.strftime(dateFormat), maturity, yields
+    return date, maturity, yields
 
 def scrapCmegroup(address):
     maxRows = 30,
@@ -324,7 +355,7 @@ def scrapCmegroup(address):
         arr = makeDicArr(dic)
         arrTable.append(arr)
 
-    return makeDicArr(totalValues), arrTable, makeDicArr(maxDic)  #ritorna un piccolo dizionario ed una lista di dizionari (un dizionari for every expiry)
+    return ('//' + str(makeDicArr(totalValues)) + '//' + str(arrTable) + '//' + str(makeDicArr(maxDic)))  #ritorna una stringa pronta ad essere scritta sul file .csv
 
 def scrapMarketwatch(address):
     #creating formatting data from scrapdata
@@ -347,7 +378,7 @@ def scrapMarketwatch(address):
         scrapData[key.text.replace(" ","")] = val[i].text.replace(",","").replace("%","").replace("$","").replace("£","").replace("€","").replace("¥","").replace("HK","").replace("¢","").replace("\n","")
 
 
-    data["Date"] = time.strftime(dateFormat)
+    data["Date"] = date
 
     try:
         data["Ticker"] = sup.find("span",{"class": "company__ticker"}).text.replace(' ','')
@@ -426,7 +457,7 @@ def scrapBloomberg(address):
     for i, key in enumerate(lab):
         scrapData[key.text.replace(" ","")] = val[i].text.replace(",","").replace("%","").replace("$","").replace("£","").replace("€","").replace("¥","").replace("HK","").replace("¢","").replace("\n","")
 
-    data["Date"] = time.strftime(dateFormat)
+    data["Date"] = date
 
     try:
         data["Ticker"] = sup.find("div",{"class": "ticker"}).text.replace(' ','')
@@ -471,56 +502,58 @@ def scrapBloomberg(address):
 ##
 
 
-def selector(address):
-    if address == '':
-        return '[]'
+def selectorPrice(address):
+    if address == 'none' or address == 'empty':
+        return ('[' + date + ',None]')
+
+    if 'marketwatch' in address:
+        return scrapMarketwatch(address)
+
+    if 'bloomberg' in address:
+        return scrapBloomberg(address)
+
+    if 'worldgovernmentbonds.com/country' in address:
+        return scrapWorldgovernmentbonds(address)
+
+    if 'sovereign-cds' in address:
+        return scrapSovereignCDS(address)
+
+    if 'wsj.com' in address:
+        return scrapWsj(address)
+
+def selectorFutures(address):
+
+    if address == 'none':
+        return ''
+
+    if address == 'empty':
+        return '//None//None//None'
 
     if 'cmegroup' in address:
         return scrapCmegroup(address)
 
-    if 'marketwatch' in address:
-        return str(scrapMarketwatch(address))
-
-    if 'bloomberg' in address:
-        return str(scrapBloomberg(address))
-
-    if 'worldgovernmentbonds.com/country' in address:
-        return str(scrapWorldgovernmentbonds(address))
-
-    if 'sovereign-cds' in address:
-        return str(scrapSovereignCDS(address))
-
-    if 'wsj.com' in address:
-        return str(scrapWsj(address))
-
 def writeit(csvFile):
+
+    try:
+        os.makedirs('data/data_' + period)
+    except OSError as e:
+        if e.errno != errno.EEXIST:
+            raise
+
     f = open(csvFile, 'r')
     for line in f:
-
         if line.split(',')[0] != "": #avoids completely empty rows in spreadsheet
             fileName = line.split(',')[0]
             address = line.split(',')[1]
-            addressFutures = line.split(',')[2]
+            addressFutures = line.split(',')[2].replace('\n','')
 
-            thisFile = open('data/' + fileName + '.csv', 'a+')
-
-            returned = selector(address)
-            returnedFutures = selector(addressFutures)
-
+            thisFile = open('data/data_' + period + '/' + fileName + '.csv', 'a+')
 
             try:
-                if len(address) > 7:
-                    thisFile.write(str(returned))
-                if len(addressFutures) > 7:
-                    thisFile.write('//')
-                    thisFile.write(str(returnedFutures[0]) + '//')
-                    thisFile.write(str(returnedFutures[1]) + '//')
-                    thisFile.write(str(returnedFutures[2]))
-                    thisFile.write('\n')
-                    thisFile.close()
-                else:
-                    thisFile.write('\n')
-                    thisFile.close()
+                thisFile.write(str(selectorPrice(address)))
+                thisFile.write(str(selectorFutures(addressFutures)))
+                thisFile.write('\n')
+                thisFile.close()
             except:
                 print('file write not working for {}'.format(fileName))
 

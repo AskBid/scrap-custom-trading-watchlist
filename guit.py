@@ -9,5 +9,4 @@ two.pack(fill=X)
 three=Label(root, text='three', bg='blue', fg='white')
 three.pack(side=LEFT, fill=Y)
 
-
 root.mainloop()
