@@ -355,7 +355,7 @@ def scrapCmegroup(address):
         arr = makeDicArr(dic)
         arrTable.append(arr)
 
-    return ('//' + str(makeDicArr(totalValues)) + '//' + str(arrTable) + '//' + str(makeDicArr(maxDic)))  #ritorna una stringa pronta ad essere scritta sul file .csv
+    return (' // ' + str(makeDicArr(totalValues)) + ' // ' + str(makeDicArr(maxDic)) + ' // ' + str(arrTable))  #ritorna una stringa pronta ad essere scritta sul file .csv
 
 def scrapMarketwatch(address):
     #creating formatting data from scrapdata
@@ -502,8 +502,8 @@ def scrapBloomberg(address):
 ##
 
 
-def selectorPrice(address):
-    if address == 'none' or address == 'empty':
+def selector(address):
+    if address == 'empty':
         return ('[' + date + ',None]')
 
     if 'marketwatch' in address:
@@ -521,14 +521,6 @@ def selectorPrice(address):
     if 'wsj.com' in address:
         return scrapWsj(address)
 
-def selectorFutures(address):
-
-    if address == 'none':
-        return ''
-
-    if address == 'empty':
-        return '//None//None//None'
-
     if 'cmegroup' in address:
         return scrapCmegroup(address)
 
@@ -536,6 +528,7 @@ def writeit(csvFile):
 
     try:
         os.makedirs('data/data_' + period)
+        os.makedirs('data/dataF_' + period)
     except OSError as e:
         if e.errno != errno.EEXIST:
             raise
@@ -547,13 +540,19 @@ def writeit(csvFile):
             address = line.split(',')[1]
             addressFutures = line.split(',')[2].replace('\n','')
 
-            thisFile = open('data/data_' + period + '/' + fileName + '.csv', 'a+')
-
             try:
-                thisFile.write(str(selectorPrice(address)))
-                thisFile.write(str(selectorFutures(addressFutures)))
-                thisFile.write('\n')
-                thisFile.close()
+                if '.Fr' not in fileName:
+                    fileData = open('data/data_' + period + '/' + fileName + '.csv', 'a+')
+                    fileData.write(str(selector(address)))
+                    fileData.write('\n')
+                    fileData.close()
+                if addressFutures != 'empty':
+                    fileDataF = open('data/dataF_' + period + '/' + fileName + '.csv', 'a+')
+                    fileDataF.write(date)
+                    fileDataF.write(str(selector(addressFutures)))
+                    fileDataF.write('\n')
+                    fileDataF.close()
+
             except:
                 print('file write not working for {}'.format(fileName))
 
