@@ -12,6 +12,8 @@ class Column(QTextEdit):
 
         self.setText(self.write_label())
 
+        print(self.write_label())
+
         self.adjustSize()
         self.setStyleSheet("""
         QTextEdit {
@@ -24,25 +26,27 @@ class Column(QTextEdit):
         }
         """)
 
-#jesus
     def write_label(self):
 
         name_list = self.read_col_list(0)
         text = ''
 
+        with open('gui/label.css') as f:
+               text = f.read()
+        i = 40
+        for name in name_list:
+            i = i+8
+            thisFileData = datait.Calc_Vals(name)
 
-        thisFileData = datait.Calc_Vals(name_list[0])
+            with open('gui/label.html') as f:
+        	    html = f.read()
+            html = html.replace('/*--bgcolor--*/', 'rgba(119, 212, {}, 0.7)'.format(i))
+            html = html.replace('<!--name-->', str(thisFileData.file_name))
+            html = html.replace('<!--prc-->', str(thisFileData.price))
 
-        with open('gui/label_H.html') as f:
-    	       html = f.read()
-        html = html.replace('/*--bgcolor--*/', 'rgba(119, 212, 214, 0.7)')
-        html = html.replace('<!--name-->', str(thisFileData.file_name))
-        html = html.replace('<!--prc-->', str(thisFileData.price))
+            text = text + html
 
-        html = html + html
-        html = html.replace('rgba(119, 212, 214, 0.7)','rgba(240, 212, 2, 0.7)')
-
-        return html
+        return text
 
         # for name in name_list:
         #     thisFileData = datait.Calc_Vals(name)
@@ -59,7 +63,7 @@ class Column(QTextEdit):
         return text
 
 
-
+        #/*--tabname--*/
         # /*--bgcolor--*/
         # <!--name-->
         # <!--prc_C-->
