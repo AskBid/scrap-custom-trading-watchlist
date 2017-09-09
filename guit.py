@@ -24,7 +24,7 @@ class Column(QTextEdit):
         }
         """)
 
-
+#jesus
     def write_label(self):
 
         name_list = self.read_col_list(0)
