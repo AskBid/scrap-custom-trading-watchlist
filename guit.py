@@ -12,8 +12,6 @@ class Column(QTextEdit):
 
         self.setText(self.write_label())
 
-        print(self.write_label())
-
         self.adjustSize()
         self.setStyleSheet("""
         QTextEdit {
