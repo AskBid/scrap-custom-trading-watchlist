@@ -3,7 +3,8 @@
 <style>
 
 #tabmain {
-    background-color: rgba(119, 212, 214, 0.7);
+    background-color: /*--bgcolor--*/;
+    /*background-color: rgba(119, 212, 214, 0.7);*/
 }
 
 td {
@@ -47,7 +48,6 @@ td {
 
 #values_cells2 {
     background-color: rgba(55, 55, 55, 0.15);
-    /*background-color: rgba(170, 170, 170, 0.8);*/
     text-align: right;
     padding: 3px 3px 5px 0px; /*Top right Bottom left*/
 }
