@@ -18,17 +18,25 @@ td {
     vertical-align: bottom;
 }
 
-/*cells*/
 
+/*cells*/
 #header_cell_ticker{
     padding: 5px 0px 0px 5px;
     text-align: left;
 }
 
 #header_cell_price{
-    padding: 0px 0px 5px 5px;
+    padding: 0px 0px 10px 5px;
     text-align: left;
+    vertical-align: top;
 }
+
+#header_small{
+    padding: 0px 5px 11px 5px;
+    text-align: right;
+    vertical-align: bottom;
+}
+
 
 #values_cells1 {
     background-color: rgba(55, 55, 55, 0.1);
@@ -45,6 +53,7 @@ td {
 }
 /*cells*/
 
+
 /*text*/
 #ticker {
     font-family: Helvetica, sans-serif;
@@ -58,8 +67,14 @@ td {
     font-family: Helvetica, sans-serif;
     font-size: 20px;
     font-weight: 900;
-
 }
+
+#price_small {
+    font-family: Helvetica, sans-serif;
+    font-size: 10px;
+    font-weight: 800;
+}
+
 
 #value {
     font-size: 12px;
@@ -72,5 +87,7 @@ td {
     font-weight: 100;
     color: rgba(255, 255, 255, 0.6);
 }
+/*text*/
+
 </style>
 </head>
