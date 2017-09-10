@@ -6,42 +6,46 @@ class Calc_Vals():
 
     def __init__(self, file_name):
 
-        self.file_name = file_name + '.csv'
-        self.linelist = []
+        self.file_name = file_name
+        self.dayslist = self.readFile()
+
+    def readFile(self):
+
+        with open('data/data_16-18/{}'.format(self.file_name + '.csv')) as f:
+    	    linelist = f.readlines()
 
         #from list of strings to list of lists
-        with open('data/data_20-22/{}'.format(self.file_name)) as f:
-    	    self.linelist = f.readlines()
-        for i,day in enumerate(self.linelist):
-            self.linelist[i] = ast.literal_eval(day)
+        for i,day in enumerate(linelist):
+            linelist[i] = ast.literal_eval(day)
 
-        self.price = self.getLastPrc()
-        self.open = self.getOpenPrc()
+        return linelist
 
-    def getLastPrc(self):
-        last_day = self.linelist[-1]
+    def getPrice(self):
+        day = self.dayslist[-1]
+        return day[1]
 
-        return last_day[1]
+    def getOpen(self):
+        day = self.dayslist[-1]
+        return day[3]
 
-    def getOpenPrc(self):
-        last_day = self.linelist[-1]
+    def getYClose(self):
+        day = self.dayslist[-1]
 
-        return last_day[3]
+        return day[2]
+
+    def getDayRange(self):
+        day = self.dayslist[-1]
+
+
+        dayrange = float(day[4]) - float(day[5])
+
+        return ("{0:.2f}".format(dayrange))
 
 
 
 if __name__ == '__main__':
     calc= Calc_Vals('USDCHF.S')
 
-#
-# "Date": "0",
-# "Price": "1",
-# "Close": "2",
-# "Open": "3",
-# "DayH": "4",
-# "DayL": "5",
-# "52H": "6",
-# "52L": "7",
-# "Volume": "8",
-# "OpenInterest": "9",
-# "Ticker": "10",
+
+# ['2017-09-08 16:30 Fri', '2461.00', '2461.00', '2464.75', '2465.75', '2455.25', '2486.25', '2061.00', '1500000', '719665', 'ESZ7']
+# "Date": "0",              Price 1    Close 2    Open 3     DayH 4     DayL 5     52H 6      52L 7      Volume 8  OpenInt 9  Ticker 10

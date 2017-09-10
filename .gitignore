@@ -4,6 +4,5 @@
 *.pyc
 *.db
 *.ods#
-data
 logs
 bin

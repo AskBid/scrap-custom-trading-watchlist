@@ -10,7 +10,7 @@ class Column(QTextEdit):
     def __init__(self):
         super().__init__()
 
-        self.setText(self.write_label())
+        self.setText(self.write_col_html())
 
         self.adjustSize()
         self.setStyleSheet("""
@@ -24,44 +24,50 @@ class Column(QTextEdit):
         }
         """)
 
-    def write_label(self):
-
-        name_list = self.read_col_list(0)
+    def write_col_html(self):
+        inst_list = self.read_guilist(0)
         text = ''
-
         with open('gui/label.css') as f:
                text = f.read()
-        i = 40
-        for name in name_list:
-            i = i+8
-            thisFileData = datait.Calc_Vals(name)
 
-            with open('gui/label.html') as f:
-        	    html = f.read()
-            html = html.replace('/*--bgcolor--*/', 'rgba(119, 212, {}, 0.7)'.format(i))
-            html = html.replace('<!--name-->', str(thisFileData.file_name))
-            html = html.replace('<!--prc-->', str(thisFileData.price))
-
-            text = text + html
+        for inst in inst_list:
+            text = text + self.write_label_html(inst)
 
         return text
 
-        # for name in name_list:
-        #     thisFileData = datait.Calc_Vals(name)
-        #     with open('gui/label_H.html') as f:
-        # 	       html = f.read()
-        #     with open('gui/label_style.css') as f:
-        # 	       css = f.read()
-        #     htmlcss = css + html
-        #     htmlcss.replace('<!--name-->', str(thisFileData.file_name))
-        #     htmlcss.replace('<!--prc-->', str(thisFileData.getLastPrc))
-        #
-        #     text = text + htmlcss
+    def write_label_html(self, inst):
 
-        return text
+        if inst == '':
+            return '<br>'
 
+        thisInstData = datait.Calc_Vals(inst)
 
-        #/*--tabname--*/
+        with open('gui/label.html') as f:
+    	    html = f.read()
+
+        html = html.replace('/*--bgcolor--*/', 'rgba(119, 212, 212, 0.7)')
+        html = html.replace('<!--name-->', str(thisInstData.file_name))
+        html = html.replace('<!--prc-->', str(thisInstData.getPrice()))
+        html = html.replace('<!--prc_C-->', str(thisInstData.getYClose()))
+        html = html.replace('<!--prc_O-->', str(thisInstData.getOpen()))
+        html = html.replace('<!--val03-->', str(thisInstData.getDayRange()))
+        html = html.replace('<!--avg03-->', str(thisInstData.getDayRange()))
+        html = html.replace('<!--val02-->', str(thisInstData.getDayRange()))
+        html = html.replace('<!--avg02-->', str(thisInstData.getDayRange()))
+        html = html.replace('<!--val01-->', str(thisInstData.getDayRange()))
+        html = html.replace('<!--avg01-->', str(thisInstData.getDayRange()))
+        html = html.replace('<!--val00-->', str(thisInstData.getDayRange()))
+        html = html.replace('<!--avg00-->', str(thisInstData.getDayRange()))
+        html = html.replace('<!--val13-->', str(thisInstData.getDayRange()))
+        html = html.replace('<!--avg13-->', str(thisInstData.getDayRange()))
+        html = html.replace('<!--val12-->', str(thisInstData.getDayRange()))
+        html = html.replace('<!--avg12-->', str(thisInstData.getDayRange()))
+        html = html.replace('<!--val11-->', str(thisInstData.getDayRange()))
+        html = html.replace('<!--avg11-->', str(thisInstData.getDayRange()))
+        html = html.replace('<!--val10-->', str(thisInstData.getDayRange()))
+        html = html.replace('<!--avg10-->', str(thisInstData.getDayRange()))
+
+        return html
         # /*--bgcolor--*/
         # <!--name-->
         # <!--prc_C-->
@@ -85,10 +91,10 @@ class Column(QTextEdit):
         # <!--avg10-->
 
 
-    def read_col_list(self, col):
+    def read_guilist(self, col):
         col_list = []
 
-        with open('gui/guilist.csv') as f:
+        with open('guilist.csv') as f:
             csv = f.readlines()
 
         for line in csv:
