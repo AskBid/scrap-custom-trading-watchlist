@@ -4,7 +4,15 @@ import ast
 from scrapit import getDataFormat
 
 def writePrice(digit):
-    pass
+    string = str(digit).split('.')
+
+    if len(string) == 1:
+        return (digit)
+    if len(string[0]) == 1:
+        return ("{:20,.4f}".format(digit))
+    # round(digit[1], 2)
+
+    return ("{:20,.2f}".format(digit))
 
 class Calc_Vals():
 
@@ -12,7 +20,7 @@ class Calc_Vals():
 
         self.file_name = file_name
         self.dayslist = self.readFile()
-
+        print(self.getPrice())
 
     def readFile(self):
         with open('data/data_16-18/{}'.format(self.file_name + '.csv')) as f:
@@ -27,47 +35,46 @@ class Calc_Vals():
         for line in linelist:
             newline = []
             newline.append(line[0].split(' ')[0])
-            for i in range(1,8):
+            for i in range(1,10):
                 try:
-                    newline.append(float(line[i]))
+                    if '.' in line[i]:
+                        newline.append(float(line[i]))
+                    else:
+                        newline.append(int(line[i]))
                 except:
                     newline.append('-')
-            try:
-                newline.append(int(line[8]))
-            except:
-                newline.append('-')
-            try:
-                newline.append(int(line[9]))
-            except:
-                newline.append('-')
+
             newlinelist.append(newline)
 
         return newlinelist
 
+
+
     def getPrice(self):
         day = self.dayslist[-1]
-        day = round(float(day[1]), 2)
-        return ("{:20,.2f}".format(day))
+        print(day)
+
+        return writePrice(day[1])
 
     def getOpen(self):
         day = self.dayslist[-1]
-        return day[3]
+        return writePrice(day[3])
 
     def getYClose(self):
         day = self.dayslist[-1]
 
-        return day[2]
+        return writePrice(day[2])
 
     def getDayRange(self):
         day = self.dayslist[-1]
-        dayrange = float(day[4]) - float(day[5])
+        dayrange = day[4] - day[5]
 
-        return ("{:20,.2f}".format(dayrange))
+        return writePrice(dayrange)
 
 
 
 if __name__ == '__main__':
-    calc= Calc_Vals('USDCHF.S')
+    calc= Calc_Vals('DJIA.F')
 
 
 # ['2017-09-08 16:30 Fri', '2461.00', '2461.00', '2464.75', '2465.75', '2455.25', '2486.25', '2061.00', '1500000', '719665', 'ESZ7']
