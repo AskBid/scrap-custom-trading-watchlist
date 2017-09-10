@@ -7,7 +7,7 @@ def writePrice(digit):
     string = str(digit).split('.')
 
     if len(string) == 1:
-        return (digit)
+        return ("{:,}".format(digit))
     if len(string[0]) == 1:
         return ("{:20,.4f}".format(digit))
     # round(digit[1], 2)
@@ -20,7 +20,6 @@ class Calc_Vals():
 
         self.file_name = file_name
         self.dayslist = self.readFile()
-        print(self.getPrice())
 
     def readFile(self):
         with open('data/data_16-18/{}'.format(self.file_name + '.csv')) as f:
@@ -52,8 +51,6 @@ class Calc_Vals():
 
     def getPrice(self):
         day = self.dayslist[-1]
-        print(day)
-
         return writePrice(day[1])
 
     def getOpen(self):
