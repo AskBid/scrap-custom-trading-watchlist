@@ -1,6 +1,10 @@
 import sys
 from os import listdir
 import ast
+from scrapit import getDataFormat
+
+def writePrice(digit):
+    pass
 
 class Calc_Vals():
 
@@ -9,8 +13,8 @@ class Calc_Vals():
         self.file_name = file_name
         self.dayslist = self.readFile()
 
-    def readFile(self):
 
+    def readFile(self):
         with open('data/data_16-18/{}'.format(self.file_name + '.csv')) as f:
     	    linelist = f.readlines()
 
@@ -18,11 +22,32 @@ class Calc_Vals():
         for i,day in enumerate(linelist):
             linelist[i] = ast.literal_eval(day)
 
-        return linelist
+        #from list of list with strings to list of lists with float,int
+        newlinelist = []
+        for line in linelist:
+            newline = []
+            newline.append(line[0].split(' ')[0])
+            for i in range(1,8):
+                try:
+                    newline.append(float(line[i]))
+                except:
+                    newline.append('-')
+            try:
+                newline.append(int(line[8]))
+            except:
+                newline.append('-')
+            try:
+                newline.append(int(line[9]))
+            except:
+                newline.append('-')
+            newlinelist.append(newline)
+
+        return newlinelist
 
     def getPrice(self):
         day = self.dayslist[-1]
-        return day[1]
+        day = round(float(day[1]), 2)
+        return ("{:20,.2f}".format(day))
 
     def getOpen(self):
         day = self.dayslist[-1]
@@ -35,11 +60,9 @@ class Calc_Vals():
 
     def getDayRange(self):
         day = self.dayslist[-1]
-
-
         dayrange = float(day[4]) - float(day[5])
 
-        return ("{0:.2f}".format(dayrange))
+        return ("{:20,.2f}".format(dayrange))
 
 
 

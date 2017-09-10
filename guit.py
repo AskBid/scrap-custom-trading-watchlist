@@ -68,28 +68,9 @@ class Column(QTextEdit):
         html = html.replace('<!--avg10-->', str(thisInstData.getDayRange()))
 
         return html
-        # /*--bgcolor--*/
-        # <!--name-->
-        # <!--prc_C-->
-        # <!--prc_O-->
-        # <!--prc-->
-        # <!--val03-->
-        # <!--avg03-->
-        # <!--val02-->
-        # <!--avg02-->
-        # <!--val01-->
-        # <!--avg01-->
-        # <!--val00-->
-        # <!--avg00-->
-        # <!--val13-->
-        # <!--avg13-->
-        # <!--val12-->
-        # <!--avg12-->
-        # <!--val11-->
-        # <!--avg11-->
-        # <!--val10-->
-        # <!--avg10-->
 
+    def drawBar():
+        pass
 
     def read_guilist(self, col):
         col_list = []

@@ -43,7 +43,7 @@ td {
 #values_cells2 {
     background-color: rgba(55, 55, 55, 0.15);
     text-align: right;
-    padding: 0px 3px 2px 0px; /*Top right Bottom left*/
+    padding: 2px 3px 3px 0px; /*Top right Bottom left*/
 }
 /*cells*/
 
