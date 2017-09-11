@@ -34,14 +34,14 @@ td {
 
 
 #values_cells1 {
-    background-color: rgba(55, 55, 55, 0.1);
+    background-color: rgba(55, 55, 55, 0.07);
     /*background-color: rgba(155, 155, 155, 0.8);*/
     text-align: right;
     padding: 2px 3px 3px 0px; /*Top right Bottom left*/
 }
 
 #values_cells2 {
-    background-color: rgba(55, 55, 55, 0.15);
+    background-color: rgba(55, 55, 55, 0.12);
     text-align: right;
     padding: 2px 3px 3px 0px; /*Top right Bottom left*/
 }
