@@ -9,6 +9,9 @@ import pandas as pd
 from scrapit import getDataFormat
 
 def writePrice(digit):
+    if digit == '-':
+        return '-'
+
     string = str(digit).split('.')
 
     if len(string) == 1:
@@ -16,6 +19,10 @@ def writePrice(digit):
     if len(string[0]) == 1:
         return ("{:20,.4f}".format(digit))
     # round(digit[1], 2)
+
+    return ("{:20,.2f}".format(digit))
+
+def writeRange(digit):
 
     return ("{:20,.2f}".format(digit))
 
@@ -46,7 +53,7 @@ class Calc_Vals():
 
         for line in linelist:
             newline = []
-            labelRows.append(line[0])
+            labelRows.append(line[0].split(' ')[0]) #modify here to decide how the rows label (date) format is
             for i in range(1,10):
                 try:
                     if '.' in line[i]:
@@ -57,7 +64,7 @@ class Calc_Vals():
                     newline.append('-')
             newlinelist.append(newline)
 
-        dayslist = pd.DataFrame(newlinelist, labelRows, labelCol)
+        dayslist = pd.DataFrame(newlinelist, index = labelRows, columns = labelCol)
 
         return dayslist
 
@@ -65,30 +72,40 @@ class Calc_Vals():
 
     def getPrice(self):
         day = self.dayslist
-        price = day['Price'][-1]
+        price = day['price'].values[-1]
         return writePrice(price)
 
     def getOpen(self):
-        day = self.dayslist[-1]
-        return writePrice(day[3])
+        day = self.dayslist
+        open_ = day['open'].values[-1]
+        return writePrice(open_)
 
     def getYClose(self):
-        day = self.dayslist[-1]
+        day = self.dayslist
+        close = day['yclose'].values[-1]
+        return writePrice(close)
 
-        return writePrice(day[2])
+    def getDayR(self):
+        day = self.dayslist
+        dayR = day['dayh'].values[-1] - day['dayl'].values[-1]
+        return writeRange(dayR)
 
-    def getDayRange(self):
-        day = self.dayslist[-1]
-        dayrange = day[4] - day[5]
-
-        return writePrice(dayrange)
-
+    def getDayR_avg(self):
+        day = self.dayslist
+        print(day['dayh'])
+        print(day['dayl'])
+        dayR_series = day['dayh'] - day['dayl']
+        return writeRange(dayR_series.sum() / dayR_series.size)
 
 
 if __name__ == '__main__':
-    calc= Calc_Vals('DJIA.F')
+    calc= Calc_Vals('SPY.i')
     print(calc.dayslist)
-    print(calc.getPrice())
+    print('price = ' + calc.getPrice())
+    print('open = ' + calc.getOpen())
+    print('yclose = ' + calc.getYClose())
+    print('dayR = ' + calc.getDayR())
+    print(calc.getDayR_avg())
 
 
 # def getDataFormat():

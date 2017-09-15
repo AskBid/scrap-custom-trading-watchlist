@@ -46,16 +46,16 @@ sys.stdout = log_file
 #data shared format between Marketwatch and Bloomberg
 def getDataFormat():
     dataFormat = {
-        "Date": "",
-        "Price": "",
-        "yClose": "",
-        "Open": "",
-        "DayH": "",
-        "DayL": "",
-        "52H": "",
-        "52L": "",
-        "Vol": "",
-        "Oi": "",
+        "date": "",
+        "price": "",
+        "yclose": "",
+        "open": "",
+        "dayh": "",
+        "dayl": "",
+        "52h": "",
+        "52l": "",
+        "vol": "",
+        "oi": "",
         "Ticker": ""}
     return dataFormat
 
@@ -378,7 +378,7 @@ def scrapMarketwatch(address):
         scrapData[key.text.replace(" ","")] = val[i].text.replace(",","").replace("%","").replace("$","").replace("£","").replace("€","").replace("¥","").replace("HK","").replace("¢","").replace("\n","")
 
 
-    data["Date"] = date
+    data["date"] = date
 
     try:
         data["Ticker"] = sup.find("span",{"class": "company__ticker"}).text.replace(' ','')
@@ -389,48 +389,48 @@ def scrapMarketwatch(address):
         priceTab = sup.find("h3",{"class": lambda x: x and 'intraday__price' in x})
         if priceTab.find('bg-quote') != None:
             bgquote = priceTab.find('bg-quote')
-            data["Price"] = bgquote.text.replace(",","").replace(" ","")
-            if data["Price"] == '' or data["Price"] == None:
-                data["Price"] = bgquote.get('data-last-raw', [])
+            data["price"] = bgquote.text.replace(",","").replace(" ","")
+            if data["price"] == '' or data["price"] == None:
+                data["price"] = bgquote.get('data-last-raw', [])
                 print(bgquote.get('data-last-raw', []))
                 print(bgquote)
         else:
-            data["Price"] = priceTab.find("span",{"class":"value"}).text.replace(",","").replace(" ","")
-        float(data["Price"]) #check that an actual number was found for Price
+            data["price"] = priceTab.find("span",{"class":"value"}).text.replace(",","").replace(" ","")
+        float(data["price"]) #check that an actual number was found for Price
     except:
         print("'{}' No 'Price'".format(address))
 
     try:
         div = sup.find("div",{"class": lambda x: x and 'intraday__close' in x})
-        data["yClose"] = div.find('tbody').text.replace(",","").replace("%","").replace("$","").replace("£","").replace("€","").replace("¥","").replace("HK","").replace("¢","").replace("\n","")
+        data["yclose"] = div.find('tbody').text.replace(",","").replace("%","").replace("$","").replace("£","").replace("€","").replace("¥","").replace("HK","").replace("¢","").replace("\n","")
     except:
         print("'{}' No 'yClose'".format(address))
 
     try:
-        data["Open"] = scrapData["Open"].replace(" ","")
+        data["open"] = scrapData["Open"].replace(" ","")
     except:
         print("'{}' No 'Open'".format(address))
 
     try:
-        data["DayH"] = scrapData["DayRange"].replace(" - ",";;").replace(" ","").split(";;")[1]
-        data["DayL"] = scrapData["DayRange"].replace(" - ",";;").replace(" ","").split(";;")[0]
+        data["dayh"] = scrapData["DayRange"].replace(" - ",";;").replace(" ","").split(";;")[1]
+        data["dayl"] = scrapData["DayRange"].replace(" - ",";;").replace(" ","").split(";;")[0]
     except:
         print("'{}' No 'DayRange'".format(address))
 
     try:
-        data["52H"] = scrapData["52WeekRange"].replace(" - ",";;").replace(" ","").split(";;")[1]
-        data["52L"] = scrapData["52WeekRange"].replace(" - ",";;").replace(" ","").split(";;")[0]
+        data["52h"] = scrapData["52WeekRange"].replace(" - ",";;").replace(" ","").split(";;")[1]
+        data["52l"] = scrapData["52WeekRange"].replace(" - ",";;").replace(" ","").split(";;")[0]
     except:
         print("'{}' No '52WeekRange'".format(address))
 
     try:
-        data["Vol"] = str(mkTranslator(sup.find("span",{"class":"volume last-value"}).text))
+        data["vol"] = str(mkTranslator(sup.find("span",{"class":"volume last-value"}).text))
     except:
         if 'index' not in address:
             print("'{}' No 'Volume'".format(address))
 
     try:
-        data["Oi"] = scrapData["OpenInterest"].replace(" ","")
+        data["oi"] = scrapData["OpenInterest"].replace(" ","")
     except:
         if 'index' not in address:
             print("'{}' No 'OpenInterest'".format(address))
@@ -457,7 +457,7 @@ def scrapBloomberg(address):
     for i, key in enumerate(lab):
         scrapData[key.text.replace(" ","")] = val[i].text.replace(",","").replace("%","").replace("$","").replace("£","").replace("€","").replace("¥","").replace("HK","").replace("¢","").replace("\n","")
 
-    data["Date"] = date
+    data["date"] = date
 
     try:
         data["Ticker"] = sup.find("div",{"class": "ticker"}).text.replace(' ','')
@@ -465,34 +465,34 @@ def scrapBloomberg(address):
         print('{}' "No 'Ticker'".format(address))
 
     try:
-        data["Price"] = sup.find("div",{"class":"price"}).text.replace(",","").replace(" ","")
+        data["price"] = sup.find("div",{"class":"price"}).text.replace(",","").replace(" ","")
     except:
         print("'{}' No 'Price'".format(address))
 
     try:
-        data["Open"] = scrapData["Open"].replace(" ","")
+        data["open"] = scrapData["Open"].replace(" ","")
     except:
         print("'{}' No 'Open'".format(address))
 
     try:
-        data["yClose"] = scrapData["PreviousClose"].replace(" ","")
+        data["yclose"] = scrapData["PreviousClose"].replace(" ","")
     except:
         print("'{}' No 'yClose'".format(address))
 
     try:
-        data["DayH"] = scrapData["DayRange"].replace(" - ",";;").replace(" ","").split(";;")[1]
-        data["DayL"] = scrapData["DayRange"].replace(" - ",";;").replace(" ","").split(";;")[0]
+        data["dayh"] = scrapData["DayRange"].replace(" - ",";;").replace(" ","").split(";;")[1]
+        data["dayl"] = scrapData["DayRange"].replace(" - ",";;").replace(" ","").split(";;")[0]
     except:
         print("'{}' No 'DayRange'".format(address))
 
     try:
-        data["52H"] = scrapData["52WkRange"].replace(" - ",";;").replace(" ","").split(";;")[1]
-        data["52L"] = scrapData["52WkRange"].replace(" - ",";;").replace(" ","").split(";;")[0]
+        data["52h"] = scrapData["52WkRange"].replace(" - ",";;").replace(" ","").split(";;")[1]
+        data["52l"] = scrapData["52WkRange"].replace(" - ",";;").replace(" ","").split(";;")[0]
     except:
         print("'{}' No '52WkRange'".format(address))
 
     try:
-        data["Vol"] = scrapData["Volume"].replace(" ","")
+        data["vol"] = scrapData["Volume"].replace(" ","")
     except:
         pass
     return makeDicArr(data);
