@@ -1,6 +1,11 @@
 import sys
 from os import listdir
-import ast
+
+import ast #reads array strings as array
+
+import numpy as np
+import pandas as pd
+
 from scrapit import getDataFormat
 
 def writePrice(digit):
@@ -29,11 +34,19 @@ class Calc_Vals():
         for i,day in enumerate(linelist):
             linelist[i] = ast.literal_eval(day)
 
+        #make panda DataFrames
+        labelCol = list(getDataFormat().keys())
+        labelCol.pop(0)
+        labelCol.pop(-1)
+
+        labelRows = []
+
         #from list of list with strings to list of lists with float,int
         newlinelist = []
+
         for line in linelist:
             newline = []
-            newline.append(line[0].split(' ')[0])
+            labelRows.append(line[0])
             for i in range(1,10):
                 try:
                     if '.' in line[i]:
@@ -42,16 +55,18 @@ class Calc_Vals():
                         newline.append(int(line[i]))
                 except:
                     newline.append('-')
-
             newlinelist.append(newline)
 
-        return newlinelist
+        dayslist = pd.DataFrame(newlinelist, labelRows, labelCol)
+
+        return dayslist
 
 
 
     def getPrice(self):
-        day = self.dayslist[-1]
-        return writePrice(day[1])
+        day = self.dayslist
+        price = day['Price'][-1]
+        return writePrice(price)
 
     def getOpen(self):
         day = self.dayslist[-1]
@@ -72,7 +87,23 @@ class Calc_Vals():
 
 if __name__ == '__main__':
     calc= Calc_Vals('DJIA.F')
+    print(calc.dayslist)
+    print(calc.getPrice())
 
+
+# def getDataFormat():
+#     dataFormat = {
+#         "Date": "",
+#         "Price": "",
+#         "yClose": "",
+#         "Open": "",
+#         "DayH": "",
+#         "DayL": "",
+#         "52H": "",
+#         "52L": "",
+#         "Vol": "",
+#         "Oi": "",
+#         "Ticker": ""}
 
 # ['2017-09-08 16:30 Fri', '2461.00', '2461.00', '2464.75', '2465.75', '2455.25', '2486.25', '2061.00', '1500000', '719665', 'ESZ7']
 # "Date": "0",              Price 1    Close 2    Open 3     DayH 4     DayL 5     52H 6      52L 7      Volume 8  OpenInt 9  Ticker 10

@@ -48,14 +48,14 @@ def getDataFormat():
     dataFormat = {
         "Date": "",
         "Price": "",
-        "Close": "",
+        "yClose": "",
         "Open": "",
         "DayH": "",
         "DayL": "",
         "52H": "",
         "52L": "",
-        "Volume": "",
-        "OpenInterest": "",
+        "Vol": "",
+        "Oi": "",
         "Ticker": ""}
     return dataFormat
 
@@ -67,7 +67,7 @@ def getDataFormatCDS():
         'bptChange': ''}
     return dataFormatCDS
 
-def getDataFormatCME():
+def getDataFormatCME(): #careful if you change this dic labels cus they are actually functional in finding values from the website during scraping process
     dataFormatCME = {
         "Ticker": "",
         "last": "",
@@ -285,12 +285,12 @@ def scrapCmegroup(address):
         for j, cell in enumerate(selectedCELLS):
 
             try:
-                label = cell.get('id').split("_")[2] ###taking all teb labels: quotesFuturesProductTable1_6EQ7_open
+                label = cell.get('id').split("_")[2] ###taking all the labels: quotesFuturesProductTable1_6EQ7_open ::here we take only 'open'
             except:
                 print("'{}' No 'label' CME '_' split did not work".format(address))
 
             for key in data:
-                if key == label: ## if one of the label from the dictonary matches any of the labe just gathrrd, then add value to that key
+                if key == label: ## if one of the label from the dictonary matches any of the labels just gathered, then add value to that dic_key
                     try:
                         stringValue = cell.text.replace("-","").replace(",","").replace("'",".")
                         if stringValue != "":
@@ -402,14 +402,14 @@ def scrapMarketwatch(address):
 
     try:
         div = sup.find("div",{"class": lambda x: x and 'intraday__close' in x})
-        data["Close"] = div.find('tbody').text.replace(",","").replace("%","").replace("$","").replace("£","").replace("€","").replace("¥","").replace("HK","").replace("¢","").replace("\n","")
+        data["yClose"] = div.find('tbody').text.replace(",","").replace("%","").replace("$","").replace("£","").replace("€","").replace("¥","").replace("HK","").replace("¢","").replace("\n","")
     except:
-        print("'{}' No 'Close'".format(address))
+        print("'{}' No 'yClose'".format(address))
 
     try:
         data["Open"] = scrapData["Open"].replace(" ","")
     except:
-        print("'{}' No 'Close'".format(address))
+        print("'{}' No 'Open'".format(address))
 
     try:
         data["DayH"] = scrapData["DayRange"].replace(" - ",";;").replace(" ","").split(";;")[1]
@@ -424,13 +424,13 @@ def scrapMarketwatch(address):
         print("'{}' No '52WeekRange'".format(address))
 
     try:
-        data["Volume"] = str(mkTranslator(sup.find("span",{"class":"volume last-value"}).text))
+        data["Vol"] = str(mkTranslator(sup.find("span",{"class":"volume last-value"}).text))
     except:
         if 'index' not in address:
             print("'{}' No 'Volume'".format(address))
 
     try:
-        data["OpenInterest"] = scrapData["OpenInterest"].replace(" ","")
+        data["Oi"] = scrapData["OpenInterest"].replace(" ","")
     except:
         if 'index' not in address:
             print("'{}' No 'OpenInterest'".format(address))
@@ -475,9 +475,9 @@ def scrapBloomberg(address):
         print("'{}' No 'Open'".format(address))
 
     try:
-        data["Close"] = scrapData["PreviousClose"].replace(" ","")
+        data["yClose"] = scrapData["PreviousClose"].replace(" ","")
     except:
-        print("'{}' No 'Close'".format(address))
+        print("'{}' No 'yClose'".format(address))
 
     try:
         data["DayH"] = scrapData["DayRange"].replace(" - ",";;").replace(" ","").split(";;")[1]
@@ -492,7 +492,7 @@ def scrapBloomberg(address):
         print("'{}' No '52WkRange'".format(address))
 
     try:
-        data["Volume"] = scrapData["Volume"].replace(" ","")
+        data["Vol"] = scrapData["Volume"].replace(" ","")
     except:
         pass
     return makeDicArr(data);
