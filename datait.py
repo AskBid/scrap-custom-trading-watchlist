@@ -11,26 +11,33 @@ from scrapit import getDataFormat
 def writePrice(digit):
     if digit == '-':
         return '-'
-
     string = str(digit).split('.')
-
     if len(string) == 1:
         return ("{:,}".format(digit))
     if len(string[0]) == 1:
         return ("{:20,.4f}".format(digit))
     # round(digit[1], 2)
-
     return ("{:20,.2f}".format(digit)).replace(' ','')
 
+def writePer(digit):
+    if digit == '-':
+        return '-'
+    string = str(digit).split('.')
+    if string[1].count('0') > 1:
+        return ("{:.3%}".format(digit))
+    return ("{:.1%}".format(digit))
 
-class Calc_Vals():
+
+class Calc_dataframe():
 
     def __init__(self, file_name, date_offset):
 
         self.file_name = file_name
         self.date_offset = date_offset
-        self.dayslist = self.readFile() #all calculation are done on this not on self.price for instance as that it is a string only given as information
+        self.dayDataFrame = self.readFile() #all calculation are done on this not on self.price for instance as that it is a string only given as information
         self.price = self.getPrice()
+        self.dayr = self.getDayR()
+        self.day52r = self.get52wR()
 
     def readFile(self):
         with open('data/data_16-18/{}'.format(self.file_name + '.csv')) as f:
@@ -66,77 +73,76 @@ class Calc_Vals():
         x = self.date_offset
 
         if x == 0:
-            dayslist = pd.DataFrame(newlinelist, index = labelRows, columns = labelCol)
+            dayDataFrame = pd.DataFrame(newlinelist, index = labelRows, columns = labelCol)
         else:
-            dayslist = pd.DataFrame(newlinelist[:-x], index = labelRows[:-x], columns = labelCol)
+            dayDataFrame = pd.DataFrame(newlinelist[:-x], index = labelRows[:-x], columns = labelCol)
 
 
-        return dayslist
-
-
+        return dayDataFrame
 
     def getPrice(self):
-        day = self.dayslist
-        price = day['price'].values[-1]
+        day = self.dayDataFrame
+        price = day['price'][-1]
         return writePrice(price)
+
+    def getOpen(self):
+        day = self.dayDataFrame
+        open_ = day['open'][-1]
+        return self.writeVal(open_)
+
+    def getYClose(self):
+        day = self.dayDataFrame
+        close = day['yclose'][-1]
+        return self.writeVal(close)
+
+    def get52wR(self):
+        day = self.dayDataFrame
+        day52r = day['52h'][-1] - day['52l'][-1]
+        return day52r
+
+    def getDayR(self):
+        day = self.dayDataFrame
+        self.dayDataFrame['dayr'] = day['dayh'] - day['dayl'] #we actually add a column to the day dataframe
+        return self.writeVal(self.dayDataFrame['dayr'][-1])
+
+    def getDayR_avg(self):
+        day = self.dayDataFrame
+        dayr_avg = day['dayr'].sum() / day['dayr'].size
+        return self.writeVal(dayr_avg)
+
+    def getPerChange(self, start_type, prc_or_R): #start_type defines if the starting price to calculate the move of the day is yesterday 'close' price or todays 'open' price
+        day = self.dayDataFrame
+        self.dayDataFrame['delta'] = day['price'] - day[start_type]
+        day = self.dayDataFrame
+        if prc_or_R == 'price':
+            self.dayDataFrame['change'] = day['delta'] / day[start_type]
+            return writePer(self.dayDataFrame['change'][-1])
+        if prc_or_R == '52r':
+            self.dayDataFrame['change'] = day['delta'] / self.day52r
+            return writePer(self.dayDataFrame['change'][-1])
+        return '-err'
 
     def writeVal(self, digit):
         if digit == '-':
             return '-'
         price = self.price.split('.')
-
         if len(price) == 1:
             digit = round(digit)
             return ("{:,}".format(digit))
         if len(price[0]) == 1:
             return ("{:20,.4f}".format(digit))
-
         return ("{:20,.2f}".format(digit)).replace(' ','')
-
-    def getOpen(self):
-        day = self.dayslist
-        open_ = day['open'].values[-1]
-        return self.writeVal(open_)
-
-    def getYClose(self):
-        day = self.dayslist
-        close = day['yclose'].values[-1]
-        return self.writeVal(close)
-
-    def getDayR(self):
-        day = self.dayslist
-        dayR = day['dayh'].values[-1] - day['dayl'].values[-1]
-        return self.writeVal(dayR)
-
-    def getDayR_avg(self):
-        day = self.dayslist
-        dayR_series = day['dayh'] - day['dayl']
-        return self.writeVal(dayR_series.sum() / dayR_series.size)
 
 
 if __name__ == '__main__':
-    calc= Calc_Vals('DJIA.F', 6)
-    print(calc.dayslist)
-    print('price = ' + calc.getPrice())
+    calc= Calc_dataframe('RUSSEL.i', 3)
+    calc.getPerChange('open','price')
+    print(calc.dayDataFrame)
+    calc.getPerChange('open','52r')
+    print(calc.dayDataFrame)
+    print('price = ' + calc.price)
     print('open = {}'.format(calc.getOpen()))
     print('yclose = {}'.format(calc.getYClose()))
-    print('dayR = {}'.format(calc.getDayR()))
+    print('dayR = {}'.format(calc.dayr))
+    print('52r = {}'.format(calc.day52r))
     print('dayR_avg = {}'.format(calc.getDayR_avg()))
-
-
-# def getDataFormat():
-#     dataFormat = {
-#         "Date": "",
-#         "Price": "",
-#         "yClose": "",
-#         "Open": "",
-#         "DayH": "",
-#         "DayL": "",
-#         "52H": "",
-#         "52L": "",
-#         "Vol": "",
-#         "Oi": "",
-#         "Ticker": ""}
-
-# ['2017-09-08 16:30 Fri', '2461.00', '2461.00', '2464.75', '2465.75', '2455.25', '2486.25', '2061.00', '1500000', '719665', 'ESZ7']
-# "Date": "0",              Price 1    Close 2    Open 3     DayH 4     DayL 5     52H 6      52L 7      Volume 8  OpenInt 9  Ticker 10

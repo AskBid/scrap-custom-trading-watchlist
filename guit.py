@@ -40,19 +40,19 @@ class Column(QTextEdit):
         if inst == '':
             return '<br>'
 
-        thisInstData = datait.Calc_Vals(inst, 5)
+        thisInstData = datait.Calc_dataframe(inst, 5)
 
         with open('gui/label.html') as f:
     	    html = f.read()
 
         html = html.replace('/*--bgcolor--*/', 'rgba(119, 212, 212, 0.7)')
         html = html.replace('<!--name-->', str(thisInstData.file_name))
-        html = html.replace('<!--prc-->', str(thisInstData.getPrice()))
+        html = html.replace('<!--prc-->', str(thisInstData.price))
         html = html.replace('<!--prc_C-->', str(thisInstData.getYClose()))
         html = html.replace('<!--prc_O-->', str(thisInstData.getOpen()))
-        html = html.replace('<!--val03-->', '')
+        html = html.replace('<!--val03-->', str(thisInstData.getPerChange('open','price')))
         html = html.replace('<!--avg03-->', '')
-        html = html.replace('<!--val02-->', str(thisInstData.getDayR()))
+        html = html.replace('<!--val02-->', str(thisInstData.dayr))
         html = html.replace('<!--avg02-->', str(thisInstData.getDayR_avg()))
         html = html.replace('<!--val01-->', '')
         html = html.replace('<!--avg01-->', '')
