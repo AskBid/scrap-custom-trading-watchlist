@@ -40,7 +40,7 @@ class Column(QTextEdit):
         if inst == '':
             return '<br>'
 
-        thisInstData = datait.Calc_Vals(inst)
+        thisInstData = datait.Calc_Vals(inst, 5)
 
         with open('gui/label.html') as f:
     	    html = f.read()

@@ -20,18 +20,17 @@ def writePrice(digit):
         return ("{:20,.4f}".format(digit))
     # round(digit[1], 2)
 
-    return ("{:20,.2f}".format(digit))
+    return ("{:20,.2f}".format(digit)).replace(' ','')
 
-def writeRange(digit):
-
-    return ("{:20,.2f}".format(digit))
 
 class Calc_Vals():
 
-    def __init__(self, file_name):
+    def __init__(self, file_name, date_offset):
 
         self.file_name = file_name
-        self.dayslist = self.readFile()
+        self.date_offset = date_offset
+        self.dayslist = self.readFile() #all calculation are done on this not on self.price for instance as that it is a string only given as information
+        self.price = self.getPrice()
 
     def readFile(self):
         with open('data/data_16-18/{}'.format(self.file_name + '.csv')) as f:
@@ -64,7 +63,13 @@ class Calc_Vals():
                     newline.append('-')
             newlinelist.append(newline)
 
-        dayslist = pd.DataFrame(newlinelist, index = labelRows, columns = labelCol)
+        x = self.date_offset
+
+        if x == 0:
+            dayslist = pd.DataFrame(newlinelist, index = labelRows, columns = labelCol)
+        else:
+            dayslist = pd.DataFrame(newlinelist[:-x], index = labelRows[:-x], columns = labelCol)
+
 
         return dayslist
 
@@ -75,37 +80,48 @@ class Calc_Vals():
         price = day['price'].values[-1]
         return writePrice(price)
 
+    def writeVal(self, digit):
+        if digit == '-':
+            return '-'
+        price = self.price.split('.')
+
+        if len(price) == 1:
+            digit = round(digit)
+            return ("{:,}".format(digit))
+        if len(price[0]) == 1:
+            return ("{:20,.4f}".format(digit))
+
+        return ("{:20,.2f}".format(digit)).replace(' ','')
+
     def getOpen(self):
         day = self.dayslist
         open_ = day['open'].values[-1]
-        return writePrice(open_)
+        return self.writeVal(open_)
 
     def getYClose(self):
         day = self.dayslist
         close = day['yclose'].values[-1]
-        return writePrice(close)
+        return self.writeVal(close)
 
     def getDayR(self):
         day = self.dayslist
         dayR = day['dayh'].values[-1] - day['dayl'].values[-1]
-        return writeRange(dayR)
+        return self.writeVal(dayR)
 
     def getDayR_avg(self):
         day = self.dayslist
-        print(day['dayh'])
-        print(day['dayl'])
         dayR_series = day['dayh'] - day['dayl']
-        return writeRange(dayR_series.sum() / dayR_series.size)
+        return self.writeVal(dayR_series.sum() / dayR_series.size)
 
 
 if __name__ == '__main__':
-    calc= Calc_Vals('SPY.i')
+    calc= Calc_Vals('DJIA.F', 6)
     print(calc.dayslist)
     print('price = ' + calc.getPrice())
-    print('open = ' + calc.getOpen())
-    print('yclose = ' + calc.getYClose())
-    print('dayR = ' + calc.getDayR())
-    print(calc.getDayR_avg())
+    print('open = {}'.format(calc.getOpen()))
+    print('yclose = {}'.format(calc.getYClose()))
+    print('dayR = {}'.format(calc.getDayR()))
+    print('dayR_avg = {}'.format(calc.getDayR_avg()))
 
 
 # def getDataFormat():
