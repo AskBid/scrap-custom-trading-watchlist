@@ -98,7 +98,7 @@ class MainWindow(QScrollArea):
         layout.setAlignment(Qt.AlignTop)
 
         cols = []
-        for i in range(0,10):
+        for i in range(0,5):
             col = Column(i)
             cols.append(col)
         for col in cols:
@@ -108,7 +108,7 @@ class MainWindow(QScrollArea):
         layout.setContentsMargins(0,0,0,0)
         layout.setSpacing(0)
         self.setWindowTitle('SnP watchlist')
-        self.resize(1000,1000)
+        self.resize(1400,1000)
 
 
         self.show()
