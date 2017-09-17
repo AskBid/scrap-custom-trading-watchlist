@@ -22,6 +22,7 @@ class Column(QTextEdit):
             padding-top:0;
             padding-bottom:0;
             padding-right:0;
+            width:250;
         }
         """)
 
@@ -43,7 +44,10 @@ class Column(QTextEdit):
         if inst == '':
             return '<br>'
 
+        print(inst)
         thisInstData = datait.Calc_dataframe(inst, 0)
+        imgpath = 'img/{}.png'.format(thisInstData.file_name)
+        thisInstData.drawBar(imgpath, 226)
 
         with open('gui/label.html') as f:
     	    html = f.read()
@@ -60,15 +64,16 @@ class Column(QTextEdit):
         html = html.replace('<!--val01-->', str(thisInstData.getPerChange('open','range')))
         html = html.replace('<!--avg01-->', str(thisInstData.getPerChange_avg()))
         html = html.replace('<!--val00-->', str(thisInstData.getVolume()))
-        html = html.replace('<!--avg00-->', '')
-        html = html.replace('<!--val13-->', '')
-        html = html.replace('<!--avg13-->', '')
+        html = html.replace('<!--avg00-->', str(thisInstData.getVolume_avg()))
+        html = html.replace('<!--val13-->', str(thisInstData.getVolR_rt()))
+        html = html.replace('<!--avg13-->', str(thisInstData.getVolR_rt_avg()))
         html = html.replace('<!--val12-->', '')
         html = html.replace('<!--avg12-->', '')
         html = html.replace('<!--val11-->', '')
         html = html.replace('<!--avg11-->', '')
         html = html.replace('<!--val10-->', '')
         html = html.replace('<!--avg10-->', '')
+        html = html.replace('<!--imgpath-->', imgpath)
 
         return html
 
@@ -98,7 +103,7 @@ class MainWindow(QScrollArea):
         layout.setAlignment(Qt.AlignTop)
 
         cols = []
-        for i in range(0,10):
+        for i in range(0,5):
             col = Column(i)
             cols.append(col)
         for col in cols:
@@ -108,7 +113,7 @@ class MainWindow(QScrollArea):
         layout.setContentsMargins(0,0,0,0)
         layout.setSpacing(0)
         self.setWindowTitle('SnP watchlist')
-        self.resize(1000,1000)
+        self.resize(1700,1000)
 
 
         self.show()
