@@ -7,10 +7,11 @@ import datait
 
 class Column(QTextEdit):
 
-    def __init__(self):
+    def __init__(self, col_num):
         super().__init__()
 
-        self.setText(self.write_col_html())
+        self.col_num = col_num
+        self.setText(self.write_col_html(self.col_num))
 
         self.adjustSize()
         self.setStyleSheet("""
@@ -24,14 +25,16 @@ class Column(QTextEdit):
         }
         """)
 
-    def write_col_html(self):
-        inst_list = self.read_guilist(0)
+    def write_col_html(self, col_num):
+        inst_list = self.read_guilist(col_num)
+
         text = ''
         with open('gui/label.css') as f:
                text = f.read()
 
         for inst in inst_list:
-            text = text + self.write_label_html(inst)
+            if 'Fr' not in inst:
+                text = text + self.write_label_html(inst)
 
         return text
 
@@ -40,7 +43,7 @@ class Column(QTextEdit):
         if inst == '':
             return '<br>'
 
-        thisInstData = datait.Calc_dataframe(inst, 5)
+        thisInstData = datait.Calc_dataframe(inst, 0)
 
         with open('gui/label.html') as f:
     	    html = f.read()
@@ -51,11 +54,11 @@ class Column(QTextEdit):
         html = html.replace('<!--prc_C-->', str(thisInstData.getYClose()))
         html = html.replace('<!--prc_O-->', str(thisInstData.getOpen()))
         html = html.replace('<!--val03-->', str(thisInstData.getPerChange('open','price')))
-        html = html.replace('<!--avg03-->', '')
+        html = html.replace('<!--avg03-->', str(thisInstData.getPerChange_avg()))
         html = html.replace('<!--val02-->', str(thisInstData.dayr))
         html = html.replace('<!--avg02-->', str(thisInstData.getDayR_avg()))
-        html = html.replace('<!--val01-->', '')
-        html = html.replace('<!--avg01-->', '')
+        html = html.replace('<!--val01-->', str(thisInstData.getPerChange('open','range')))
+        html = html.replace('<!--avg01-->', str(thisInstData.getPerChange_avg()))
         html = html.replace('<!--val00-->', '')
         html = html.replace('<!--avg00-->', '')
         html = html.replace('<!--val13-->', '')
@@ -93,17 +96,19 @@ class MainWindow(QScrollArea):
 
         layout = QHBoxLayout(self)
         layout.setAlignment(Qt.AlignTop)
-        layout.addWidget(Column())
-        # layout.addWidget(Column())
-        # layout.addWidget(Column())
-        # layout.addWidget(Column())
-        # layout.addWidget(Column())
+
+        cols = []
+        for i in range(0,10):
+            col = Column(i)
+            cols.append(col)
+        for col in cols:
+            layout.addWidget(col)
 
 
         layout.setContentsMargins(0,0,0,0)
         layout.setSpacing(0)
         self.setWindowTitle('SnP watchlist')
-        self.resize(400,300)
+        self.resize(1000,1000)
 
 
         self.show()

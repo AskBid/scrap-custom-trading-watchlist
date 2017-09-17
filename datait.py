@@ -23,10 +23,16 @@ def writePer(digit):
     if digit == '-':
         return '-'
     string = str(digit).split('.')
-    if string[1].count('0') > 1:
-        return ("{:.3%}".format(digit))
-    return ("{:.1%}".format(digit))
+    # if string[1].count('0') > 1:
+    return ("{:.2%}".format(digit))
+    # return ("{:.1%}".format(digit))
 
+def isnumber(x):
+    try:
+        float(x)
+        return True
+    except:
+        return False
 
 class Calc_dataframe():
 
@@ -77,37 +83,38 @@ class Calc_dataframe():
         else:
             dayDataFrame = pd.DataFrame(newlinelist[:-x], index = labelRows[:-x], columns = labelCol)
 
+        dayDataFrame = dayDataFrame[dayDataFrame.applymap(isnumber)] #makes sure that if there is a bad recording that gets NaN in dataframe so it does not affect calculation
 
         return dayDataFrame
 
     def getPrice(self):
         day = self.dayDataFrame
-        price = day['price'][-1]
+        price = day['price'].values[-1]
         return writePrice(price)
 
     def getOpen(self):
         day = self.dayDataFrame
-        open_ = day['open'][-1]
+        open_ = day['open'].values[-1]
         return self.writeVal(open_)
 
     def getYClose(self):
         day = self.dayDataFrame
-        close = day['yclose'][-1]
+        close = day['yclose'].values[-1]
         return self.writeVal(close)
 
     def get52wR(self):
         day = self.dayDataFrame
-        day52r = day['52h'][-1] - day['52l'][-1]
+        day52r = day['52h'].values[-1] - day['52l'].values[-1]
         return day52r
 
     def getDayR(self):
         day = self.dayDataFrame
         self.dayDataFrame['dayr'] = day['dayh'] - day['dayl'] #we actually add a column to the day dataframe
-        return self.writeVal(self.dayDataFrame['dayr'][-1])
+        return self.writeVal(self.dayDataFrame['dayr'].values[-1])
 
     def getDayR_avg(self):
         day = self.dayDataFrame
-        dayr_avg = day['dayr'].sum() / day['dayr'].size
+        dayr_avg = day['dayr'].sum() / day['dayr'].dropna(axis=0).size
         return self.writeVal(dayr_avg)
 
     def getPerChange(self, start_type, prc_or_R): #start_type defines if the starting price to calculate the move of the day is yesterday 'close' price or todays 'open' price
@@ -116,11 +123,16 @@ class Calc_dataframe():
         day = self.dayDataFrame
         if prc_or_R == 'price':
             self.dayDataFrame['change'] = day['delta'] / day[start_type]
-            return writePer(self.dayDataFrame['change'][-1])
-        if prc_or_R == '52r':
+            return writePer(self.dayDataFrame['change'].values[-1])
+        if prc_or_R == 'range':
             self.dayDataFrame['change'] = day['delta'] / self.day52r
-            return writePer(self.dayDataFrame['change'][-1])
+            return writePer(self.dayDataFrame['change'].values[-1])
         return '-err'
+
+    def getPerChange_avg(self):
+        day = self.dayDataFrame
+        dayr_avg = day['change'].sum() / day['change'].dropna(axis=0).size
+        return writePer(dayr_avg)
 
     def writeVal(self, digit):
         if digit == '-':
@@ -129,17 +141,21 @@ class Calc_dataframe():
         if len(price) == 1:
             digit = round(digit)
             return ("{:,}".format(digit))
-        if len(price[0]) == 1:
+        if len(price[0].replace(' ','')) == 1:
             return ("{:20,.4f}".format(digit))
         return ("{:20,.2f}".format(digit)).replace(' ','')
 
 
 if __name__ == '__main__':
-    calc= Calc_dataframe('RUSSEL.i', 3)
-    calc.getPerChange('open','price')
+    calc= Calc_dataframe('AUDUSD.S',0)
+    print(calc.getPerChange('open','price'))
+    print(calc.getPerChange_avg())
     print(calc.dayDataFrame)
-    calc.getPerChange('open','52r')
+
+    print(calc.getPerChange('open','range'))
+    print(calc.getPerChange_avg())
     print(calc.dayDataFrame)
+
     print('price = ' + calc.price)
     print('open = {}'.format(calc.getOpen()))
     print('yclose = {}'.format(calc.getYClose()))
