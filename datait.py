@@ -1,31 +1,12 @@
 import sys
 from os import listdir
-
+from math import isnan
 import ast #reads array strings as array
 
 import numpy as np
 import pandas as pd
 
 from scrapit import getDataFormat
-
-def writePrice(digit):
-    if digit == '-':
-        return '-'
-    string = str(digit).split('.')
-    if len(string) == 1:
-        return ("{:,}".format(digit))
-    if len(string[0]) == 1:
-        return ("{:20,.4f}".format(digit))
-    # round(digit[1], 2)
-    return ("{:20,.2f}".format(digit)).replace(' ','')
-
-def writePer(digit):
-    if digit == '-':
-        return '-'
-    string = str(digit).split('.')
-    # if string[1].count('0') > 1:
-    return ("{:.2%}".format(digit))
-    # return ("{:.1%}".format(digit))
 
 def isnumber(x):
     try:
@@ -134,16 +115,40 @@ class Calc_dataframe():
         dayr_avg = day['change'].sum() / day['change'].dropna(axis=0).size
         return writePer(dayr_avg)
 
+    def getVolume(self):
+        day = self.dayDataFrame
+        vol = day['vol'].values[-1]
+        return writePrice(vol)
+
     def writeVal(self, digit):
-        if digit == '-':
+        if digit == '-' or isnan(digit):
             return '-'
         price = self.price.split('.')
         if len(price) == 1:
             digit = round(digit)
-            return ("{:,}".format(digit))
+            return ("{:,}".format(digit).replace(' ',''))
         if len(price[0].replace(' ','')) == 1:
-            return ("{:20,.4f}".format(digit))
+            return ("{:20,.4f}".format(digit).replace(' ',''))
         return ("{:20,.2f}".format(digit)).replace(' ','')
+
+def writePrice(digit):
+    if digit == '-' or isnan(digit):
+        return '-'
+    string = str(digit).split('.')
+    if len(string) == 1:
+        return ("{:,}".format(digit).replace(' ',''))
+    if len(string[0].replace(' ','')) == 1:
+        return ("{:20,.4f}".format(digit).replace(' ',''))
+    # round(digit[1], 2)
+    return ("{:20,.2f}".format(digit)).replace(' ','')
+
+def writePer(digit):
+    if digit == '-':
+        return '-'
+    string = str(digit).split('.')
+    # if string[1].count('0') > 1:
+    return ("{:.2%}".format(digit))
+    # return ("{:.1%}".format(digit))
 
 
 if __name__ == '__main__':
@@ -162,3 +167,5 @@ if __name__ == '__main__':
     print('dayR = {}'.format(calc.dayr))
     print('52r = {}'.format(calc.day52r))
     print('dayR_avg = {}'.format(calc.getDayR_avg()))
+
+    print('VOLUME = {}'.format(calc.getVolume()))

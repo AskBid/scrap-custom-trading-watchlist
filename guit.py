@@ -59,7 +59,7 @@ class Column(QTextEdit):
         html = html.replace('<!--avg02-->', str(thisInstData.getDayR_avg()))
         html = html.replace('<!--val01-->', str(thisInstData.getPerChange('open','range')))
         html = html.replace('<!--avg01-->', str(thisInstData.getPerChange_avg()))
-        html = html.replace('<!--val00-->', '')
+        html = html.replace('<!--val00-->', str(thisInstData.getVolume()))
         html = html.replace('<!--avg00-->', '')
         html = html.replace('<!--val13-->', '')
         html = html.replace('<!--avg13-->', '')
