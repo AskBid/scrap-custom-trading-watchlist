@@ -1,7 +1,8 @@
 <style>
 
 td {
-    font-family: Courier New;
+    /*font-family: Andale Mono;*/
+    font-family: Lucida Console;
     color: white;
     vertical-align: bottom;
 }

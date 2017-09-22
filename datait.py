@@ -135,11 +135,15 @@ class Calc_dataframe():
 
     def getVolume_avg(self):
         day = self.dayDataFrame
-        try:
-            vol_avg = day['vol'].sum() / day['vol'].dropna(axis=0).size
-        except:
-            return '-'
-        return writeVolume(vol_avg)
+        return writeVolume(day['vol'].mean())
+
+    def getVolume_med(self):
+        day = self.dayDataFrame
+        return writeVolume(day['vol'].median())
+
+    def getVolume_std(self):
+        day = self.dayDataFrame
+        return writeVolume(day['vol'].std())
 
     def getVolR_rt(self):
         day = self.dayDataFrame
@@ -209,7 +213,7 @@ def writeNum(num):
     return ("{:20,.2f}".format(num)).replace(' ','')
 
 if __name__ == '__main__':
-    calc = Calc_dataframe('DAX.F',0)
+    calc = Calc_dataframe('ES.F',0)
     print('prc chgPc =  {}'.format(calc.getPerChange('open','price')))
     print('avg "=       {}'.format(calc.getPerChange_avg()))
 
@@ -225,7 +229,9 @@ if __name__ == '__main__':
 
     print('VOLUME =     {}'.format(calc.getVolume()))
     print('VOLUME AVG = {}'.format(calc.getVolume_avg()))
+    print('VOLUME MED = {}'.format(calc.getVolume_med()))
+    print('VOLUME STD = {}'.format(calc.getVolume_std()))
     print('Vol/rng =    {}'.format(calc.getVolR_rt()))
-    print('Vol/rng =    {}'.format(calc.getVolR_rt_avg()))
+    print('Vol/rng AVG=    {}'.format(calc.getVolR_rt_avg()))
 
     print(calc.dayDataFrame)
