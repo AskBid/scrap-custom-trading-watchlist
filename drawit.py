@@ -1,4 +1,4 @@
-import cairocffi as cairo
+import cairo
 
 def drawBar(width = 226,
             low52 = 11865.0,

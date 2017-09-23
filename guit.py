@@ -55,18 +55,18 @@ class Column(QTextEdit):
         html = html.replace('/*--bgcolor--*/', 'rgba(119, 212, 212, 0.7)')
         html = html.replace('<!--name-->', str(thisInstData.file_name))
         html = html.replace('<!--prc-->', str(thisInstData.price))
-        html = html.replace('<!--prc_C-->', str(thisInstData.getYClose()))
-        html = html.replace('<!--prc_O-->', str(thisInstData.getOpen()))
-        html = html.replace('<!--val03-->', str(thisInstData.getPerChange('open','price')))
-        html = html.replace('<!--avg03-->', str(thisInstData.getPerChange_avg()))
+        html = html.replace('<!--prc_C-->', thisInstData.getYClose())
+        html = html.replace('<!--prc_O-->', thisInstData.getOpen())
+        html = html.replace('<!--val03-->', thisInstData.getPcChange('open','price'))
+        html = html.replace('<!--avg03-->', thisInstData.getPcChange_avg('abs'))
         html = html.replace('<!--val02-->', str(thisInstData.dayr))
-        html = html.replace('<!--avg02-->', str(thisInstData.getDayR_avg()))
-        html = html.replace('<!--val01-->', str(thisInstData.getPerChange('open','range')))
-        html = html.replace('<!--avg01-->', str(thisInstData.getPerChange_avg()))
-        html = html.replace('<!--val00-->', str(thisInstData.getVolume()))
-        html = html.replace('<!--avg00-->', str(thisInstData.getVolume_avg()))
-        html = html.replace('<!--val13-->', str(thisInstData.getVolR_rt()))
-        html = html.replace('<!--avg13-->', str(thisInstData.getVolR_rt_avg()))
+        html = html.replace('<!--avg02-->', thisInstData.getDayR_avg())
+        html = html.replace('<!--val01-->', thisInstData.getPcChange('open','range'))
+        html = html.replace('<!--avg01-->', thisInstData.getPcChange_avg('abs'))
+        html = html.replace('<!--val00-->', thisInstData.getVolume())
+        html = html.replace('<!--avg00-->', thisInstData.getVolume_avg())
+        html = html.replace('<!--val13-->', thisInstData.getVolR_rt())
+        html = html.replace('<!--avg13-->', thisInstData.getVolR_rt_avg())
         html = html.replace('<!--val12-->', thisInstData.getVolume_std())
         html = html.replace('<!--avg12-->', '')
         html = html.replace('<!--val11-->', '')
@@ -103,12 +103,14 @@ class MainWindow(QScrollArea):
         layout.setAlignment(Qt.AlignTop)
 
         cols = []
-        for i in range(0,5):
+        for i in range(0,10):
             col = Column(i)
             cols.append(col)
         for col in cols:
             layout.addWidget(col)
 
+        layout.addWidget(Column(0))    
+        layout.addWidget(Column(1))
 
         layout.setContentsMargins(0,0,0,0)
         layout.setSpacing(0)

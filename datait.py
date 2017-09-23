@@ -10,13 +10,6 @@ import pandas as pd
 from scrapit import getDataFormat
 from drawit import drawBar
 
-def isnumber(x):
-    try:
-        float(x)
-        return True
-    except:
-        return False
-
 class Calc_dataframe():
 
     def __init__(self, file_name, date_offset):
@@ -70,6 +63,20 @@ class Calc_dataframe():
 
         return dayDataFrame
 
+    def drawBar(self, path, width):
+        day = self.dayDataFrame
+        low52 = day['52l'].values[-1]
+        drawBar(width,
+                low52,
+                self.day52r,
+                day['open'].values[-1],
+                day['dayr'].values[-1],
+                path)
+
+        return '{} bar has been drawn'.format(path)
+
+    ### STATISTIC FUNCTION ###
+
     def getPrice(self):
         day = self.dayDataFrame
         price = day['price'].values[-1]
@@ -85,17 +92,6 @@ class Calc_dataframe():
         close = day['yclose'].values[-1]
         return writePrice(close, self.price)
 
-    def drawBar(self, path, width):
-        day = self.dayDataFrame
-        low52 = day['52l'].values[-1]
-        drawBar(width,
-                low52,
-                self.day52r,
-                day['open'].values[-1],
-                day['dayr'].values[-1],
-                path)
-        return '{} bar has been drawn'.format(path)
-
     def get52wR(self):
         day = self.dayDataFrame
         day52r = day['52h'].values[-1] - day['52l'].values[-1]
@@ -108,24 +104,39 @@ class Calc_dataframe():
 
     def getDayR_avg(self):
         day = self.dayDataFrame
-        dayr_avg = day['dayr'].sum() / day['dayr'].dropna(axis=0).size
-        return writePrice(dayr_avg, self.price)
+        return writePrice(day['dayr'].mean())
 
-    def getPerChange(self, start_type, prc_or_R): #start_type defines if the starting price to calculate the move of the day is yesterday 'close' price or todays 'open' price
+    def getDayR_med(self):
         day = self.dayDataFrame
-        self.dayDataFrame['delta'] = day['price'] - day[start_type]
+        return writePrice(day['dayr'].median())
+
+    def getDayR_std(self):
+        day = self.dayDataFrame
+        return writePrice(day['dayr'].std())
+
+    def get_describe(self):
+        day = self.dayDataFrame
+        x = day['changept'].describe()
+        return x
+
+    def getPcChange(self, start_type, prc_or_R): #start_type defines if the starting price to calculate the move of the day is yesterday 'close' price or todays 'open' price
+        day = self.dayDataFrame
+        self.dayDataFrame['changept'] = day['price'] - day[start_type]
         day = self.dayDataFrame
         if prc_or_R == 'price':
-            self.dayDataFrame['change'] = day['delta'] / day[start_type]
-            return writePercent(self.dayDataFrame['change'].values[-1])
+            self.dayDataFrame['changepc'] = day['changept'] / day[start_type]
+            return writePercent(self.dayDataFrame['changepc'].values[-1])
         if prc_or_R == 'range':
-            self.dayDataFrame['change'] = day['delta'] / self.day52r
-            return writePercent(self.dayDataFrame['change'].values[-1])
+            self.dayDataFrame['changepc'] = day['changept'] / self.day52r
+            return writePercent(self.dayDataFrame['changepc'].values[-1])
         return '-err'
 
-    def getPerChange_avg(self):
-        day = self.dayDataFrame
-        dayr_avg = day['change'].sum() / day['change'].dropna(axis=0).size
+    def getPcChange_avg(self, switch_abs = None):
+        if switch_abs == 'abs':
+            day = self.dayDataFrame['changepc'].abs()
+        else:
+            day = self.dayDataFrame['changepc']
+        dayr_avg = day.mean()
         return writePercent(dayr_avg)
 
     def getVolume(self):
@@ -162,6 +173,8 @@ class Calc_dataframe():
             return '-'
         return writeVolume(VolR_rt_avg)
 
+    ### STATISTIC FUNCTION ###
+
 def writePrice(num, price = None):
     if num == '-' or isnan(num):
         return '-'
@@ -187,13 +200,15 @@ def writePercent(num):
     # return ("{:.1%}".format(num))
 
 def writeVolume(num):
-    i_offset = 15 # change this if you extend the symbols!!! (you copied this code)
+    i_offset = 15 # changepc this if you extend the symbols!!! (you copied this code)
     prec = 3
     fmt = '.{p}g'.format(p=prec)
     symbols = ['Y', 'T', 'G', 'M', 'k', '', 'm', 'u', 'n']
 
     if num == '-' or isnan(num):
         return '-'
+    if num == 0:
+        return '0'
 
     e = log10(abs(num))
     if e >= i_offset + 3:
@@ -203,6 +218,14 @@ def writeVolume(num):
         if e >= e_thresh:
             return '{:{fmt}}{sym}'.format(num/10.**e_thresh, fmt=fmt, sym=sym)
     return '{:{fmt}}'.format(num, fmt=fmt)
+
+def isnumber(x):
+    try:
+        float(x)
+        return True
+    except:
+        return False
+
 
 def writeNum(num):
     if num == '-' or isnan(num):
@@ -214,17 +237,20 @@ def writeNum(num):
 
 if __name__ == '__main__':
     calc = Calc_dataframe('ES.F',0)
-    print('prc chgPc =  {}'.format(calc.getPerChange('open','price')))
-    print('avg "=       {}'.format(calc.getPerChange_avg()))
+    print('prc chgPc =  {}'.format(calc.getPcChange('open','price')))
+    print('avg "=       {}'.format(calc.getPcChange_avg('abs')))
 
-    print('rng chgPc =  {}'.format(calc.getPerChange('open','range')))
-    print('avg "=       {}'.format(calc.getPerChange_avg()))
+    print('rng chgPc =  {}'.format(calc.getPcChange('open','range')))
+    print('avg "=       {}'.format(calc.getPcChange_avg('abs')))
 
     print('price =      ' + calc.price)
     print('open =       {}'.format(calc.getOpen()))
     print('yclose =     {}'.format(calc.getYClose()))
     print('dayR =       {}'.format(calc.dayr))
     print('dayR_avg =   {}'.format(calc.getDayR_avg()))
+    print('dayR_med =   {}'.format(calc.getDayR_med()))
+    print('dayR_std =   {}'.format(calc.getDayR_std()))
+    print('chpt_describe =   \n{}'.format(calc.get_describe()))
     print('52r =        {}'.format(calc.day52r))
 
     print('VOLUME =     {}'.format(calc.getVolume()))
@@ -232,6 +258,6 @@ if __name__ == '__main__':
     print('VOLUME MED = {}'.format(calc.getVolume_med()))
     print('VOLUME STD = {}'.format(calc.getVolume_std()))
     print('Vol/rng =    {}'.format(calc.getVolR_rt()))
-    print('Vol/rng AVG=    {}'.format(calc.getVolR_rt_avg()))
+    print('Vol/rng AVG= {}'.format(calc.getVolR_rt_avg()))
 
     print(calc.dayDataFrame)

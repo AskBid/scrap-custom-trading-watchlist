@@ -3,6 +3,7 @@ import requests
 from bs4 import BeautifulSoup as bs
 import sys
 import os, errno
+import re
 
 
 
@@ -35,11 +36,11 @@ except OSError as e:
 
 
 ##### start/divert all prints to a log file
-old_stdout = sys.stdout
-
-log_file = open("logs/logs_" + period + "/" + date + ".log","a+")
-
-sys.stdout = log_file
+# old_stdout = sys.stdout
+#
+# log_file = open("logs/logs_" + period + "/" + date + ".log","a+")
+#
+# sys.stdout = log_file
 ##### start\divert all prints to a log file
 
 
@@ -375,7 +376,8 @@ def scrapMarketwatch(address):
     scrapData = {}
     #we create a dictionary of scraped data with labels as key and val as values
     for i, key in enumerate(lab):
-        scrapData[key.text.replace(" ","")] = val[i].text.replace(",","").replace("%","").replace("$","").replace("£","").replace("€","").replace("¥","").replace("HK","").replace("¢","").replace("\n","")
+        string = re.sub("[^0-9. -]", "", val[i].text)
+        scrapData[key.text.replace(" ","")] = string.replace('\n', '')
 
 
     data["date"] = date
@@ -402,7 +404,7 @@ def scrapMarketwatch(address):
 
     try:
         div = sup.find("div",{"class": lambda x: x and 'intraday__close' in x})
-        data["yclose"] = div.find('tbody').text.replace(",","").replace("%","").replace("$","").replace("£","").replace("€","").replace("¥","").replace("HK","").replace("¢","").replace("\n","")
+        data["yclose"] = re.sub("[^0-9. -]", "", div.find('tbody').text)
     except:
         print("'{}' No 'yClose'".format(address))
 
@@ -455,7 +457,7 @@ def scrapBloomberg(address):
     scrapData = {}
     #we create a dictionary of scraped data with labels as key and val as values
     for i, key in enumerate(lab):
-        scrapData[key.text.replace(" ","")] = val[i].text.replace(",","").replace("%","").replace("$","").replace("£","").replace("€","").replace("¥","").replace("HK","").replace("¢","").replace("\n","")
+        scrapData[key.text.replace(" ","")] = re.sub("[^0-9. -]", "", val[i].text)
 
     data["date"] = date
 
@@ -540,21 +542,21 @@ def writeit(csvFile):
             address = line.split(',')[1]
             addressFutures = line.split(',')[2].replace('\n','')
 
-            try:
-                if '.Fr' not in fileName:
-                    fileData = open('data/data_' + period + '/' + fileName + '.csv', 'a+')
-                    fileData.write(str(selector(address)))
-                    fileData.write('\n')
-                    fileData.close()
-                if addressFutures != 'empty':
-                    fileDataF = open('data/dataF_' + period + '/' + fileName + '.csv', 'a+')
-                    fileDataF.write(date)
-                    fileDataF.write(str(selector(addressFutures)))
-                    fileDataF.write('\n')
-                    fileDataF.close()
+            # try:
+            if '.Fr' not in fileName:
+                fileData = open('data/data_' + period + '/' + fileName + '.csv', 'a+')
+                fileData.write(str(selector(address)))
+                fileData.write('\n')
+                fileData.close()
+            if addressFutures != 'empty':
+                fileDataF = open('data/dataF_' + period + '/' + fileName + '.csv', 'a+')
+                fileDataF.write(date)
+                fileDataF.write(str(selector(addressFutures)))
+                fileDataF.write('\n')
+                fileDataF.close()
 
-            except:
-                print('file write not working for {}'.format(fileName))
+            # except:
+            #     print('file write not working for {}'.format(fileName))
 
     f.close
 
@@ -562,7 +564,7 @@ if __name__ == '__main__':
     writeit('macrowatchlist.csv')
 
 ##### end/divert all prints to a log file
-sys.stdout = old_stdout
-
-log_file.close()
+# sys.stdout = old_stdout
+#
+# log_file.close()
 ##### end\divert all prints to a log file
