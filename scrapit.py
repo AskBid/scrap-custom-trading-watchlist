@@ -3,46 +3,15 @@ import requests
 from bs4 import BeautifulSoup as bs
 import sys
 import os, errno
-import re
+import re #used to get rid of all the characters which are not numbers or dashes
 import sqlite3
 
 
+date = time.strftime('%Y-%m-%d')
+hour = time.strftime('%H:%M')
+day = time.strftime('%a')
 
-dateFormat = '%Y-%m-%d'
-timeFormat = '%H:%M'
-dayFormat = '%a'
-date = time.strftime(dateFormat)
-hour = time.strftime(timeFormat)
-day = time.strftime(dayFormat)
-
-# try:
-#     os.makedirs("logs/logs_" + period)
-# except OSError as e:
-#     if e.errno != errno.EEXIST:
-#         raise
-
-# 01 +-0.5~
-# 03 +-0.5~
-# 05 +-0.5~
-# 07 +-0.5~
-# 09 +-0.5~
-# 11 +-0.5~
-# 13 +-0.5~
-# 15 +-0.5~
-# 17 +-0.5~
-# 19 +-0.5~
-# 21 +-0.5~
-# 23 +-0.5~
-
-
-##### start/divert all prints to a log file
-# old_stdout = sys.stdout
-#
-# log_file = open("logs/logs_" + period + "/" + date + ".log","a+")
-#
-# sys.stdout = log_file
-##### start\divert all prints to a log file
-
+logfile = open('logs/' + date + '_log.txt', 'a+')
 
 #data shared format between Marketwatch and Bloomberg
 def getDataFormat():
@@ -147,7 +116,7 @@ def scrapSovereignCDS(address):
     table = table.find('tbody')
     rows = table.find_all("tr")
 
-    sovereignCDS = [date]
+    dictCDS = []
 
     for row in rows:
         dictRow = getDataFormatCDS()
@@ -162,9 +131,9 @@ def scrapSovereignCDS(address):
         dictRow['Value'] = value
         dictRow['Unit'] = 'Spread'
 
-        sovereignCDS.append(dictRow)
+        dictCDS.append(dictRow)
 
-    return sovereignCDS  #ritorna una lista di dizionari 'dataFormatGlobalCDS'
+    return dictCDS  #ritorna una lista di dizionari 'dataFormatGlobalCDS'
 
 def scrapWsj(address):
     #CDS indexes and big movers for bonds and corporate
@@ -199,8 +168,9 @@ def scrapWsj(address):
         bptChange = soup.find_all("td",{"class": lambda x: x and 'col5' in x})
     except:
         print("table CDS column gathering did not work")
+        logfile.write('{}: {} table CDS column gathering did not work...\n'.format(hour, address))
 
-    dictCDS = [date]
+    dictCDS = []
 
     for i in range(0,len(names)):
         if 'n.a.' not in values[i].text:
@@ -212,8 +182,7 @@ def scrapWsj(address):
 
             dictCDS.append(dictRow)
 
-
-    return dictCDS
+    return dictCDS  #ritorna una lista di dizionari 'dataFormatGlobalCDS'
 
 def scrapWorldgovernmentbonds(address):
     #for yeld curves
@@ -233,7 +202,8 @@ def scrapWorldgovernmentbonds(address):
             yieldIndex = 2
             alert = True
     if not alert:
-        print("Yield was not found")
+        print("Yield was not found _YC")
+        logfile.write('{}: {} Yield was not found _YC...\n'.format(hour, address))
     #check that we get today Yield and not a past one
 
     maturity = []
@@ -245,9 +215,9 @@ def scrapWorldgovernmentbonds(address):
             maturity.append(durataTranslator(selectedCELLS[1].text))
             yields.append(float(selectedCELLS[yieldIndex].text.replace('%','')))
 
-    return date, maturity, yields
+    return maturity, yields
 
-def scrapCmegroup(address, ):
+def scrapCmegroup(address):
     maxRows = 30,
     switchOI4eachMonth = True
 
@@ -270,17 +240,19 @@ def scrapCmegroup(address, ):
 
         data = getDataFormatCME()
 
-        totalValues = {'totalOpenInterest': "",
-                       'totalVolume': "",
-                       'totalBlockTrades': ""}
+        totalValues = {'totalOI': "",
+                       'totalVol': "",
+                       'totalBT': ""}
 
         try:
             #the id of the tag in the first TD has the ticker of the instrument i.e. quotesFuturesProductTable1_6EQ7_change
             data["Ticker"] = selectedCELLS[0].get('id').split("_")[1]
             if not data["Ticker"][-1].isdigit():  #small check to see if we actualy got a ticker code
-                print("'{}' No 'Ticker' CME".format(address))
+                print("'{}' No 'Ticker' CME cus last character was not digit".format(address))
+                logfile.write("{}: '{}' No 'Ticker' CME cus last character was not digit...\n".format(hour, address))
         except:
             print("'{}' No 'Ticker' CME".format(address))
+            logfile.write("{}: '{}' No 'Ticker' CME...\n".format(hour, address))
 
         for j, cell in enumerate(selectedCELLS):
 
@@ -288,6 +260,7 @@ def scrapCmegroup(address, ):
                 label = cell.get('id').split("_")[2] ###taking all the labels: quotesFuturesProductTable1_6EQ7_open ::here we take only 'open'
             except:
                 print("'{}' No 'label' CME '_' split did not work".format(address))
+                logfile.write("{}: '{}' No 'label' CME '_' split did not work...\n".format(hour, address))
 
             for key in data:
                 if key == label: ## if one of the label from the dictonary matches any of the labels just gathered, then add value to that dic_key
@@ -296,7 +269,8 @@ def scrapCmegroup(address, ):
                         if stringValue != "":
                             float(stringValue)
                     except:
-                        print("'{}' No 'float' CME with {}".format(address,stringValue))
+                        print("'{}' No 'float' CME with {}".format(address, stringValue))
+                        logfile.write("{}: '{}' No 'float' CME with {}...\n".format(hour, address, stringValue))
 
                     data[key] = stringValue
 
@@ -317,14 +291,13 @@ def scrapCmegroup(address, ):
 
     if rows[-1].find('th').text == 'Totals':   ##last row of the table
         cells = rows[-1].find_all('td')
-        totalValues['totalOpenInterest'] = cells[colNumOpenInterest].text.replace(',','')
-        totalValues['totalVolume'] = cells[colNumVolume].text.replace(',','')
-        totalValues['totalBlockTrades'] = cells[colNumBlockTrades].text.replace(',','')
+        totalValues['totalOI'] = cells[colNumOpenInterest].text.replace(',','')
+        totalValues['totalVol'] = cells[colNumVolume].text.replace(',','')
+        totalValues['totalBT'] = cells[colNumBlockTrades].text.replace(',','')
     else:
         print("'{}' No 'Totals' CME tag was found".format(address))
+        logfile.write("{}: '{}' No 'Totals' CME tag was found...\n".format(hour, address))
     #// from now if switch is on we scrap OpenInterest and maybe OIchange for each month
-
-    print(table)
 
     ioTable = []
     if switchOI4eachMonth:
@@ -351,9 +324,7 @@ def scrapCmegroup(address, ):
         arr = makeDicArr(dic)
         arrTable.append(arr)
 
-    print(table)
-
-    return (' // ' + str(makeDicArr(totalValues)) + ' // ' + str(arrTable))  #ritorna una stringa pronta ad essere scritta sul file .csv
+    return (totalValues, arrTable)
 
 def scrapMarketwatch(address):
     #creating formatting data from scrapdata
@@ -368,6 +339,7 @@ def scrapMarketwatch(address):
 
     if not len(lab) == len(val):
         print("'{}' labels and values mismatch".format(address))
+        logfile.write("{}: '{}' labels and values mismatch...\n".format(hour, address))
         return data
 
     scrapData = {}
@@ -385,6 +357,7 @@ def scrapMarketwatch(address):
         data["ticker"] = sup.find("span",{"class": "company__ticker"}).text.replace(' ','')
     except:
         print("'{}' No 'Ticker'".format(address))
+        logfile.write("{}: '{}' No 'Ticker'...\n".format(hour, address))
 
     try:
         priceTab = sup.find("h3",{"class": lambda x: x and 'intraday__price' in x})
@@ -400,41 +373,48 @@ def scrapMarketwatch(address):
         float(data["price"]) #check that an actual number was found for Price
     except:
         print("'{}' No 'Price'".format(address))
+        logfile.write("{}: '{}' No 'Price'...\n".format(hour, address))
 
     try:
         div = sup.find("div",{"class": lambda x: x and 'intraday__close' in x})
         data["yclose"] = re.sub("[^0-9. -]", "", div.find('tbody').text)
     except:
         print("'{}' No 'yClose'".format(address))
+        logfile.write("{}: '{}' No 'yClose'...\n".format(hour, address))
 
     try:
         data["open"] = scrapData["Open"].replace(" ","")
     except:
         print("'{}' No 'Open'".format(address))
+        logfile.write("{}: '{}' No 'Open'...\n".format(hour, address))
 
     try:
         data["dayh"] = scrapData["DayRange"].replace(" - ",";;").replace(" ","").split(";;")[1]
         data["dayl"] = scrapData["DayRange"].replace(" - ",";;").replace(" ","").split(";;")[0]
     except:
         print("'{}' No 'DayRange'".format(address))
+        logfile.write("{}: '{}' No 'DayRange'...\n".format(hour, address))
 
     try:
         data["h52"] = scrapData["52WeekRange"].replace(" - ",";;").replace(" ","").split(";;")[1]
         data["l52"] = scrapData["52WeekRange"].replace(" - ",";;").replace(" ","").split(";;")[0]
     except:
         print("'{}' No '52WeekRange'".format(address))
+        logfile.write("{}: '{}' No '52WeekRange'...\n".format(hour, address))
 
     try:
         data["vol"] = str(mkTranslator(sup.find("span",{"class":"volume last-value"}).text))
     except:
         if 'index' not in address:
             print("'{}' No 'Volume'".format(address))
+            logfile.write("{}: '{}' No 'Volume'...\n".format(hour, address))
 
     try:
         data["oi"] = scrapData["OpenInterest"].replace(" ","")
     except:
         if 'index' not in address:
             print("'{}' No 'OpenInterest'".format(address))
+            logfile.write("{}: '{}' No 'OpenInterest'...\n".format(hour, address))
 
     return data
 
@@ -451,6 +431,7 @@ def scrapBloomberg(address):
 
     if not len(lab) == len(val):
         print("'{}' labels and values mismatch".format(address))
+        logfile.write("{}: '{}' labels and values mismatch...\n".format(hour, address))
         return data
 
     scrapData = {}
@@ -465,34 +446,40 @@ def scrapBloomberg(address):
     try:
         data["ticker"] = sup.find("div",{"class": "ticker"}).text.replace(' ','')
     except:
-        print('{}' "No 'Ticker'".format(address))
+        print("'{}' No 'Ticker'".format(address))
+        logfile.write("{}: '{}' No 'Ticker'...\n".format(hour, address))
 
     try:
         data["price"] = sup.find("div",{"class":"price"}).text.replace(",","").replace(" ","")
     except:
         print("'{}' No 'Price'".format(address))
+        logfile.write("{}: '{}' No 'Price'...\n".format(hour, address))
 
     try:
         data["open"] = scrapData["Open"].replace(" ","")
     except:
         print("'{}' No 'Open'".format(address))
+        logfile.write("{}: '{}' No 'Open'...\n".format(hour, address))
 
     try:
         data["yclose"] = scrapData["PreviousClose"].replace(" ","")
     except:
         print("'{}' No 'yClose'".format(address))
+        logfile.write("{}: '{}' No 'yClose'...\n".format(hour, address))
 
     try:
         data["dayh"] = scrapData["DayRange"].replace(" - ",";;").replace(" ","").split(";;")[1]
         data["dayl"] = scrapData["DayRange"].replace(" - ",";;").replace(" ","").split(";;")[0]
     except:
         print("'{}' No 'DayRange'".format(address))
+        logfile.write("{}: '{}' No 'DayRange'...\n".format(hour, address))
 
     try:
         data["h52"] = scrapData["52WkRange"].replace(" - ",";;").replace(" ","").split(";;")[1]
         data["l52"] = scrapData["52WkRange"].replace(" - ",";;").replace(" ","").split(";;")[0]
     except:
         print("'{}' No '52WkRange'".format(address))
+        logfile.write("{}: '{}' No '52WkRange'...\n".format(hour, address))
 
     try:
         data["vol"] = scrapData["Volume"].replace(" ","")
@@ -504,7 +491,6 @@ def scrapBloomberg(address):
 ##
 #\ scraping functions
 ##
-
 
 def selector(address):
     if address == 'empty':
@@ -534,88 +520,146 @@ def writeit(csvFile):
     c = conn.cursor()
 
     csvlist = open(csvFile, 'r')
+    count = 0
+
     for line in csvlist:
         if line.split(',')[0] != "": #avoids completely empty rows in spreadsheet
             fileName = line.split(',')[0]
             address = line.split(',')[1]
             addressFutures = line.split(',')[2].replace('\n','')
 
-            # we take all the main/first adresses unless we have an .Fr file.
-            if address != 'empty' and 'd' not in fileName and 'YC' not in fileName:
-                this_dic = selector(address)
+            try:
+                print('\n:::::::::::')
+                print("Start to write DataBase for {}...".format(fileName))
 
-                c.execute("""CREATE TABLE IF NOT EXISTS {tablename}(
-                            date text,
-                            time text,
-                            day text,
-                            price real,
-                            yclose real,
-                            open real,
-                            dayh real,
-                            dayl real,
-                            h52 real,
-                            l52 real,
-                            vol integer,
-                            oi integer,
-                            ticker text)""".format(tablename = fileName))
-                conn.commit()
+                if address != 'empty' and '_d' not in fileName and '_YC' not in fileName:
+                    this_dic = selector(address)
 
-                c.execute("""INSERT INTO {tablename} VALUES (
-                :date,
-                :time,
-                :day,
-                :price,
-                :yclose,
-                :open,
-                :dayh,
-                :dayl,
-                :h52,
-                :l52,
-                :vol,
-                :oi,
-                :ticker)""".format(tablename = fileName),
+                    c.execute("""CREATE TABLE IF NOT EXISTS {tablename}(
+                                date text,
+                                time text,
+                                day text,
+                                price real,
+                                yclose real,
+                                open real,
+                                dayh real,
+                                dayl real,
+                                h52 real,
+                                l52 real,
+                                vol integer,
+                                oi integer,
+                                ticker text)""".format(tablename = fileName))
+                    conn.commit()
 
-                {'date': this_dic['date'],
-                'time': this_dic['time'],
-                'day': this_dic['day'],
-                'price': this_dic['price'],
-                'yclose': this_dic['yclose'],
-                'open': this_dic['open'],
-                'dayh': this_dic['dayh'],
-                'dayl': this_dic['dayl'],
-                'h52': this_dic['h52'],
-                'l52': this_dic['l52'],
-                'vol': this_dic['vol'],
-                'oi': this_dic['oi'],
-                'ticker': this_dic['ticker']}),
+                    c.execute("""INSERT INTO {tablename} VALUES (
+                    ?,?,?,?,?,?,?,?,?,?,?,?,?)""".format(tablename = fileName),(
+                    this_dic['date'],
+                    this_dic['time'],
+                    this_dic['day'],
+                    this_dic['price'],
+                    this_dic['yclose'],
+                    this_dic['open'],
+                    this_dic['dayh'],
+                    this_dic['dayl'],
+                    this_dic['h52'],
+                    this_dic['l52'],
+                    this_dic['vol'],
+                    this_dic['oi'],
+                    this_dic['ticker']))
 
+                    conn.commit()      # we take all the main/first adresses unless we have an .Fr file.
 
-            # then if the cme address is not empty we scrap it
-            if addressFutures != 'empty':
-                this_dic = selector(addressFutures)
+                if addressFutures != 'empty':
+                    arr = selector(addressFutures)
+                    dic_totals = arr[0]
+                    table_futures = arr[1]
 
-                c.execute("""CREATE TABLE IF NOT EXISTS {tablename}(
-                            totalVolume integer,
-                            totalOpenInterest integer,
-                            totalBlockTrades integer,
-                            tableFutures text)""".format(tablename = fileName + '_cme'))
-                conn.commit()
-            #     fileDataF = open('data/dataF_' + period + '/' + fileName + '.csv', 'a+')
-            #     fileDataF.write(date)
-            #     fileDataF.write(str(selector(addressFutures)))
-            #     fileDataF.write('\n')
-            #     fileDataF.close()
+                    c.execute("""CREATE TABLE IF NOT EXISTS {tablename}(
+                                date text,
+                                time text,
+                                day text,
+                                totalVol integer,
+                                totalOI integer,
+                                totalBT integer,
+                                tableFutures text)""".format(tablename = fileName + '_cme'))
+                    conn.commit()
 
-            # except:
-            #     print('file write not working for {}'.format(fileName))
+                    c.execute("""INSERT INTO {tablename} VALUES (
+                    ?,?,?,?,?,?,?)""".format(tablename = fileName + '_cme'),(
+                    date,
+                    hour,
+                    day,
+                    dic_totals['totalVol'],
+                    dic_totals['totalOI'],
+                    dic_totals['totalBT'],
+                    str(table_futures)))
+
+                    conn.commit()      # then if the cme address is not empty we scrap it
+
+                if '_d' in fileName:
+
+                    arr = selector(address)
+
+                    for dictCDS in arr:
+                        tablename = 'CDS_' + dictCDS['Name'].replace(' ','_')
+
+                        c.execute("""CREATE TABLE IF NOT EXISTS {}(
+                                    date text,
+                                    time text,
+                                    day text,
+                                    value integer,
+                                    unit integer)""".format(tablename))
+                        conn.commit()
+
+                        c.execute("""INSERT INTO {} VALUES
+                        (?,?,?,?,?)""".format(tablename),(
+                        date,
+                        hour,
+                        day,
+                        dictCDS['Value'],
+                        dictCDS['Unit']))
+                        conn.commit()
+
+                if '_YC' in fileName:
+                    arr = selector(address)
+                    maturity = arr[0]
+                    yields = arr[1]
+
+                    c.execute("""CREATE TABLE IF NOT EXISTS {tablename}(
+                                date text,
+                                time text,
+                                day text,
+                                maturity text,
+                                yields text)""".format(tablename = fileName))
+                    conn.commit()
+
+                    c.execute("""INSERT INTO {tablename} VALUES (
+                    ?,?,?,?,?)""".format(tablename = fileName),(
+                    date,
+                    hour,
+                    day,
+                    str(maturity),
+                    str(yields)))
+
+                    conn.commit()
+
+                print("End writing DataBase for {}.".format(fileName))
+                print('///////////')
+
+                count += 1
+
+            except:
+                print("Writing DataBase for {} did not work".format(fileName))
+                logfile.write('{}: Writing DataBase for {} did not work...\n'.format(hour, fileName))
+
+    logfile.write('{}: --> {} <-- inst_x have been written on DataBase...\n'.format(hour, count))
+
+    c.close()
+    conn.close()
 
     csvlist.close
 
 if __name__ == '__main__':
     writeit('macrowatchlist.csv')
 
-##### end/divert all prints to a log file
-# sys.stdout = old_stdout
-#
-# log_file.close()
-##### end\divert all prints to a log file
+logfile.close()
