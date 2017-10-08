@@ -30,7 +30,7 @@ def translateNonCME(folder):
 
         if fileName.split('_')[1] in 'F S Y i':
             for line in linelist:
-                print('DB this line: {}'.format(line))
+                print('    DB this line: {}'.format(line))
 
                 c.execute("""CREATE TABLE IF NOT EXISTS {tablename}(
                 date text,
@@ -69,7 +69,7 @@ def translateNonCME(folder):
 
         if '_YC' in fileName:
             for line in linelist:
-                print('DB this line: {}'.format(line))
+                print('    DB this line: {}'.format(line))
 
                 c.execute("""CREATE TABLE IF NOT EXISTS {tablename}(
                 date text,
@@ -94,7 +94,7 @@ def translateNonCME(folder):
 
         if '_d' in fileName:
             for line in linelist:
-                print('DB this line: {}'.format(line))
+                print('    DB this line: {}'.format(line))
 
                 date = line[0].split(' ')[0]
                 hour = line[0].split(' ')[1]
@@ -107,7 +107,7 @@ def translateNonCME(folder):
                     regex = re.compile('[^a-zA-Z ]')
                     name = regex.sub('', dictCDS['Name'])
                     tablename = 'CDS_' + name.replace(' ','_')
-                    print('----DB this CDS: {}'.format(name))
+                    print('        DB this CDS: {}'.format(name))
 
                     cCDS.execute("""CREATE TABLE IF NOT EXISTS {}(
                     date text,
@@ -181,12 +181,12 @@ def translateCME(folder):
             }
 
             linelist[i] = new_linelist
-        print('ordered messy string from CME: {}'.format(fileName))
+        print('    ordered messy string from CME: {}'.format(fileName))
         fileName = fileName.replace('.','_')
 
         if '_F' in fileName or '_Fr' in fileName: #just a check, not necessary
             for line in linelist:
-                print('DB this line from CME: {}'.format(line))
+                print('    DB this line from CME: {}'.format(line))
 
                 c.execute("""CREATE TABLE IF NOT EXISTS {tablename}(
                 date text,
@@ -206,6 +206,7 @@ def translateCME(folder):
                 oi_max integer,
                 bt_max integer,
                 tableFutures text)""".format(tablename = fileName + '_cme'))
+
                 conn.commit()
 
                 c.execute("""INSERT INTO {tablename} VALUES (

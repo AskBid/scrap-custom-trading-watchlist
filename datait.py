@@ -10,6 +10,8 @@ import pandas as pd
 from scrapit import getDataFormat
 from drawit import drawBar
 
+import sqlite3
+
 class Calc_dataframe():
 
     def __init__(self, file_name, date_offset):
@@ -22,42 +24,12 @@ class Calc_dataframe():
         self.day52r = self.get52wR()
 
     def readFile(self):
-        with open('data/data_16-18/{}'.format(self.file_name + '.csv')) as f:
-    	    linelist = f.readlines()
 
-        #from list of strings to list of lists
-        for i,day in enumerate(linelist):
-            linelist[i] = ast.literal_eval(day)
+        conn = sqlite3.connect("scrapData.db")
 
-        #make panda DataFrames
-        labelCol = list(getDataFormat().keys())
-        labelCol.pop(0)
-        labelCol.pop(-1)
+        dayDataFrame = pd.read_sql_query('SELECT * FROM ES_F WHERE timestamp BETWEEN 900 AND 1100;', conn)
 
-        labelRows = []
-
-        #from list of list with strings to list of lists with float,int
-        newlinelist = []
-
-        for line in linelist:
-            newline = []
-            labelRows.append(line[0].split(' ')[0]) #modify here to decide how the rows label (date) format is
-            for i in range(1,10):
-                try:
-                    if '.' in line[i]:
-                        newline.append(float(line[i]))
-                    else:
-                        newline.append(int(line[i]))
-                except:
-                    newline.append('-')
-            newlinelist.append(newline)
-
-        x = self.date_offset
-
-        if x == 0:
-            dayDataFrame = pd.DataFrame(newlinelist, index = labelRows, columns = labelCol)
-        else:
-            dayDataFrame = pd.DataFrame(newlinelist[:-x], index = labelRows[:-x], columns = labelCol)
+        dayDataFrame.set_index('date', inplace=True)
 
         dayDataFrame = dayDataFrame[dayDataFrame.applymap(isnumber)] #makes sure that if there is a bad recording that gets NaN in dataframe so it does not affect calculation
 
@@ -94,7 +66,7 @@ class Calc_dataframe():
 
     def get52wR(self):
         day = self.dayDataFrame
-        day52r = day['52h'].values[-1] - day['52l'].values[-1]
+        day52r = day['h52'].values[-1] - day['l52'].values[-1]
         return day52r
 
     def getDayR(self):
@@ -236,28 +208,32 @@ def writeNum(num):
     return ("{:20,.2f}".format(num)).replace(' ','')
 
 if __name__ == '__main__':
+    pd.set_option('display.height', 1000)
+    pd.set_option('display.max_rows', 500)
+    pd.set_option('display.max_columns', 500)
+    pd.set_option('display.width', 1000)
     calc = Calc_dataframe('ES.F',0)
-    print('prc chgPc =  {}'.format(calc.getPcChange('open','price')))
-    print('avg "=       {}'.format(calc.getPcChange_avg('abs')))
-
-    print('rng chgPc =  {}'.format(calc.getPcChange('open','range')))
-    print('avg "=       {}'.format(calc.getPcChange_avg('abs')))
-
-    print('price =      ' + calc.price)
-    print('open =       {}'.format(calc.getOpen()))
-    print('yclose =     {}'.format(calc.getYClose()))
-    print('dayR =       {}'.format(calc.dayr))
-    print('dayR_avg =   {}'.format(calc.getDayR_avg()))
-    print('dayR_med =   {}'.format(calc.getDayR_med()))
-    print('dayR_std =   {}'.format(calc.getDayR_std()))
-    print('chpt_describe =   \n{}'.format(calc.get_describe()))
-    print('52r =        {}'.format(calc.day52r))
-
-    print('VOLUME =     {}'.format(calc.getVolume()))
-    print('VOLUME AVG = {}'.format(calc.getVolume_avg()))
-    print('VOLUME MED = {}'.format(calc.getVolume_med()))
-    print('VOLUME STD = {}'.format(calc.getVolume_std()))
-    print('Vol/rng =    {}'.format(calc.getVolR_rt()))
-    print('Vol/rng AVG= {}'.format(calc.getVolR_rt_avg()))
+    # print('prc chgPc =  {}'.format(calc.getPcChange('open','price')))
+    # print('avg "=       {}'.format(calc.getPcChange_avg('abs')))
+    #
+    # print('rng chgPc =  {}'.format(calc.getPcChange('open','range')))
+    # print('avg "=       {}'.format(calc.getPcChange_avg('abs')))
+    #
+    # print('price =      ' + calc.price)
+    # print('open =       {}'.format(calc.getOpen()))
+    # print('yclose =     {}'.format(calc.getYClose()))
+    # print('dayR =       {}'.format(calc.dayr))
+    # print('dayR_avg =   {}'.format(calc.getDayR_avg()))
+    # print('dayR_med =   {}'.format(calc.getDayR_med()))
+    # print('dayR_std =   {}'.format(calc.getDayR_std()))
+    # print('chpt_describe =   \n{}'.format(calc.get_describe()))
+    # print('52r =        {}'.format(calc.day52r))
+    #
+    # print('VOLUME =     {}'.format(calc.getVolume()))
+    # print('VOLUME AVG = {}'.format(calc.getVolume_avg()))
+    # print('VOLUME MED = {}'.format(calc.getVolume_med()))
+    # print('VOLUME STD = {}'.format(calc.getVolume_std()))
+    # print('Vol/rng =    {}'.format(calc.getVolR_rt()))
+    # print('Vol/rng AVG= {}'.format(calc.getVolR_rt_avg()))
 
     print(calc.dayDataFrame)
