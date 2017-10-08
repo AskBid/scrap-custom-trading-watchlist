@@ -6,9 +6,15 @@ import os, errno
 import re #used to get rid of all the characters which are not numbers or dashes
 import sqlite3
 
+def getTimestamp(h_m):
+    hours = int(h_m.split(":")[0])
+    minutes = int(h_m.split(":")[1])
+    tot_mins = (hours * 60) + minutes
+    return tot_mins
 
 date = time.strftime('%Y-%m-%d')
 hour = time.strftime('%H:%M')
+timestamp = getTimestamp(hour)
 day = time.strftime('%a')
 
 logfile = open('logs/' + date + '_log.txt', 'a+')
@@ -51,10 +57,18 @@ def getDataFormatCME(): #careful if you change this dic labels cus they are actu
         "blockTrades": ""}
     return dataFormatCME
 
-def makeDicArr(dic):
+def makeDicArr(dic): #to avoid problems with older versions of Python where dictionary order is messed up we need to convert dictionary in array to preserve order
     arr = []
-    for key in dic:
-        arr.append(dic[key])
+
+    arr.append(dic['Ticker'])
+    arr.append(dic['last'])
+    arr.append(dic['priorSettle'])
+    arr.append(dic['open'])
+    arr.append(dic['high'])
+    arr.append(dic['low'])
+    arr.append(dic['volume'])
+    arr.append(dic['openInterest'])
+    arr.append(dic['blockTrades'])
 
     return arr
 
@@ -319,12 +333,19 @@ def scrapCmegroup(address):
                             dic['openInterest'] = cells[colNumOpenInterest].text.replace(',','')
                             dic['blockTrades'] = cells[colNumBlockTrades].text.replace(',','')
 
+    maxVol = 0
+    maxDic = {}
+    for dic in table:
+        if int(dic['volume']) >= maxVol:
+            maxVol = int(dic['volume'])
+            maxDic = dic
+
     arrTable = []
     for dic in table:
         arr = makeDicArr(dic)
         arrTable.append(arr)
 
-    return (totalValues, arrTable)
+    return (totalValues, makeDicArr(maxDic), arrTable)
 
 def scrapMarketwatch(address):
     #creating formatting data from scrapdata
@@ -518,6 +539,8 @@ def writeit(csvFile):
 
     conn = sqlite3.connect('scrapData.db')
     c = conn.cursor()
+    connCDS = sqlite3.connect('scrapDataCDS.db')
+    cCDS = connCDS.cursor()
 
     csvlist = open(csvFile, 'r')
     count = 0
@@ -528,134 +551,169 @@ def writeit(csvFile):
             address = line.split(',')[1]
             addressFutures = line.split(',')[2].replace('\n','')
 
-            try:
-                print('\n:::::::::::')
-                print("Start to write DataBase for {}...".format(fileName))
+            # try:
+            print('\n:::::::::::')
+            print("Start to write DataBase for {}...".format(fileName))
 
-                if address != 'empty' and '_d' not in fileName and '_YC' not in fileName:
-                    this_dic = selector(address)
+            if address != 'empty' and fileName.split('_')[1] in 'F S Y i':
+                this_dic = selector(address)
 
-                    c.execute("""CREATE TABLE IF NOT EXISTS {tablename}(
-                                date text,
-                                time text,
-                                day text,
-                                price real,
-                                yclose real,
-                                open real,
-                                dayh real,
-                                dayl real,
-                                h52 real,
-                                l52 real,
-                                vol integer,
-                                oi integer,
-                                ticker text)""".format(tablename = fileName))
-                    conn.commit()
+                c.execute("""CREATE TABLE IF NOT EXISTS {tablename}(
+                date text,
+                time text,
+                timestamp integer,
+                day text,
+                price real,
+                yclose real,
+                open real,
+                dayh real,
+                dayl real,
+                h52 real,
+                l52 real,
+                vol integer,
+                oi integer,
+                ticker text)""".format(tablename = fileName))
+                conn.commit()
 
-                    c.execute("""INSERT INTO {tablename} VALUES (
-                    ?,?,?,?,?,?,?,?,?,?,?,?,?)""".format(tablename = fileName),(
-                    this_dic['date'],
-                    this_dic['time'],
-                    this_dic['day'],
-                    this_dic['price'],
-                    this_dic['yclose'],
-                    this_dic['open'],
-                    this_dic['dayh'],
-                    this_dic['dayl'],
-                    this_dic['h52'],
-                    this_dic['l52'],
-                    this_dic['vol'],
-                    this_dic['oi'],
-                    this_dic['ticker']))
+                c.execute("""INSERT INTO {tablename} VALUES (
+                ?,?,?,?,?,?,?,?,?,?,?,?,?,?)""".format(tablename = fileName),(
+                this_dic['date'],
+                this_dic['time'],
+                timestamp,
+                this_dic['day'],
+                this_dic['price'],
+                this_dic['yclose'],
+                this_dic['open'],
+                this_dic['dayh'],
+                this_dic['dayl'],
+                this_dic['h52'],
+                this_dic['l52'],
+                this_dic['vol'],
+                this_dic['oi'],
+                this_dic['ticker']))
 
-                    conn.commit()      # we take all the main/first adresses unless we have an .Fr file.
+                conn.commit()      # we take all the main/first adresses unless we have an .Fr file.
 
-                if addressFutures != 'empty':
-                    arr = selector(addressFutures)
-                    dic_totals = arr[0]
-                    table_futures = arr[1]
+            if addressFutures != 'empty':
+                arr = selector(addressFutures)
+                dic_totals = arr[0]
+                max_Contract = arr[1]
+                table_futures = arr[2]
 
-                    c.execute("""CREATE TABLE IF NOT EXISTS {tablename}(
-                                date text,
-                                time text,
-                                day text,
-                                totalVol integer,
-                                totalOI integer,
-                                totalBT integer,
-                                tableFutures text)""".format(tablename = fileName + '_cme'))
-                    conn.commit()
+                c.execute("""CREATE TABLE IF NOT EXISTS {tablename}(
+                date text,
+                time text,
+                timestamp integer,
+                day text,
+                totalVol integer,
+                totalOI integer,
+                totalBT integer,
+                Ticker_max text,
+                price_max real,
+                yclose_max real,
+                open_max real,
+                dayh_max real,
+                dayl_max real,
+                vol_max integer,
+                oi_max integer,
+                bt_max integer,
+                tableFutures text)""".format(tablename = fileName + '_cme'))
+                conn.commit()
 
-                    c.execute("""INSERT INTO {tablename} VALUES (
-                    ?,?,?,?,?,?,?)""".format(tablename = fileName + '_cme'),(
+                c.execute("""INSERT INTO {tablename} VALUES (
+                ?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)""".format(tablename = fileName + '_cme'),(
+                date,
+                hour,
+                timestamp,
+                day,
+                dic_totals['totalVol'],
+                dic_totals['totalOI'],
+                dic_totals['totalBT'],
+                max_Contract[0],
+                max_Contract[1],
+                max_Contract[2],
+                max_Contract[3],
+                max_Contract[4],
+                max_Contract[5],
+                max_Contract[6],
+                max_Contract[7],
+                max_Contract[8],
+                str(table_futures)))
+
+                conn.commit()      # then if the cme address is not empty we scrap it
+
+            if '_YC' in fileName:
+                arr = selector(address)
+                maturity = arr[0]
+                yields = arr[1]
+
+                c.execute("""CREATE TABLE IF NOT EXISTS {tablename}(
+                date text,
+                time text,
+                timestamp integer,
+                day text,
+                maturity text,
+                yields text)""".format(tablename = fileName))
+
+                conn.commit()
+
+                c.execute("""INSERT INTO {tablename} VALUES (
+                ?,?,?,?,?,?)""".format(tablename = fileName),(
+                date,
+                hour,
+                timestamp,
+                day,
+                str(maturity),
+                str(yields)))
+
+                conn.commit()
+
+            if '_d' in fileName:
+
+                arr = selector(address)
+
+                for dictCDS in arr:
+                    regex = re.compile('[^a-zA-Z ]')
+                    name = regex.sub('', dictCDS['Name'])
+                    tablename = 'CDS_' + name.replace(' ','_')
+
+                    cCDS.execute("""CREATE TABLE IF NOT EXISTS {}(
+                    date text,
+                    time text,
+                    timestamp integer,
+                    day text,
+                    value integer,
+                    unit text)""".format(tablename))
+
+                    connCDS.commit()
+
+                    cCDS.execute("""INSERT INTO {} VALUES
+                    (?,?,?,?,?,?)""".format(tablename),(
                     date,
                     hour,
+                    timestamp,
                     day,
-                    dic_totals['totalVol'],
-                    dic_totals['totalOI'],
-                    dic_totals['totalBT'],
-                    str(table_futures)))
+                    dictCDS['Value'],
+                    dictCDS['Unit']))
 
-                    conn.commit()      # then if the cme address is not empty we scrap it
+                    connCDS.commit()
 
-                if '_d' in fileName:
+            print("End writing DataBase for {}.".format(fileName))
+            print('///////////')
 
-                    arr = selector(address)
+            count += 1
 
-                    for dictCDS in arr:
-                        tablename = 'CDS_' + dictCDS['Name'].replace(' ','_')
-
-                        c.execute("""CREATE TABLE IF NOT EXISTS {}(
-                                    date text,
-                                    time text,
-                                    day text,
-                                    value integer,
-                                    unit integer)""".format(tablename))
-                        conn.commit()
-
-                        c.execute("""INSERT INTO {} VALUES
-                        (?,?,?,?,?)""".format(tablename),(
-                        date,
-                        hour,
-                        day,
-                        dictCDS['Value'],
-                        dictCDS['Unit']))
-                        conn.commit()
-
-                if '_YC' in fileName:
-                    arr = selector(address)
-                    maturity = arr[0]
-                    yields = arr[1]
-
-                    c.execute("""CREATE TABLE IF NOT EXISTS {tablename}(
-                                date text,
-                                time text,
-                                day text,
-                                maturity text,
-                                yields text)""".format(tablename = fileName))
-                    conn.commit()
-
-                    c.execute("""INSERT INTO {tablename} VALUES (
-                    ?,?,?,?,?)""".format(tablename = fileName),(
-                    date,
-                    hour,
-                    day,
-                    str(maturity),
-                    str(yields)))
-
-                    conn.commit()
-
-                print("End writing DataBase for {}.".format(fileName))
-                print('///////////')
-
-                count += 1
-
-            except:
-                print("Writing DataBase for {} did not work".format(fileName))
-                logfile.write('{}: Writing DataBase for {} did not work...\n'.format(hour, fileName))
+            # except:
+            #     print("Writing DataBase for {} did not work".format(fileName))
+            #     print("X X X X X X")
+            #     logfile.write('{}: Writing DataBase for {} did not work...\n'.format(hour, fileName))
 
     logfile.write('{}: --> {} <-- inst_x have been written on DataBase...\n'.format(hour, count))
 
     c.close()
     conn.close()
+    cCDS.close()
+    connCDS.close()
 
     csvlist.close
 
