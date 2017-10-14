@@ -45,7 +45,7 @@ class Column(QTextEdit):
             return '<br>'
 
         print(inst)
-        
+
         thisDatait = datait.Calc_dataframe(inst, '2017-09-29', 30, '09:00', '09:26')
         imgpath = 'img/{}.png'.format(thisDatait.file_name)
         thisDatait.drawBar(imgpath, 226)
@@ -84,7 +84,7 @@ class Column(QTextEdit):
     def read_guilist(self, col):
         col_list = []
 
-        with open('guilist.csv') as f:
+        with open('csv/guilist.csv') as f:
             csv = f.readlines()
 
         for line in csv:
