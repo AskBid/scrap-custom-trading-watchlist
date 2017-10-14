@@ -45,29 +45,30 @@ class Column(QTextEdit):
             return '<br>'
 
         print(inst)
-        thisInstData = datait.Calc_dataframe(inst, 0)
-        imgpath = 'img/{}.png'.format(thisInstData.file_name)
-        thisInstData.drawBar(imgpath, 226)
+        
+        thisDatait = datait.Calc_dataframe(inst, '2017-09-29', 30, '09:00', '09:26')
+        imgpath = 'img/{}.png'.format(thisDatait.file_name)
+        thisDatait.drawBar(imgpath, 226)
 
         with open('gui/label.html') as f:
     	    html = f.read()
 
         html = html.replace('/*--bgcolor--*/', 'rgba(119, 212, 212, 0.7)')
-        html = html.replace('<!--name-->', str(thisInstData.file_name))
-        html = html.replace('<!--prc-->', str(thisInstData.price))
-        html = html.replace('<!--prc_C-->', thisInstData.getYClose())
-        html = html.replace('<!--prc_O-->', thisInstData.getOpen())
-        html = html.replace('<!--val03-->', thisInstData.getPcChange('open','price'))
-        html = html.replace('<!--avg03-->', thisInstData.getPcChange_avg('abs'))
-        html = html.replace('<!--val02-->', str(thisInstData.dayr))
-        html = html.replace('<!--avg02-->', thisInstData.getDayR_avg())
-        html = html.replace('<!--val01-->', thisInstData.getPcChange('open','range'))
-        html = html.replace('<!--avg01-->', thisInstData.getPcChange_avg('abs'))
-        html = html.replace('<!--val00-->', thisInstData.getVolume())
-        html = html.replace('<!--avg00-->', thisInstData.getVolume_avg())
-        html = html.replace('<!--val13-->', thisInstData.getVolR_rt())
-        html = html.replace('<!--avg13-->', thisInstData.getVolR_rt_avg())
-        html = html.replace('<!--val12-->', thisInstData.getVolume_std())
+        html = html.replace('<!--name-->', str(thisDatait.file_name))
+        html = html.replace('<!--prc-->', str(thisDatait.price))
+        html = html.replace('<!--prc_C-->', thisDatait.getYClose())
+        html = html.replace('<!--prc_O-->', thisDatait.getOpen())
+        html = html.replace('<!--val03-->', thisDatait.getPcChange('open','price'))
+        html = html.replace('<!--avg03-->', thisDatait.getPcChange_avg('abs'))
+        html = html.replace('<!--val02-->', str(thisDatait.dayr))
+        html = html.replace('<!--avg02-->', thisDatait.getDayR_avg())
+        html = html.replace('<!--val01-->', thisDatait.getPcChange('open','range'))
+        html = html.replace('<!--avg01-->', thisDatait.getPcChange_avg('abs'))
+        html = html.replace('<!--val00-->', thisDatait.getVolume())
+        html = html.replace('<!--avg00-->', thisDatait.getVolume_avg())
+        html = html.replace('<!--val13-->', thisDatait.getVolR_rt())
+        html = html.replace('<!--avg13-->', thisDatait.getVolR_rt_avg())
+        html = html.replace('<!--val12-->', thisDatait.getVolume_std())
         html = html.replace('<!--avg12-->', '')
         html = html.replace('<!--val11-->', '')
         html = html.replace('<!--avg11-->', '')
@@ -109,7 +110,7 @@ class MainWindow(QScrollArea):
         for col in cols:
             layout.addWidget(col)
 
-        layout.addWidget(Column(0))    
+        layout.addWidget(Column(0))
         layout.addWidget(Column(1))
 
         layout.setContentsMargins(0,0,0,0)

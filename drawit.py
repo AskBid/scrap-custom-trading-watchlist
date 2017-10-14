@@ -1,4 +1,11 @@
-import cairo
+try:
+    import cairo
+except:
+    pass
+try:
+    import cairocffi as cairo
+except:
+    pass
 
 def drawBar(width = 226,
             low52 = 11865.0,
@@ -8,9 +15,7 @@ def drawBar(width = 226,
             path = "gui/bar4.png"):
 
     left2open_px = (width / range52) * (dopen - low52)
-    print(left2open_px)
     range_px = (width / range52) * drange
-    print(range_px)
 
     ims = cairo.ImageSurface(cairo.FORMAT_ARGB32, width, 25)
     cr = cairo.Context(ims)

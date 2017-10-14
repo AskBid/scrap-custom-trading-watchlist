@@ -1,24 +1,37 @@
 import sys
 from os import listdir
 from math import isnan, log10
-
 import ast #reads array strings as array
 
 import numpy as np
 import pandas as pd
 
-from scrapit import getDataFormat
+import time
+import datetime as dt
+from pandas.tseries.offsets import BDay #to make operation betwen dates where only BusinessDays are considered
+
+from scrapit import getDataFormat, getTimestamp
 from drawit import drawBar
 
 import sqlite3
 
 class Calc_dataframe():
 
-    def __init__(self, file_name, date_offset):
+    def __init__(self,
+        file_name,
+        enddate,
+        sample_days,
+        period_start,
+        period_end):
 
         self.file_name = file_name
-        self.date_offset = date_offset
+        self.enddate = enddate
+        self.sample_days = sample_days
+        self.period_start = getTimestamp(period_start)
+        self.period_end = getTimestamp(period_end)
+
         self.dayDataFrame = self.readFile() #all calculation are done on this not on self.price for instance as that it is a string only given as information
+
         self.price = self.getPrice()
         self.dayr = self.getDayR()
         self.day52r = self.get52wR()
@@ -27,17 +40,37 @@ class Calc_dataframe():
 
         conn = sqlite3.connect("scrapData.db")
 
-        dayDataFrame = pd.read_sql_query('SELECT * FROM ES_F WHERE timestamp BETWEEN 900 AND 1100;', conn)
+        start_date = dt.datetime.strptime(self.enddate, '%Y-%m-%d') - BDay(self.sample_days)
+        start_date = start_date.strftime('%Y-%m-%d')
+        start_date_str = "'" + start_date + "'"
+        end_date_str = "'" + self.enddate + "'"
 
-        dayDataFrame.set_index('date', inplace=True)
+        df = pd.read_sql_query('''
+            SELECT * FROM {0}
+            WHERE date BETWEEN {1} AND {2}
+            AND timestamp BETWEEN {3} AND {4};
+            '''.format(
+            self.file_name,
+            start_date_str,
+            end_date_str,
+            self.period_start,
+            self.period_end), conn)
 
-        dayDataFrame = dayDataFrame[dayDataFrame.applymap(isnumber)] #makes sure that if there is a bad recording that gets NaN in dataframe so it does not affect calculation
+        df.drop('day', axis=1, inplace=True)
+        df.drop('ticker', axis=1, inplace=True)
 
-        return dayDataFrame
+        df.set_index(['date', 'time'], inplace=True)
+
+        try:
+            df = df[df.applymap(isnumber)] #makes sure that if there is a bad recording that gets NaN in dataframe so it does not affect calculation
+        except:
+            print('''something went wrong with the DB selection in datait.py and no value where selected''')
+
+        return df
 
     def drawBar(self, path, width):
         day = self.dayDataFrame
-        low52 = day['52l'].values[-1]
+        low52 = day['l52'].values[-1]
         drawBar(width,
                 low52,
                 self.day52r,
@@ -47,7 +80,7 @@ class Calc_dataframe():
 
         return '{} bar has been drawn'.format(path)
 
-    ### STATISTIC FUNCTION ###
+    ### :STATISTIC FUNCTION ###
 
     def getPrice(self):
         day = self.dayDataFrame
@@ -145,7 +178,7 @@ class Calc_dataframe():
             return '-'
         return writeVolume(VolR_rt_avg)
 
-    ### STATISTIC FUNCTION ###
+    ### /STATISTIC FUNCTION ###
 
 def writePrice(num, price = None):
     if num == '-' or isnan(num):
@@ -208,32 +241,36 @@ def writeNum(num):
     return ("{:20,.2f}".format(num)).replace(' ','')
 
 if __name__ == '__main__':
-    pd.set_option('display.height', 1000)
+    # pd.set_option('display.height', 1000)
     pd.set_option('display.max_rows', 500)
     pd.set_option('display.max_columns', 500)
     pd.set_option('display.width', 1000)
-    calc = Calc_dataframe('ES.F',0)
-    # print('prc chgPc =  {}'.format(calc.getPcChange('open','price')))
-    # print('avg "=       {}'.format(calc.getPcChange_avg('abs')))
-    #
-    # print('rng chgPc =  {}'.format(calc.getPcChange('open','range')))
-    # print('avg "=       {}'.format(calc.getPcChange_avg('abs')))
-    #
-    # print('price =      ' + calc.price)
-    # print('open =       {}'.format(calc.getOpen()))
-    # print('yclose =     {}'.format(calc.getYClose()))
-    # print('dayR =       {}'.format(calc.dayr))
-    # print('dayR_avg =   {}'.format(calc.getDayR_avg()))
-    # print('dayR_med =   {}'.format(calc.getDayR_med()))
-    # print('dayR_std =   {}'.format(calc.getDayR_std()))
-    # print('chpt_describe =   \n{}'.format(calc.get_describe()))
-    # print('52r =        {}'.format(calc.day52r))
-    #
-    # print('VOLUME =     {}'.format(calc.getVolume()))
-    # print('VOLUME AVG = {}'.format(calc.getVolume_avg()))
-    # print('VOLUME MED = {}'.format(calc.getVolume_med()))
-    # print('VOLUME STD = {}'.format(calc.getVolume_std()))
-    # print('Vol/rng =    {}'.format(calc.getVolR_rt()))
-    # print('Vol/rng AVG= {}'.format(calc.getVolR_rt_avg()))
 
+    calc = Calc_dataframe('ES_F','2017-09-29',30,'09:00','09:26')
     print(calc.dayDataFrame)
+    print('\n')
+
+    print('----> ' + calc.file_name +  ' <----''\n')
+
+    print('prc chgPc =  {}'.format(calc.getPcChange('open','price')))
+    print('avg "=       {}'.format(calc.getPcChange_avg('abs')))
+
+    print('rng chgPc =  {}'.format(calc.getPcChange('open','range')))
+    print('avg "=       {}'.format(calc.getPcChange_avg('abs')))
+
+    print('price =      ' + calc.price)
+    print('open =       {}'.format(calc.getOpen()))
+    print('yclose =     {}'.format(calc.getYClose()))
+    print('dayR =       {}'.format(calc.dayr))
+    print('dayR_avg =   {}'.format(calc.getDayR_avg()))
+    print('dayR_med =   {}'.format(calc.getDayR_med()))
+    print('dayR_std =   {}'.format(calc.getDayR_std()))
+    print('chpt_describe =   \n{}'.format(calc.get_describe()))
+    print('52r =        {}'.format(calc.day52r))
+
+    print('VOLUME =     {}'.format(calc.getVolume()))
+    print('VOLUME AVG = {}'.format(calc.getVolume_avg()))
+    print('VOLUME MED = {}'.format(calc.getVolume_med()))
+    print('VOLUME STD = {}'.format(calc.getVolume_std()))
+    print('Vol/rng =    {}'.format(calc.getVolR_rt()))
+    print('Vol/rng AVG= {}'.format(calc.getVolR_rt_avg()))
