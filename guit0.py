@@ -5,18 +5,15 @@ from PyQt5.QtGui import *
 from PyQt5.QtCore import QCoreApplication, QRect, Qt
 import datait
 
-class Box(QTextEdit):
+class Column(QTextEdit):
 
-    def __init__(self, inst):
+    def __init__(self, col_num):
         super().__init__()
 
-        self.inst = inst
-        self.setText(self.write_label_html(self.inst))
-        # self.setText('none')
-        self.verticalScrollBar().setSliderPosition(0)
-        # self.adjustSize()
-        # self.resize(500,500)
-        self.setContentsMargins(0,0,0,0)
+        self.col_num = col_num
+        self.setText(self.write_col_html(self.col_num))
+
+        self.adjustSize()
         self.setStyleSheet("""
         QTextEdit {
             border: 0;
@@ -29,15 +26,23 @@ class Box(QTextEdit):
         }
         """)
 
+    def write_col_html(self, col_num):
+        inst_list = self.read_guilist(col_num)
+
+        text = ''
+        with open('gui/label.css') as f:
+               text = f.read()
+
+        for inst in inst_list:
+            if 'Fr' not in inst:
+                text = text + self.write_label_html(inst)
+
+        return text
+
     def write_label_html(self, inst):
 
         if inst == '':
-            return ''
-
-        if '_Fr' in inst or '_YC' in inst:
-            with open('gui/label.html') as f:
-        	    html = f.read()
-            return html
+            return '<br>'
 
         print(inst)
 
@@ -71,55 +76,42 @@ class Box(QTextEdit):
         html = html.replace('<!--avg10-->', '')
         html = html.replace('<!--imgpath-->', imgpath)
 
-        with open('gui/label.css') as f:
-               text = f.read()
-
-        html = str(text) + html
-
         return html
 
     def drawBar():
         pass
 
-def read_guilist(guilist):
-    col_list = []
-    rows = 0
-    cols = 0
+    def read_guilist(self, col):
+        col_list = []
 
-    with open(guilist) as f:
-        csv = f.readlines()
+        with open('csv/guilist.csv') as f:
+            csv = f.readlines()
 
-    rows = len(csv)
-    csv_arr = []
+        for line in csv:
+            line = line.replace('\n','').split(',')
+            file_name = line[col]
+            col_list.append(file_name)
 
-    for line in csv:
-        line = line.replace('\n','').split(',')
-        cols = len(line)
-        csv_arr.append(line)
+        return col_list
 
-    return csv_arr, rows, cols
 
-class MainWindow(QWidget):
+
+class MainWindow(QScrollArea):
     def __init__(self):
         super().__init__()
 
-        box = QFrame(self)
-        box.resize(600,612)
+        layout = QHBoxLayout(self)
+        layout.setAlignment(Qt.AlignTop)
 
-        inst_list = read_guilist('csv/guilist.csv')
-        rows = inst_list[1]
-        cols = inst_list[2]
-        inst_list = inst_list[0]
+        cols = []
+        for i in range(0,10):
+            col = Column(i)
+            cols.append(col)
+        for col in cols:
+            layout.addWidget(col)
 
-        print(inst_list)
-
-        layout = QGridLayout(box)
-
-        for row, line in enumerate(inst_list):
-            for col, inst in enumerate(line):
-                i = (row * col)
-                QGridLayout.addWidget(layout, Box(inst), row, col)
-
+        layout.addWidget(Column(9))
+        layout.addWidget(Column(9))
 
         layout.setContentsMargins(0,0,0,0)
         layout.setSpacing(0)
@@ -162,7 +154,9 @@ def makeMainTable():
 
 if __name__ == '__main__':
 
+    makeMainTable()
+
     app = QApplication(sys.argv)
-    print(QDesktopWidget().availableGeometry())
+    ##print(QDesktopWidget().availableGeometry())
     ex = MainWindow()
     sys.exit(app.exec_())
