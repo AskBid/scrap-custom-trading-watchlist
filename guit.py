@@ -99,15 +99,16 @@ class Column(QTextEdit):
 class MainWindow(QScrollArea):
     def __init__(self):
         super().__init__()
+        self.setWidgetResizable(True)
+        box = QFrame(self)
+        box.resize(3000,2000)
 
-        layout = QHBoxLayout(self)
+        layout = QHBoxLayout(box)
         layout.setAlignment(Qt.AlignTop)
 
-        cols = []
+
         for i in range(0,10):
             col = Column(i)
-            cols.append(col)
-        for col in cols:
             layout.addWidget(col)
 
         layout.addWidget(Column(0))
