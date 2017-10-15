@@ -6,6 +6,7 @@
 logs
 bin
 data
+*.png
 Transfer
 *.csv#
 *.pem

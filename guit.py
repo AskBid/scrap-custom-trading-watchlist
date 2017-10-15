@@ -5,7 +5,7 @@ from PyQt5.QtGui import *
 from PyQt5.QtCore import QCoreApplication, QRect, Qt
 import datait
 
-class Box(QTextEdit):
+class Box(QTextBrowser):
 
     def __init__(self, inst):
         super().__init__()
@@ -13,7 +13,9 @@ class Box(QTextEdit):
         self.inst = inst
         self.setText(self.write_label_html(self.inst))
         # self.setText('none')
-        self.verticalScrollBar().setSliderPosition(0)
+        self.setVerticalScrollBarPolicy(Qt.ScrollBarAlwaysOff)
+        self.setMinimumWidth(180)
+        self.setMaximumWidth(200)
         # self.adjustSize()
         # self.resize(500,500)
         self.setContentsMargins(0,0,0,0)
@@ -52,22 +54,22 @@ class Box(QTextEdit):
         html = html.replace('<!--prc-->', str(thisDatait.price))
         html = html.replace('<!--prc_C-->', thisDatait.getYClose()[-6:])
         html = html.replace('<!--prc_O-->', thisDatait.getOpen()[-6:])
-        html = html.replace('<!--val03-->', thisDatait.getPcChange('open','price'))
-        html = html.replace('<!--avg03-->', thisDatait.getPcChange_avg('abs'))
-        html = html.replace('<!--val02-->', str(thisDatait.dayr))
-        html = html.replace('<!--avg02-->', thisDatait.getDayR_avg())
-        html = html.replace('<!--val01-->', thisDatait.getPcChange('open','range'))
-        html = html.replace('<!--avg01-->', thisDatait.getPcChange_avg('abs'))
-        html = html.replace('<!--val00-->', thisDatait.getVolume())
-        html = html.replace('<!--avg00-->', thisDatait.getVolume_avg())
-        html = html.replace('<!--val13-->', thisDatait.getVolR_rt())
-        html = html.replace('<!--avg13-->', thisDatait.getVolR_rt_avg())
-        html = html.replace('<!--val12-->', thisDatait.getVolume_std())
-        html = html.replace('<!--avg12-->', '')
-        html = html.replace('<!--val11-->', '')
-        html = html.replace('<!--avg11-->', '')
-        html = html.replace('<!--val10-->', '')
-        html = html.replace('<!--avg10-->', '')
+        html = html.replace('<!--row00-->', thisDatait.getPcChange('open','price'))
+        html = html.replace('<!--row02-->', thisDatait.getPcChange_avg('abs'))
+        html = html.replace('<!--row03-->', str(thisDatait.dayr))
+        html = html.replace('<!--row04-->', thisDatait.getDayR_avg())
+        html = html.replace('<!--row05-->', thisDatait.getPcChange('open','range'))
+        html = html.replace('<!--row06-->', thisDatait.getPcChange_avg('abs'))
+        html = html.replace('<!--row07-->', thisDatait.getVolume())
+        html = html.replace('<!--row08-->', thisDatait.getVolume_avg())
+        html = html.replace('<!--row09-->', thisDatait.getVolR_rt())
+        html = html.replace('<!--row10-->', thisDatait.getVolR_rt_avg())
+        html = html.replace('<!--row11-->', thisDatait.getVolume_std())
+        html = html.replace('<!--row12-->', '')
+        html = html.replace('<!--row13-->', '')
+        html = html.replace('<!--row14-->', '')
+        html = html.replace('<!--row15-->', '')
+        html = html.replace('<!--row16-->', '')
         html = html.replace('<!--imgpath-->', imgpath)
 
         with open('gui/labellist.css') as f:
@@ -119,9 +121,6 @@ class MainWindow(QWidget):
     def __init__(self):
         super().__init__()
 
-        box = QFrame(self)
-        box.resize(1700,1300)
-
         inst_list = read_guilist('csv/guilist.csv')
         rows = inst_list[1]
         cols = inst_list[2]
@@ -129,7 +128,7 @@ class MainWindow(QWidget):
 
         print(inst_list)
 
-        layout = QGridLayout(box)
+        layout = QGridLayout(self)
 
         for row, line in enumerate(inst_list):
             for col, inst in enumerate(line):
