@@ -31,13 +31,12 @@ class Box(QTextEdit):
 
     def write_label_html(self, inst):
 
-        if inst == '':
-            return ''
+        labelhtml = 'gui/labelList.html'
 
-        if '_Fr' in inst or '_YC' in inst:
-            with open('gui/label.html') as f:
-        	    html = f.read()
-            return html
+        if '_Fr' in inst or '_YC' in inst or inst == '':
+            # with open(labelhtml) as f:
+        	#     html = f.read()
+            return ''
 
         print(inst)
 
@@ -45,14 +44,14 @@ class Box(QTextEdit):
         imgpath = 'img/{}.png'.format(thisDatait.file_name)
         thisDatait.drawBar(imgpath, 226)
 
-        with open('gui/label.html') as f:
+        with open(labelhtml) as f:
     	    html = f.read()
 
         html = html.replace('/*--bgcolor--*/', 'rgba(119, 212, 212, 0.7)')
         html = html.replace('<!--name-->', str(thisDatait.file_name))
         html = html.replace('<!--prc-->', str(thisDatait.price))
-        html = html.replace('<!--prc_C-->', thisDatait.getYClose())
-        html = html.replace('<!--prc_O-->', thisDatait.getOpen())
+        html = html.replace('<!--prc_C-->', thisDatait.getYClose()[-6:])
+        html = html.replace('<!--prc_O-->', thisDatait.getOpen()[-6:])
         html = html.replace('<!--val03-->', thisDatait.getPcChange('open','price'))
         html = html.replace('<!--avg03-->', thisDatait.getPcChange_avg('abs'))
         html = html.replace('<!--val02-->', str(thisDatait.dayr))
@@ -71,7 +70,7 @@ class Box(QTextEdit):
         html = html.replace('<!--avg10-->', '')
         html = html.replace('<!--imgpath-->', imgpath)
 
-        with open('gui/label.css') as f:
+        with open('gui/labellist.css') as f:
                text = f.read()
 
         html = str(text) + html
@@ -99,12 +98,29 @@ def read_guilist(guilist):
 
     return csv_arr, rows, cols
 
+def shortenName(string):
+    maxCh = 7
+    if len(string) > maxCh:
+        tale= ''
+        head = ''
+        name = string.split('_')[0]
+        kind = string.split('_')[1]
+        if len(kind) > 1:
+            tale = name[-(len(kind)-1):]
+        else:
+            tale = name[-3:]
+        head = name[:4]
+
+        return str(head + tale + '_' + kind)
+    else:
+        return string
+
 class MainWindow(QWidget):
     def __init__(self):
         super().__init__()
 
         box = QFrame(self)
-        box.resize(600,612)
+        box.resize(1700,1300)
 
         inst_list = read_guilist('csv/guilist.csv')
         rows = inst_list[1]
