@@ -1,12 +1,36 @@
-import time
-import datetime as dt
-from pandas.tseries.offsets import BDay
+import sys
+from PyQt5.QtWidgets import *
+from PyQt5.QtGui import *
+from PyQt5.QtCore import QCoreApplication, QRect, Qt
 
 
-s = '2017-09-22'
-d = dt.datetime.strptime(s, '%Y-%m-%d') - dt.timedelta(days=6)
-c = dt.datetime.strptime(s, '%Y-%m-%d') - BDay(6)
-d = dt.datetime.today() - dt.timedelta(days=6)
-c = dt.datetime.today() - BDay(6)
-print(d.strftime('%Y-%m-%d'))
-print(c.strftime('%Y-%m-%d'))
+class MainWindow(QScrollArea):
+    def __init__(self):
+        super().__init__()
+
+        # container = QScrollArea(self)
+        # container.resize(600,15000)
+
+
+        layout = QHBoxLayout(self)
+
+        text = ''
+        for i in range(0,1000):
+            text = '{0} {1}\n'.format(text, i)
+
+        for i in range(0,10):
+            textEdit = QTextEdit()
+            layout.addWidget(textEdit)
+            textEdit.setText(text)
+
+        self.resize(600,400)
+
+
+        self.show()
+
+
+if __name__ == '__main__':
+
+    app = QApplication(sys.argv)
+    ex = MainWindow()
+    sys.exit(app.exec_())

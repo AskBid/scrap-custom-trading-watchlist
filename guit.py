@@ -30,7 +30,7 @@ class Column(QTextEdit):
         inst_list = self.read_guilist(col_num)
 
         text = ''
-        with open('gui/label.css') as f:
+        with open('gui/labellist.css') as f:
                text = f.read()
 
         for inst in inst_list:
@@ -50,7 +50,7 @@ class Column(QTextEdit):
         imgpath = 'img/{}.png'.format(thisDatait.file_name)
         thisDatait.drawBar(imgpath, 226)
 
-        with open('gui/label.html') as f:
+        with open('gui/labelList.html') as f:
     	    html = f.read()
 
         html = html.replace('/*--bgcolor--*/', 'rgba(119, 212, 212, 0.7)')

@@ -1,0 +1,80 @@
+<style>
+
+td {
+    /*font-family: Andale Mono;*/
+    font-family: Lucida Console;
+    color: white;
+    vertical-align: bottom;
+}
+
+#bar {
+    padding: 0px 0px 0px 0px;
+    margin: 0px;
+    vertical-align: bottom;
+}
+
+
+/*cells*/
+#header_cell_ticker{
+    padding: 5px 0px 0px 5px;
+    text-align: left;
+    vertical-align: bottom;
+}
+
+#header_cell_price{
+    padding: 0px 0px 0px 5px;
+    text-align: left;
+    vertical-align: top;
+}
+
+#header_small{
+    padding: 1px 0px 10px 5px;
+    text-align: left;
+    vertical-align: top;
+}
+
+
+#values_cells1 {
+    background-color: rgba(55, 55, 55, 0.07);
+    /*background-color: rgba(155, 155, 155, 0.8);*/
+    text-align: right;
+    padding: 2px 3px 3px 0px; /*Top right Bottom left*/
+}
+
+#values_cells2 {
+    background-color: rgba(55, 55, 55, 0.12);
+    text-align: right;
+    padding: 2px 3px 3px 0px; /*Top right Bottom left*/
+}
+/*cells*/
+
+
+/*text*/
+#ticker {
+    font-family: Helvetica, sans-serif;
+    font-size: 18px;
+    font-weight: 700;
+    color: rgba(255, 255, 255, 0.6);
+}
+
+#price {
+    font-family: Helvetica, sans-serif;
+    font-size: 15px;
+    font-weight: 900;
+}
+
+
+#value {
+    font-size: 11px;
+    font-weight: 400;
+
+}
+
+#average {
+    font-size: 11px;
+    font-weight: 300;
+    color: rgba(255, 255, 255, 0.6);
+}
+/*text*/
+
+</style>
