@@ -2,7 +2,7 @@ import sys
 from os import listdir
 from PyQt5.QtWidgets import *
 from PyQt5.QtGui import *
-from PyQt5.QtCore import QCoreApplication, QRect, Qt
+from PyQt5.QtCore import QCoreApplication, QRect, Qt, QSize
 import datait
 
 class Box(QTextBrowser):
@@ -14,8 +14,11 @@ class Box(QTextBrowser):
         self.setText(self.write_label_html(self.inst))
         # self.setText('none')
         self.setVerticalScrollBarPolicy(Qt.ScrollBarAlwaysOff)
-        self.setMinimumWidth(180)
-        self.setMaximumWidth(200)
+        self.setHorizontalScrollBarPolicy(Qt.ScrollBarAlwaysOff)
+        self.setMinimumWidth(250)
+        self.setMaximumWidth(300)
+        self.setMinimumHeight(260)
+        self.setMaximumHeight(280)
         # self.adjustSize()
         # self.resize(500,500)
         self.setContentsMargins(0,0,0,0)
@@ -117,7 +120,7 @@ def shortenName(string):
     else:
         return string
 
-class MainWindow(QWidget):
+class MainWindow(QScrollArea):
     def __init__(self):
         super().__init__()
 
@@ -126,15 +129,18 @@ class MainWindow(QWidget):
         cols = inst_list[2]
         inst_list = inst_list[0]
 
-        print(inst_list)
+        container = QFrame(self)
+        container.resize(2800,1500)
 
-        layout = QGridLayout(self)
+
+        layout = QGridLayout(container)
 
         for row, line in enumerate(inst_list):
             for col, inst in enumerate(line):
                 i = (row * col)
                 QGridLayout.addWidget(layout, Box(inst), row, col)
 
+        self.setWidget(container)
 
         layout.setContentsMargins(0,0,0,0)
         layout.setSpacing(0)
@@ -143,36 +149,6 @@ class MainWindow(QWidget):
 
 
         self.show()
-
-def makeMainTable():
-    cols = 0
-    rows = 0
-
-    with open('gui/mainTableTemplate.html') as f:
-        template_html = f.readlines()
-
-    with open('csv/guilist.csv') as f:
-        csv = f.readlines()
-
-    rows = len(csv)
-
-    for line in csv:
-        line = line.replace('\n','').split(',')
-        cells_in_line = len(line)
-        if cells_in_line > cols:
-            cols = cells_in_line
-
-    html = ''
-
-    for line in template_html:
-        html = html + line
-
-    html = html.replace('<!--replaceme-->', '<tr><td>gg</td></tr>')
-
-    table_html = open('gui/mainTable.html', 'w')
-    table_html.write(html)
-
-    table_html.close()
 
 
 if __name__ == '__main__':
