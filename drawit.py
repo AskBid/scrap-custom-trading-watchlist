@@ -17,7 +17,9 @@ def drawBar(width = 226,
     left2open_px = (width / range52) * (dopen - low52)
     range_px = (width / range52) * drange
 
-    ims = cairo.ImageSurface(cairo.FORMAT_ARGB32, width, 25)
+
+
+    ims = cairo.ImageSurface(cairo.FORMAT_ARGB32, width, 6)
     cr = cairo.Context(ims)
 
     cr.set_line_width(0)
@@ -28,7 +30,16 @@ def drawBar(width = 226,
     cr.stroke()
 
     cr.set_source_rgb(255, 255, 255)
-    cr.rectangle(left2open_px, 2, range_px, 2)
+
+    if left2open_px > (width - 3):
+        left2open_px = width - 3
+        cr.rectangle(left2open_px, 2, range_px, 2)
+
+    if range_px < 3:
+        range_px = 3
+
+
+    cr.rectangle(left2open_px, 0, range_px, 6)
     cr.set_line_join(cairo.LINE_JOIN_MITER)
     cr.fill()
     cr.stroke()

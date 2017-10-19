@@ -6,22 +6,25 @@ from PyQt5.QtCore import QCoreApplication, QRect, Qt, QSize
 import datait
 from random import *
 
-class Box(QTextBrowser):
+class Box(QWidget):
 
     def __init__(self, inst):
         super().__init__()
 
         self.inst = inst
-        self.setText(self.write_label_html(self.inst))
+        layout = QHBoxLayout(self)
+
+        text = QTextBrowser(self)
+
+        text.setText(self.write_label_html(self.inst))
         # self.setText('none')
-        self.setVerticalScrollBarPolicy(Qt.ScrollBarAlwaysOff)
-        self.setHorizontalScrollBarPolicy(Qt.ScrollBarAlwaysOff)
-        self.setSizePolicy(QSizePolicy.Minimum, QSizePolicy.Minimum)
-        # self.setMinimumWidth(250)
-        # self.setMaximumWidth(300)
-        # self.setMinimumHeight(260)
-        # self.setMaximumHeight(280)
-        # self.adjustSize()
+        text.setVerticalScrollBarPolicy(Qt.ScrollBarAlwaysOff)
+        text.setHorizontalScrollBarPolicy(Qt.ScrollBarAlwaysOff)
+
+        layout.addWidget(text)
+
+        # self.resize(500,500)
+        layout.setContentsMargins(0,0,0,0)
         self.setContentsMargins(0,0,0,0)
 
         cstring ="""
@@ -42,7 +45,6 @@ class Box(QTextBrowser):
 
         self.setStyleSheet(cstring)
 
-
     def write_label_html(self, inst):
 
         labelhtml = 'gui/labellist.html'
@@ -56,7 +58,7 @@ class Box(QTextBrowser):
 
         thisDatait = datait.Calc_dataframe(inst, '2017-09-29', 30, '09:00', '09:26')
         imgpath = 'img/{}.png'.format(thisDatait.file_name)
-        thisDatait.drawBar2(imgpath, 260)
+        thisDatait.drawBar2(imgpath, 230)
 
         with open(labelhtml) as f:
     	    html = f.read()
@@ -122,9 +124,8 @@ class MainFrame(QScrollArea):
         inst_list = inst_list[0]
 
         container = QFrame(self)
-        container.setContentsMargins(0,0,0,0)
-        container.resize(3100,1300)
-
+        # container.setContentsMargins(0,0,0,0)
+        # container.resize(3000,1500)
 
 
         layout = QGridLayout(container)
@@ -134,7 +135,7 @@ class MainFrame(QScrollArea):
                 i = (row * col)
                 QGridLayout.addWidget(layout, Box(inst), row, col)
 
-        # container.setSizePolicy(QSizePolicy.Minimum, QSizePolicy.Minimum)
+        # self.setSizePolicy(QSizePolicy.Minimum, QSizePolicy.Minimum)
         self.setWidget(container)
 
 
@@ -142,8 +143,7 @@ class MainFrame(QScrollArea):
         layout.setContentsMargins(0,0,0,0)
         layout.setSpacing(0)
 
-        # container.setFixedSize(self.sizeHint())
-        # self.setFixedSize(self.sizeHint())
+        self.show()
 
 class Bar(QWidget):
     def __init__(self):
@@ -154,6 +154,23 @@ class Bar(QWidget):
         date.setText('2017-09-29')
         date.setFixedWidth(110)
         print(date.toPlainText())
+
+        layout.addWidget(date)
+        self.setFixedHeight(20)
+        layout.addStretch(1)
+
+        layout.setContentsMargins(0,0,0,0)
+        layout.setSpacing(0)
+
+class Bar2(QWidget):
+    def __init__(self):
+        super().__init__()
+
+        layout = QHBoxLayout(self)
+        date = QTextEdit()
+        date.setText('si puooo fareeeeeee')
+        date.setFixedWidth(110)
+        date
 
         layout.addWidget(date)
         self.setFixedHeight(20)
@@ -176,9 +193,10 @@ class MainWindow(QWidget):
         layout.setSpacing(0)
 
         self.setWindowTitle('SnP watchlist')
-        # layout.removeWidget(bar)
-        # bar = Bar2()
-        # layout.insertWidget(0,bar)
+        # self.resize(1700,1000)
+        layout.removeWidget(bar)
+        bar = Bar2()
+        layout.insertWidget(0,bar)
 
         self.show()
 
@@ -186,5 +204,5 @@ if __name__ == '__main__':
 
     app = QApplication(sys.argv)
     print(QDesktopWidget().availableGeometry())
-    ex = MainWindow()
+    ex = MainFrame()
     sys.exit(app.exec_())

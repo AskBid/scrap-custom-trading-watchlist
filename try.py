@@ -1,35 +1,42 @@
 import sys
+from os import listdir
 from PyQt5.QtWidgets import *
 from PyQt5.QtGui import *
-from PyQt5.QtCore import QCoreApplication, QRect, Qt
+import PyQt5.QtCore as QtCore
+import datait
 
-class MainWindow(QScrollArea):
-    def __init__(self):
-        super().__init__()
+class Example(QWidget):
 
-        container = QFrame(self)
-        container.resize(600,15000)
+   def __init__(self):
+      super(Example, self).__init__()
 
-        layout = QHBoxLayout(container)
+      self.initUI()
 
-        text = ''
-        for i in range(0,1000):
-            text = '{0} {1}\n'.format(text, i)
+   def initUI(self):
 
-        for i in range(0,10):
-            textEdit = QTextEdit()
-            layout.addWidget(textEdit)
-            textEdit.setText(text)
-            textEdit.setVerticalScrollBarPolicy(Qt.ScrollBarAlwaysOff)
+      cal = QCalendarWidget(self)
+      cal.setGridVisible(True)
+      cal.move(20, 20)
+      cal.clicked[QtCore.QDate].connect(self.showDate)
 
-        self.setWidget(container)
+      self.lbl = QLabel(self)
+      date = cal.selectedDate()
+      self.lbl.setText(date.toString())
+      self.lbl.move(20, 200)
 
-        self.resize(625,400)
+      self.setGeometry(100,100,300,300)
+      self.setWindowTitle('Calendar')
+      self.show()
 
-        self.show()
-        
+   def showDate(self, date):
+
+      self.lbl.setText(date.toString())
+
+def main():
+
+   app = QApplication(sys.argv)
+   ex = Example()
+   sys.exit(app.exec_())
+
 if __name__ == '__main__':
-
-    app = QApplication(sys.argv)
-    ex = MainWindow()
-    sys.exit(app.exec_())
+   main()

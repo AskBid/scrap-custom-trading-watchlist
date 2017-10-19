@@ -68,7 +68,7 @@ class Calc_dataframe():
 
         return df
 
-    def drawBar(self, path, width):
+    def drawBar2(self, path, width):
         day = self.dayDataFrame
         low52 = day['l52'].values[-1]
         drawBar(width,
@@ -246,7 +246,7 @@ if __name__ == '__main__':
     pd.set_option('display.max_columns', 500)
     pd.set_option('display.width', 1000)
 
-    calc = Calc_dataframe('ES_F','2017-09-29',30,'09:00','09:26')
+    calc = Calc_dataframe('SPX_i','2017-09-29',30,'09:00','09:26')
     print(calc.dayDataFrame)
     print('\n')
 
