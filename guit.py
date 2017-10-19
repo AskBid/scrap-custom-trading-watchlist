@@ -27,7 +27,7 @@ class Box(QTextBrowser):
         cstring ="""
         QTextEdit {
             border: 0;
-            background-color: #----;
+            background-color: #-.-.-.-.-.-.;
             margin: 0px;
             padding-left:0;
             padding-top:0;
@@ -36,9 +36,9 @@ class Box(QTextBrowser):
         }
         """
 
-        ncol = randint(300000, 999999)
+        ncol = randint(4, 9)
 
-        cstring = cstring.replace('----', str(ncol))
+        cstring = cstring.replace('-.', str(ncol))
 
         self.setStyleSheet(cstring)
 
