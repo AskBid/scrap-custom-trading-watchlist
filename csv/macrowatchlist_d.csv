@@ -1,0 +1,8 @@
+NASDAQ_i,https://www.bloomberg.com/quote/NDX:IND,empty
+NASDAQ_F,http://www.marketwatch.com/investing/future/nasdaq%20100%20futures,https://www.cmegroup.com/trading/equity-index/us-index/e-mini-nasdaq-100.html
+SPY_i,https://www.bloomberg.com/quote/SPY:US,empty
+SPX_i,https://www.bloomberg.com/quote/SPX:IND,empty
+VIX_i,https://www.bloomberg.com/quote/VIX:IND,empty
+VIX_F,http://www.marketwatch.com/investing/future/vix%20futures,empty
+ES_F,http://www.marketwatch.com/investing/future/sp%20500%20futures,https://www.cmegroup.com/trading/equity-index/us-index/e-mini-sandp500.html
+EURODOLLAR_F,http://www.marketwatch.com/investing/future/3-month%20euro%20dollar,http://www.cmegroup.com/trading/interest-rates/stir/eurodollar.html
