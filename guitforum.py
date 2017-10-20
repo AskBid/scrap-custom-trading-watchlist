@@ -1,7 +1,9 @@
 import sys
+from os import listdir
 from PyQt5.QtWidgets import *
 from PyQt5.QtGui import *
-from PyQt5.QtCore import *
+from PyQt5.QtCore import QCoreApplication, QRect, Qt, QSize
+import datait
 from random import *
 
 class Box(QTextBrowser):
@@ -9,7 +11,11 @@ class Box(QTextBrowser):
     def __init__(self):
         super().__init__()
 
-        self.setText('''
+        layout = QHBoxLayout(self)
+
+        text = QTextBrowser(self)
+
+        text.setText('''
             <table border="0" cellspacing="0" cellpadding="5" style="background-color: rgba(119, 212, 212, 0.7);">
                 <tr>
                     <td width="100">
@@ -25,15 +31,18 @@ class Box(QTextBrowser):
 
         ''')
 
-        self.setVerticalScrollBarPolicy(Qt.ScrollBarAlwaysOff)
-        self.setHorizontalScrollBarPolicy(Qt.ScrollBarAlwaysOff)
+        text.setVerticalScrollBarPolicy(Qt.ScrollBarAlwaysOff)
+        text.setHorizontalScrollBarPolicy(Qt.ScrollBarAlwaysOff)
 
+        layout.addWidget(text)
+
+        layout.setContentsMargins(0,0,0,0)
         self.setContentsMargins(0,0,0,0)
 
         cstring ="""
-        QTextBrowser {
+        QTextEdit {
             border: 0;
-            background-color: #<---->;
+            background-color: #----;
             margin: 0px;
             padding-left:0;
             padding-top:0;
@@ -44,7 +53,7 @@ class Box(QTextBrowser):
 
         ncol = randint(300000, 999999)
 
-        cstring = cstring.replace('<---->', str(ncol))
+        cstring = cstring.replace('----', str(ncol))
 
         self.setStyleSheet(cstring)
 
@@ -54,6 +63,8 @@ class MainFrame(QScrollArea):
         super().__init__()
 
         container = QFrame(self)
+        # container.setContentsMargins(0,0,0,0)
+        # container.resize(3000,1500)
 
 
         layout = QGridLayout(container)
@@ -64,8 +75,6 @@ class MainFrame(QScrollArea):
 
         self.setWidget(container)
 
-        container.setSizePolicy(QSizePolicy.Minimum, QSizePolicy.Minimum)
-
         layout.setContentsMargins(0,0,0,0)
         layout.setSpacing(0)
 
@@ -75,5 +84,6 @@ class MainFrame(QScrollArea):
 if __name__ == '__main__':
 
     app = QApplication(sys.argv)
+    print(QDesktopWidget().availableGeometry())
     ex = MainFrame()
     sys.exit(app.exec_())

@@ -13,15 +13,9 @@ class Box(QTextBrowser):
 
         self.inst = inst
         self.setText(self.write_label_html(self.inst))
-        # self.setText('none')
         self.setVerticalScrollBarPolicy(Qt.ScrollBarAlwaysOff)
         self.setHorizontalScrollBarPolicy(Qt.ScrollBarAlwaysOff)
         self.setSizePolicy(QSizePolicy.Minimum, QSizePolicy.Minimum)
-        # self.setMinimumWidth(250)
-        # self.setMaximumWidth(300)
-        # self.setMinimumHeight(260)
-        # self.setMaximumHeight(280)
-        # self.adjustSize()
         self.setContentsMargins(0,0,0,0)
 
         cstring ="""
@@ -36,11 +30,13 @@ class Box(QTextBrowser):
         }
         """
 
-        ncol = randint(4, 9)
+        ncol = randint(222222, 999999)
 
-        cstring = cstring.replace('-.', str(ncol))
+        cstring = cstring.replace('-.-.-.-.-.-.', str(ncol))
 
         self.setStyleSheet(cstring)
+
+        # self.resize(600,300)
 
 
     def write_label_html(self, inst):
@@ -56,7 +52,7 @@ class Box(QTextBrowser):
 
         thisDatait = datait.Calc_dataframe(inst, '2017-09-29', 30, '09:00', '09:26')
         imgpath = 'img/{}.png'.format(thisDatait.file_name)
-        thisDatait.drawBar2(imgpath, 260)
+        thisDatait.drawBar2(imgpath, 200)
 
         with open(labelhtml) as f:
     	    html = f.read()
@@ -123,7 +119,7 @@ class MainFrame(QScrollArea):
 
         container = QFrame(self)
         container.setContentsMargins(0,0,0,0)
-        container.resize(3100,1300)
+        container.resize(3700,1700)
 
 
 
