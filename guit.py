@@ -28,11 +28,9 @@ class Box(QTextBrowser):
             padding-right:0;
         }
         """
-        ncol = randint(222222, 999999)
-        cstring = cstring.replace('-.-.-.-.-.-.', str(ncol))
+        ncol = randint(2, 9)
+        cstring = cstring.replace('-.', str(ncol))
         self.setStyleSheet(cstring)
-
-
 
         self.document().contentsChange.connect(lambda: self.customGeometry())
         self.setSizePolicy(QSizePolicy.Preferred, QSizePolicy.Preferred)
