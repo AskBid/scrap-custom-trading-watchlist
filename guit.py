@@ -8,15 +8,14 @@ from random import *
 
 class Box(QTextBrowser):
 
-    def __init__(self, inst):
-        super().__init__()
+    def __init__(self, inst, parent=None):
+        QTextBrowser.__init__(self, parent)
+        self.setContentsMargins(0, 0, 0, 0)
+        self.setVerticalScrollBarPolicy(Qt.ScrollBarAlwaysOff)
+        self.setHorizontalScrollBarPolicy(Qt.ScrollBarAlwaysOff)
 
         self.inst = inst
         self.setText(self.write_label_html(self.inst))
-        self.setVerticalScrollBarPolicy(Qt.ScrollBarAlwaysOff)
-        self.setHorizontalScrollBarPolicy(Qt.ScrollBarAlwaysOff)
-        self.setSizePolicy(QSizePolicy.Minimum, QSizePolicy.Minimum)
-        self.setContentsMargins(0,0,0,0)
 
         cstring ="""
         QTextEdit {
@@ -29,14 +28,24 @@ class Box(QTextBrowser):
             padding-right:0;
         }
         """
-
         ncol = randint(222222, 999999)
-
         cstring = cstring.replace('-.-.-.-.-.-.', str(ncol))
-
         self.setStyleSheet(cstring)
 
-        # self.resize(600,300)
+
+
+        self.document().contentsChange.connect(lambda: self.customGeometry())
+        self.setSizePolicy(QSizePolicy.Preferred, QSizePolicy.Preferred)
+        self.setContentsMargins(0, 0, 0, 0)
+
+    def customGeometry(self):
+        if self.isVisible():
+            self.setFixedWidth(self.document().idealWidth())
+            self.setFixedHeight(self.document().size().height())
+
+    def showEvent(self, event):
+        self.customGeometry()
+        QTextBrowser.showEvent(self, event)
 
 
     def write_label_html(self, inst):
@@ -87,9 +96,6 @@ class Box(QTextBrowser):
 
         return html
 
-    def drawBar():
-        pass
-
 def read_guilist(guilist):
     col_list = []
     rows = 0
@@ -109,37 +115,28 @@ def read_guilist(guilist):
     return csv_arr, rows, cols
 
 class MainFrame(QScrollArea):
-    def __init__(self):
-        super().__init__()
-
+    def __init__(self, parent=None):
         inst_list = read_guilist('csv/guilist.csv')
         rows = inst_list[1]
         cols = inst_list[2]
         inst_list = inst_list[0]
 
+        QScrollArea.__init__(self, parent)
         container = QFrame(self)
-        container.setContentsMargins(0,0,0,0)
-        container.resize(3700,1700)
-
-
 
         layout = QGridLayout(container)
+        layout.setSpacing(0)
+        layout.setContentsMargins(0, 0, 0, 0)
+        self.show()
 
         for row, line in enumerate(inst_list):
             for col, inst in enumerate(line):
-                i = (row * col)
-                QGridLayout.addWidget(layout, Box(inst), row, col)
+                box = Box(inst, container)
+                layout.addWidget(box, row, col)
+                box.show()
 
-        # container.setSizePolicy(QSizePolicy.Minimum, QSizePolicy.Minimum)
+
         self.setWidget(container)
-
-
-
-        layout.setContentsMargins(0,0,0,0)
-        layout.setSpacing(0)
-
-        # container.setFixedSize(self.sizeHint())
-        # self.setFixedSize(self.sizeHint())
 
 class Bar(QWidget):
     def __init__(self):
@@ -181,6 +178,7 @@ class MainWindow(QWidget):
 if __name__ == '__main__':
 
     app = QApplication(sys.argv)
-    print(QDesktopWidget().availableGeometry())
+    # print(QDesktopWidget().availableGeometry())
     ex = MainWindow()
+    ex.show()
     sys.exit(app.exec_())

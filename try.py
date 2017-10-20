@@ -5,38 +5,36 @@ from PyQt5.QtGui import *
 import PyQt5.QtCore as QtCore
 import datait
 
+
 class Example(QWidget):
 
-   def __init__(self):
-      super(Example, self).__init__()
+    def __init__(self):
+        super(Example, self).__init__()
 
-      self.initUI()
+        self.initUI()
 
-   def initUI(self):
+    def initUI(self):
 
-      cal = QCalendarWidget(self)
-      cal.setGridVisible(True)
-      cal.move(20, 20)
-      cal.clicked[QtCore.QDate].connect(self.showDate)
+        lcd = QLCDNumber(self)
+        sld = QSlider(QtCore.Qt.Horizontal, self)
 
-      self.lbl = QLabel(self)
-      date = cal.selectedDate()
-      self.lbl.setText(date.toString())
-      self.lbl.move(20, 200)
+        vbox = QVBoxLayout()
+        vbox.addWidget(lcd)
+        vbox.addWidget(sld)
 
-      self.setGeometry(100,100,300,300)
-      self.setWindowTitle('Calendar')
-      self.show()
+        self.setLayout(vbox)
+        sld.valueChanged.connect(lcd.display)
 
-   def showDate(self, date):
-
-      self.lbl.setText(date.toString())
+        self.setGeometry(300, 300, 250, 150)
+        self.setWindowTitle('Signal & slot')
+        self.show()
 
 def main():
 
-   app = QApplication(sys.argv)
-   ex = Example()
-   sys.exit(app.exec_())
+    app = QApplication(sys.argv)
+    ex = Example()
+    sys.exit(app.exec_())
+
 
 if __name__ == '__main__':
-   main()
+    main()

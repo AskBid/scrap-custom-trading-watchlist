@@ -1,7 +1,6 @@
 .DS_Store
 *.ipynb
 *.pyc
-*.db
 *.ods#
 logs
 bin
