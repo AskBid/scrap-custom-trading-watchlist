@@ -2,121 +2,183 @@ import sys
 from os import listdir
 from PyQt5.QtWidgets import *
 from PyQt5.QtGui import *
-from PyQt5.QtCore import QCoreApplication, QRect, Qt
+from PyQt5.QtCore import QCoreApplication, QRect, Qt, QSize
 import datait
+from random import *
 
-class Column(QTextEdit):
+class Box(QTextBrowser):
 
-    def __init__(self, col_num):
-        super().__init__()
+    def __init__(self, inst, parent=None):
+        QTextBrowser.__init__(self, parent)
+        self.setContentsMargins(0, 0, 0, 0)
+        self.setVerticalScrollBarPolicy(Qt.ScrollBarAlwaysOff)
+        self.setHorizontalScrollBarPolicy(Qt.ScrollBarAlwaysOff)
 
-        self.col_num = col_num
-        self.setText(self.write_col_html(self.col_num))
+        self.inst = inst
+        self.setText(self.write_label_html(self.inst))
 
-        self.adjustSize()
-        self.setStyleSheet("""
+        cstring ="""
         QTextEdit {
             border: 0;
-            background-color: #838ea0;
-            margin: 0px; padding-left:0;
+            background-color: #-.-.-.-.-.-.;
+            margin: 0px;
+            padding-left:0;
             padding-top:0;
             padding-bottom:0;
             padding-right:0;
         }
-        """)
+        """
+        ncol = randint(222222, 999999)
+        cstring = cstring.replace('-.-.-.-.-.-.', str(ncol))
+        self.setStyleSheet(cstring)
 
-    def write_col_html(self, col_num):
-        inst_list = self.read_guilist(col_num)
 
-        text = ''
-        with open('gui/label.css') as f:
-               text = f.read()
 
-        for inst in inst_list:
-            if 'Fr' not in inst:
-                text = text + self.write_label_html(inst)
+        self.document().contentsChange.connect(lambda: self.customGeometry())
+        self.setSizePolicy(QSizePolicy.Preferred, QSizePolicy.Preferred)
+        self.setContentsMargins(0, 0, 0, 0)
 
-        return text
+    def customGeometry(self):
+        if self.isVisible():
+            self.setFixedWidth(self.document().idealWidth())
+            self.setFixedHeight(self.document().size().height())
+
+    def showEvent(self, event):
+        self.customGeometry()
+        QTextBrowser.showEvent(self, event)
+
 
     def write_label_html(self, inst):
 
-        if inst == '':
-            return '<br>'
+        labelhtml = 'gui/labellist.html'
 
-        thisInstData = datait.Calc_dataframe(inst, 0)
+        if '_Fr' in inst or '_YC' in inst or inst == '':
+            # with open(labelhtml) as f:
+        	#     html = f.read()
+            return ''
 
-        with open('gui/label.html') as f:
+        print(inst)
+
+        thisDatait = datait.Calc_dataframe(inst, '2017-09-29', 30, '09:00', '09:26')
+        imgpath = 'img/{}.png'.format(thisDatait.file_name)
+        thisDatait.drawBar2(imgpath, 200)
+
+        with open(labelhtml) as f:
     	    html = f.read()
 
         html = html.replace('/*--bgcolor--*/', 'rgba(119, 212, 212, 0.7)')
-        html = html.replace('<!--name-->', str(thisInstData.file_name))
-        html = html.replace('<!--prc-->', str(thisInstData.price))
-        html = html.replace('<!--prc_C-->', str(thisInstData.getYClose()))
-        html = html.replace('<!--prc_O-->', str(thisInstData.getOpen()))
-        html = html.replace('<!--val03-->', str(thisInstData.getPerChange('open','price')))
-        html = html.replace('<!--avg03-->', str(thisInstData.getPerChange_avg()))
-        html = html.replace('<!--val02-->', str(thisInstData.dayr))
-        html = html.replace('<!--avg02-->', str(thisInstData.getDayR_avg()))
-        html = html.replace('<!--val01-->', str(thisInstData.getPerChange('open','range')))
-        html = html.replace('<!--avg01-->', str(thisInstData.getPerChange_avg()))
-        html = html.replace('<!--val00-->', str(thisInstData.getVolume()))
-        html = html.replace('<!--avg00-->', '')
-        html = html.replace('<!--val13-->', '')
-        html = html.replace('<!--avg13-->', '')
-        html = html.replace('<!--val12-->', '')
-        html = html.replace('<!--avg12-->', '')
-        html = html.replace('<!--val11-->', '')
-        html = html.replace('<!--avg11-->', '')
-        html = html.replace('<!--val10-->', '')
-        html = html.replace('<!--avg10-->', '')
+        html = html.replace('<!--name-->', str(thisDatait.file_name))
+        html = html.replace('<!--prc-->', str(thisDatait.price))
+        html = html.replace('<!--prc_C-->', thisDatait.getYClose())
+        html = html.replace('<!--prc_O-->', thisDatait.getOpen())
+        html = html.replace('<!--row00-->', thisDatait.getPcChange('open','price'))
+        html = html.replace('<!--row02-->', thisDatait.getPcChange_avg('abs'))
+        html = html.replace('<!--row03-->', str(thisDatait.dayr))
+        html = html.replace('<!--row04-->', thisDatait.getDayR_avg())
+        html = html.replace('<!--row05-->', thisDatait.getPcChange('open','range'))
+        html = html.replace('<!--row06-->', thisDatait.getPcChange_avg('abs'))
+        html = html.replace('<!--row07-->', thisDatait.getVolume())
+        html = html.replace('<!--row08-->', thisDatait.getVolume_avg())
+        html = html.replace('<!--row09-->', thisDatait.getVolR_rt())
+        html = html.replace('<!--row10-->', thisDatait.getVolR_rt_avg())
+        html = html.replace('<!--row11-->', thisDatait.getVolume_std())
+        html = html.replace('<!--row12-->', '')
+        html = html.replace('<!--row13-->', '')
+        html = html.replace('<!--row14-->', '')
+        html = html.replace('<!--row15-->', '')
+        html = html.replace('<!--row16-->', '')
+        html = html.replace('<!--imgpath-->', imgpath)
+
+        with open('gui/labellist.css') as f:
+               text = f.read()
+
+        html = str(text) + html
 
         return html
 
-    def drawBar():
-        pass
+def read_guilist(guilist):
+    col_list = []
+    rows = 0
+    cols = 0
 
-    def read_guilist(self, col):
-        col_list = []
+    with open(guilist) as f:
+        csv = f.readlines()
 
-        with open('guilist.csv') as f:
-            csv = f.readlines()
+    rows = len(csv)
+    csv_arr = []
 
-        for line in csv:
-            line = line.replace('\n','').split(',')
-            file_name = line[col]
-            col_list.append(file_name)
+    for line in csv:
+        line = line.replace('\n','').split(',')
+        cols = len(line)
+        csv_arr.append(line)
 
-        return col_list
+    return csv_arr, rows, cols
+
+class MainFrame(QScrollArea):
+    def __init__(self, parent=None):
+        inst_list = read_guilist('csv/guilist.csv')
+        rows = inst_list[1]
+        cols = inst_list[2]
+        inst_list = inst_list[0]
+
+        QScrollArea.__init__(self, parent)
+        container = QFrame(self)
+
+        layout = QGridLayout(container)
+        layout.setSpacing(0)
+        layout.setContentsMargins(0, 0, 0, 0)
+        self.show()
+
+        for row, line in enumerate(inst_list):
+            for col, inst in enumerate(line):
+                box = Box(inst, container)
+                layout.addWidget(box, row, col)
+                box.show()
 
 
+        self.setWidget(container)
 
-class MainWindow(QScrollArea):
+class Bar(QWidget):
     def __init__(self):
         super().__init__()
 
         layout = QHBoxLayout(self)
-        layout.setAlignment(Qt.AlignTop)
+        date = QTextEdit()
+        date.setText('2017-09-29')
+        date.setFixedWidth(110)
+        print(date.toPlainText())
 
-        cols = []
-        for i in range(0,10):
-            col = Column(i)
-            cols.append(col)
-        for col in cols:
-            layout.addWidget(col)
-
+        layout.addWidget(date)
+        self.setFixedHeight(20)
+        layout.addStretch(1)
 
         layout.setContentsMargins(0,0,0,0)
         layout.setSpacing(0)
-        self.setWindowTitle('SnP watchlist')
-        self.resize(1000,1000)
 
+class MainWindow(QWidget):
+    def __init__(self):
+        super().__init__()
+
+        layout = QVBoxLayout(self)
+        bar = Bar()
+        layout.addWidget(bar)
+
+        layout.addWidget(MainFrame())
+
+        layout.setContentsMargins(0,0,0,0)
+        layout.setSpacing(0)
+
+        self.setWindowTitle('SnP watchlist')
+        # layout.removeWidget(bar)
+        # bar = Bar2()
+        # layout.insertWidget(0,bar)
 
         self.show()
-
 
 if __name__ == '__main__':
 
     app = QApplication(sys.argv)
-    #print(QDesktopWidget().availableGeometry())
+    # print(QDesktopWidget().availableGeometry())
     ex = MainWindow()
+    ex.show()
     sys.exit(app.exec_())

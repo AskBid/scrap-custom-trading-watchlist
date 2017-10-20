@@ -1,72 +1,86 @@
 import sys
 from os import listdir
-from math import isnan
+from math import isnan, log10
 import ast #reads array strings as array
 
 import numpy as np
 import pandas as pd
 
-from scrapit import getDataFormat
+import time
+import datetime as dt
+from pandas.tseries.offsets import BDay #to make operation betwen dates where only BusinessDays are considered
 
-def isnumber(x):
-    try:
-        float(x)
-        return True
-    except:
-        return False
+from scrapit import getDataFormat, getTimestamp
+from drawit import drawBar
+
+import sqlite3
 
 class Calc_dataframe():
 
-    def __init__(self, file_name, date_offset):
+    def __init__(self,
+        file_name,
+        enddate,
+        sample_days,
+        period_start,
+        period_end):
 
         self.file_name = file_name
-        self.date_offset = date_offset
+        self.enddate = enddate
+        self.sample_days = sample_days
+        self.period_start = getTimestamp(period_start)
+        self.period_end = getTimestamp(period_end)
+
         self.dayDataFrame = self.readFile() #all calculation are done on this not on self.price for instance as that it is a string only given as information
+
         self.price = self.getPrice()
         self.dayr = self.getDayR()
         self.day52r = self.get52wR()
 
     def readFile(self):
-        with open('data/data_16-18/{}'.format(self.file_name + '.csv')) as f:
-    	    linelist = f.readlines()
 
-        #from list of strings to list of lists
-        for i,day in enumerate(linelist):
-            linelist[i] = ast.literal_eval(day)
+        conn = sqlite3.connect("scrapData.db")
 
-        #make panda DataFrames
-        labelCol = list(getDataFormat().keys())
-        labelCol.pop(0)
-        labelCol.pop(-1)
+        start_date = dt.datetime.strptime(self.enddate, '%Y-%m-%d') - BDay(self.sample_days)
+        start_date = start_date.strftime('%Y-%m-%d')
+        start_date_str = "'" + start_date + "'"
+        end_date_str = "'" + self.enddate + "'"
 
-        labelRows = []
+        df = pd.read_sql_query('''
+            SELECT * FROM {0}
+            WHERE date BETWEEN {1} AND {2}
+            AND timestamp BETWEEN {3} AND {4};
+            '''.format(
+            self.file_name,
+            start_date_str,
+            end_date_str,
+            self.period_start,
+            self.period_end), conn)
 
-        #from list of list with strings to list of lists with float,int
-        newlinelist = []
+        df.drop('day', axis=1, inplace=True)
+        df.drop('ticker', axis=1, inplace=True)
 
-        for line in linelist:
-            newline = []
-            labelRows.append(line[0].split(' ')[0]) #modify here to decide how the rows label (date) format is
-            for i in range(1,10):
-                try:
-                    if '.' in line[i]:
-                        newline.append(float(line[i]))
-                    else:
-                        newline.append(int(line[i]))
-                except:
-                    newline.append('-')
-            newlinelist.append(newline)
+        df.set_index(['date', 'time'], inplace=True)
 
-        x = self.date_offset
+        try:
+            df = df[df.applymap(isnumber)] #makes sure that if there is a bad recording that gets NaN in dataframe so it does not affect calculation
+        except:
+            print('''something went wrong with the DB selection in datait.py and no value where selected''')
 
-        if x == 0:
-            dayDataFrame = pd.DataFrame(newlinelist, index = labelRows, columns = labelCol)
-        else:
-            dayDataFrame = pd.DataFrame(newlinelist[:-x], index = labelRows[:-x], columns = labelCol)
+        return df
 
-        dayDataFrame = dayDataFrame[dayDataFrame.applymap(isnumber)] #makes sure that if there is a bad recording that gets NaN in dataframe so it does not affect calculation
+    def drawBar2(self, path, width):
+        day = self.dayDataFrame
+        low52 = day['l52'].values[-1]
+        drawBar(width,
+                low52,
+                self.day52r,
+                day['open'].values[-1],
+                day['dayr'].values[-1],
+                path)
 
-        return dayDataFrame
+        return '{} bar has been drawn'.format(path)
+
+    ### :STATISTIC FUNCTION ###
 
     def getPrice(self):
         day = self.dayDataFrame
@@ -76,96 +90,187 @@ class Calc_dataframe():
     def getOpen(self):
         day = self.dayDataFrame
         open_ = day['open'].values[-1]
-        return self.writeVal(open_)
+        return writePrice(open_, self.price)
 
     def getYClose(self):
         day = self.dayDataFrame
         close = day['yclose'].values[-1]
-        return self.writeVal(close)
+        return writePrice(close, self.price)
 
     def get52wR(self):
         day = self.dayDataFrame
-        day52r = day['52h'].values[-1] - day['52l'].values[-1]
+        day52r = day['h52'].values[-1] - day['l52'].values[-1]
         return day52r
 
     def getDayR(self):
         day = self.dayDataFrame
         self.dayDataFrame['dayr'] = day['dayh'] - day['dayl'] #we actually add a column to the day dataframe
-        return self.writeVal(self.dayDataFrame['dayr'].values[-1])
+        return writePrice(self.dayDataFrame['dayr'].values[-1], self.price)
 
     def getDayR_avg(self):
         day = self.dayDataFrame
-        dayr_avg = day['dayr'].sum() / day['dayr'].dropna(axis=0).size
-        return self.writeVal(dayr_avg)
+        return writePrice(day['dayr'].mean())
 
-    def getPerChange(self, start_type, prc_or_R): #start_type defines if the starting price to calculate the move of the day is yesterday 'close' price or todays 'open' price
+    def getDayR_med(self):
         day = self.dayDataFrame
-        self.dayDataFrame['delta'] = day['price'] - day[start_type]
+        return writePrice(day['dayr'].median())
+
+    def getDayR_std(self):
+        day = self.dayDataFrame
+        return writePrice(day['dayr'].std())
+
+    def get_describe(self):
+        day = self.dayDataFrame
+        x = day['changept'].describe()
+        return x
+
+    def getPcChange(self, start_type, prc_or_R): #start_type defines if the starting price to calculate the move of the day is yesterday 'close' price or todays 'open' price
+        day = self.dayDataFrame
+        self.dayDataFrame['changept'] = day['price'] - day[start_type]
         day = self.dayDataFrame
         if prc_or_R == 'price':
-            self.dayDataFrame['change'] = day['delta'] / day[start_type]
-            return writePer(self.dayDataFrame['change'].values[-1])
+            self.dayDataFrame['changepc'] = day['changept'] / day[start_type]
+            return writePercent(self.dayDataFrame['changepc'].values[-1])
         if prc_or_R == 'range':
-            self.dayDataFrame['change'] = day['delta'] / self.day52r
-            return writePer(self.dayDataFrame['change'].values[-1])
+            self.dayDataFrame['changepc'] = day['changept'] / self.day52r
+            return writePercent(self.dayDataFrame['changepc'].values[-1])
         return '-err'
 
-    def getPerChange_avg(self):
-        day = self.dayDataFrame
-        dayr_avg = day['change'].sum() / day['change'].dropna(axis=0).size
-        return writePer(dayr_avg)
+    def getPcChange_avg(self, switch_abs = None):
+        if switch_abs == 'abs':
+            day = self.dayDataFrame['changepc'].abs()
+        else:
+            day = self.dayDataFrame['changepc']
+        dayr_avg = day.mean()
+        return writePercent(dayr_avg)
 
     def getVolume(self):
         day = self.dayDataFrame
         vol = day['vol'].values[-1]
-        return writePrice(vol)
+        return writeVolume(vol)
 
-    def writeVal(self, digit):
-        if digit == '-' or isnan(digit):
+    def getVolume_avg(self):
+        day = self.dayDataFrame
+        return writeVolume(day['vol'].mean())
+
+    def getVolume_med(self):
+        day = self.dayDataFrame
+        return writeVolume(day['vol'].median())
+
+    def getVolume_std(self):
+        day = self.dayDataFrame
+        return writeVolume(day['vol'].std())
+
+    def getVolR_rt(self):
+        day = self.dayDataFrame
+        # self.dayDataFrame['thickness'] = (day['vol'] / day['dayr'])
+        try:
+            self.dayDataFrame['thinness'] = (day['dayr'] / day['vol'])*1000000
+        except:
             return '-'
-        price = self.price.split('.')
-        if len(price) == 1:
-            digit = round(digit)
-            return ("{:,}".format(digit).replace(' ',''))
-        if len(price[0].replace(' ','')) == 1:
-            return ("{:20,.4f}".format(digit).replace(' ',''))
-        return ("{:20,.2f}".format(digit)).replace(' ','')
+        return writeVolume(self.dayDataFrame['thinness'].values[-1])
 
-def writePrice(digit):
-    if digit == '-' or isnan(digit):
-        return '-'
-    string = str(digit).split('.')
-    if len(string) == 1:
-        return ("{:,}".format(digit).replace(' ',''))
-    if len(string[0].replace(' ','')) == 1:
-        return ("{:20,.4f}".format(digit).replace(' ',''))
-    # round(digit[1], 2)
-    return ("{:20,.2f}".format(digit)).replace(' ','')
+    def getVolR_rt_avg(self):
+        day = self.dayDataFrame
+        try:
+            VolR_rt_avg = day['thinness'].sum() / day['thinness'].dropna(axis=0).size
+        except:
+            return '-'
+        return writeVolume(VolR_rt_avg)
 
-def writePer(digit):
-    if digit == '-':
+    ### /STATISTIC FUNCTION ###
+
+def writePrice(num, price = None):
+    if num == '-' or isnan(num):
         return '-'
-    string = str(digit).split('.')
+
+    if price == None:
+        price = str(num).split('.')
+    else:
+        price = price.split('.')
+
+    if len(price) == 1:
+        num = round(num)
+        return ("{:,}".format(num).replace(' ',''))
+    if len(price[0].replace(' ','')) == 1:
+        return ("{:20,.4f}".format(num).replace(' ',''))
+    return ("{:20,.2f}".format(num)).replace(' ','')
+
+def writePercent(num):
+    if num == '-':
+        return '-'
+    string = str(num).split('.')
     # if string[1].count('0') > 1:
-    return ("{:.2%}".format(digit))
-    # return ("{:.1%}".format(digit))
+    return ("{:.2%}".format(num))
+    # return ("{:.1%}".format(num))
 
+def writeVolume(num):
+    i_offset = 15 # changepc this if you extend the symbols!!! (you copied this code)
+    prec = 3
+    fmt = '.{p}g'.format(p=prec)
+    symbols = ['Y', 'T', 'G', 'M', 'k', '', 'm', 'u', 'n']
+
+    if num == '-' or isnan(num):
+        return '-'
+    if num == 0:
+        return '0'
+
+    e = log10(abs(num))
+    if e >= i_offset + 3:
+        return '{:{fmt}}'.format(num, fmt=fmt)
+    for i, sym in enumerate(symbols):
+        e_thresh = i_offset - 3 * i
+        if e >= e_thresh:
+            return '{:{fmt}}{sym}'.format(num/10.**e_thresh, fmt=fmt, sym=sym)
+    return '{:{fmt}}'.format(num, fmt=fmt)
+
+def isnumber(x):
+    try:
+        float(x)
+        return True
+    except:
+        return False
+
+
+def writeNum(num):
+    if num == '-' or isnan(num):
+        return '-'
+    string = str(num)
+    if len(string[0]) > 1:
+        return ("{:20,.0f}".format(num)).replace(' ','')
+    return ("{:20,.2f}".format(num)).replace(' ','')
 
 if __name__ == '__main__':
-    calc= Calc_dataframe('AUDUSD.S',0)
-    print(calc.getPerChange('open','price'))
-    print(calc.getPerChange_avg())
+    # pd.set_option('display.height', 1000)
+    pd.set_option('display.max_rows', 500)
+    pd.set_option('display.max_columns', 500)
+    pd.set_option('display.width', 1000)
+
+    calc = Calc_dataframe('SPX_i','2017-09-29',30,'09:00','09:26')
     print(calc.dayDataFrame)
+    print('\n')
 
-    print(calc.getPerChange('open','range'))
-    print(calc.getPerChange_avg())
-    print(calc.dayDataFrame)
+    print('----> ' + calc.file_name +  ' <----''\n')
 
-    print('price = ' + calc.price)
-    print('open = {}'.format(calc.getOpen()))
-    print('yclose = {}'.format(calc.getYClose()))
-    print('dayR = {}'.format(calc.dayr))
-    print('52r = {}'.format(calc.day52r))
-    print('dayR_avg = {}'.format(calc.getDayR_avg()))
+    print('prc chgPc =  {}'.format(calc.getPcChange('open','price')))
+    print('avg "=       {}'.format(calc.getPcChange_avg('abs')))
 
-    print('VOLUME = {}'.format(calc.getVolume()))
+    print('rng chgPc =  {}'.format(calc.getPcChange('open','range')))
+    print('avg "=       {}'.format(calc.getPcChange_avg('abs')))
+
+    print('price =      ' + calc.price)
+    print('open =       {}'.format(calc.getOpen()))
+    print('yclose =     {}'.format(calc.getYClose()))
+    print('dayR =       {}'.format(calc.dayr))
+    print('dayR_avg =   {}'.format(calc.getDayR_avg()))
+    print('dayR_med =   {}'.format(calc.getDayR_med()))
+    print('dayR_std =   {}'.format(calc.getDayR_std()))
+    print('chpt_describe =   \n{}'.format(calc.get_describe()))
+    print('52r =        {}'.format(calc.day52r))
+
+    print('VOLUME =     {}'.format(calc.getVolume()))
+    print('VOLUME AVG = {}'.format(calc.getVolume_avg()))
+    print('VOLUME MED = {}'.format(calc.getVolume_med()))
+    print('VOLUME STD = {}'.format(calc.getVolume_std()))
+    print('Vol/rng =    {}'.format(calc.getVolR_rt()))
+    print('Vol/rng AVG= {}'.format(calc.getVolR_rt_avg()))

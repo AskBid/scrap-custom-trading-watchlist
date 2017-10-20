@@ -1,8 +1,12 @@
-
 .DS_Store
 *.ipynb
 *.pyc
-*.db
 *.ods#
 logs
 bin
+data
+*.png
+Transfer
+*.csv#
+*.pem
+*.png
