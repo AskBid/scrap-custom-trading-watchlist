@@ -30,13 +30,14 @@ class Calc_dataframe():
         self.period_start = getTimestamp(period_start)
         self.period_end = getTimestamp(period_end)
 
-        self.dayDataFrame = self.readFile() #all calculation are done on this not on self.price for instance as that it is a string only given as information
+        self.dayDataFrame = self.getDataFrame() #all calculation are done on this not on self.price for instance as that it is a string only given as information
 
+        self.lastdate = self.dayDataFrame.index[-1][0]
         self.price = self.getPrice()
         self.dayr = self.getDayR()
         self.day52r = self.get52wR()
 
-    def readFile(self):
+    def getDataFrame(self):
 
         conn = sqlite3.connect("scrapData.db")
 
@@ -68,10 +69,11 @@ class Calc_dataframe():
 
         return df
 
-    def drawBar2(self, path, width):
+    def drawBar2(self, path, lenght, thickness):
         day = self.dayDataFrame
         low52 = day['l52'].values[-1]
-        drawBar(width,
+        drawBar(lenght,
+                thickness,
                 low52,
                 self.day52r,
                 day['open'].values[-1],
@@ -246,7 +248,9 @@ if __name__ == '__main__':
     pd.set_option('display.max_columns', 500)
     pd.set_option('display.width', 1000)
 
-    calc = Calc_dataframe('SPX_i','2017-09-29',30,'09:00','09:26')
+    today = time.strftime('%Y-%m-%d')
+
+    calc = Calc_dataframe('ES_F',today,30,'16:00','16:30')
     print(calc.dayDataFrame)
     print('\n')
 

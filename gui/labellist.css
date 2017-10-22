@@ -4,7 +4,6 @@ td {
     /*font-family: Andale Mono;*/
     font-family: Lucida Console;
     color: white;
-    vertical-align: bottom;
 }
 
 #bar {
@@ -53,7 +52,7 @@ td {
     font-size: 15px;
     font-weight: 600;
     color: rgba(60, 60, 60, 0.5);
-    padding: 3px 10px 3px 2px;
+    padding: 0px 10px 3px 2px;
 }
 
 #price {
@@ -68,8 +67,15 @@ td {
     text-align: right;
     font-size: 12px;
     font-weight: 400;
-    float: right;
     padding: 0px 3px 0px 0px; /*Top right Bottom left*/
+}
+
+#theValue {
+    font-family: Helvetica, sans-serif;
+    font-size: 25px;
+    font-weight: 600;
+    padding: 0px 10px 0px 0px;
+    /*Top right Bottom left*/
 }
 
 #average {
