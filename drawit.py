@@ -37,7 +37,7 @@ def drawBar(lenght = 226,
     cr.fill()
     cr.stroke()
 
-    cr.set_source_rgb(255, 255, 255)
+    cr.set_source_rgb(1, 1, 1)
 
     if left2open_px > (lenght - 3):
         left2open_px = lenght - 3
@@ -69,22 +69,55 @@ def drawCandle( lenght = 226,
                 dayClose = 2560.75,
                 dayLow = 2542.5,
                 dayHigh = 2561.5,
-                path = "img/candle.png"):
+                path = "gui/candle.png"):
 
+    centerY = lenght / 2
+    centerX = thickness / 2
+    ratio = dayRange / avgRange
+    pts2pxs_rt = 0
 
-    ims = cairo.ImageSurface(cairo.FORMAT_ARGB32, 10, height)
+    if ratio < 3:
+        ## find max points that fit inside canvas
+        maxPts = avgRange * 3
+        pts2pxs_rt = lenght / maxPts
+
+    if ratio >= 3:
+        maxPts = dayRange
+        pts2pxs_rt = lenght / maxPts
+
+    ims = cairo.ImageSurface(cairo.FORMAT_ARGB32, thickness, lenght)
     cr = cairo.Context(ims)
+    cr.move_to(centerX,centerY)
+    cr.scale(1,-1)
+    cr.translate(0, -lenght)
 
-    cr.set_line_lenght(0)
-    cr.set_source_rgb(0, 0, 0)
-    cr.rectangle(0, 0, 10, height)
+    cr.set_source_rgba(0.4, 0.4, 0.4, 0.5)
+    cr.set_line_width(0)
+    cr.rectangle(0, 0, thickness, lenght)
     cr.set_line_join(cairo.LINE_JOIN_MITER)
     cr.fill()
     cr.stroke()
 
+    def pts2px(max_L):
+        pass
+
+    def lineByCenter(bar_len):
+        half_bar = bar_len / 2
+        start = centerY - half_bar
+
+        cr.set_source_rgb(0, 0, 0)
+        cr.set_line_width(2)
+
+        cr.move_to(centerX, start)
+        cr.line_to(centerX, start + bar_len)
+        cr.stroke()
+
+    drawLineCenter(16)
+
+    ratio = dayRange / avgRange
+
 
     ims.write_to_png(path)
 
-
 if __name__ == "__main__":
-    drawBar()
+    drawCandle()
