@@ -55,7 +55,7 @@ def drawBar(lenght = 226,
     ims.write_to_png(path)
 
 def drawCandle( lenght = 226,
-                thickness = 15,
+                thickness = 25,
 
                 avgRange = 10.17,
                 dayRange = 19,
@@ -68,7 +68,7 @@ def drawCandle( lenght = 226,
                 dayOpen = 2560, #taken from [-1]
                 price = 2560.75, #taken from [-1]
                 dayLow = 2542.5, #taken from [-1]
-                dayHigh = 2561.5, #taken from [-1]
+
                 path = "gui/candle.png"):
 
     def background():
@@ -81,12 +81,20 @@ def drawCandle( lenght = 226,
 
     centerY = lenght / 2
     centerX = thickness / 2
-    ratio = dayRange / avgRange
-    pt2px_rt = 0
+
     line_w = 2
-    arm_len = 3
+    half_lw = 1
+    arm_len = 4
+    body_w = 4
+
+    pt2px_rt = 0
+    ratio = dayRange / avgRange
+
     deltaOL = dayOpen - dayLow
-    deltaOH = price - dayLow
+    deltaPL = price - dayLow
+    deltaLows =  yLow - dayLow
+    yDeltaOL = yOpen - yLow
+    yDeltaPL = yClose - yLow
 
     ims = cairo.ImageSurface(cairo.FORMAT_ARGB32, thickness, lenght)
     cr = cairo.Context(ims)
@@ -108,31 +116,59 @@ def drawCandle( lenght = 226,
     def pt2px(pts):
         return pts * pt2px_rt
 
-    cr.set_source_rgb(0, 0, 0)
-    cr.set_line_width(0)
+    def bar(x_start, y_start, len_LH, len_O, len_P, alpha, type_="bar"):
+        if len_O < len_P:
+            cr.set_source_rgba(1, 1, 1, alpha)
+        else:
+            cr.set_source_rgba(0, 0, 0, alpha)
+        cr.set_line_width(0)
+        # Rectangle(x0, y0, x1, y1)
+        #today bar trunk
+        cr.rectangle(int(x_start),
+                     int(y_start),
+                     int(line_w),
+                     int(len_LH))
+
+        if type_ == "bar":
+            #today arm open
+            cr.rectangle(int(x_start),
+                         int(y_start + len_O - half_lw),
+                         int(-arm_len + half_lw),
+                         int(line_w))
+            #today arm current/close
+            cr.rectangle(int(x_start + line_w),
+                         int(y_start + len_P - half_lw),
+                         int(arm_len - half_lw),
+                         int(line_w))
+        else:
+            #today body
+            cr.rectangle(int(x_start + half_lw - body_w),
+                         int(y_start + len_O),
+                         int(body_w*2),
+                         int(len_P - len_O))
+        cr.fill()
+        cr.stroke()
+
     bar_len = pt2px(dayRange)
-    half_bar = bar_len / 2
-    bar_low = centerY - half_bar
-    xBar = centerX + line_w
-    cr.set_line_width(line_w)
+    bar_low = centerY - (bar_len / 2)
+    bar(centerX + 5,
+        bar_low,
+        bar_len,
+        pt2px(deltaOL),
+        pt2px(deltaPL),
+        1,
+        "bar")
 
-    #today bar trunk
-    cr.rectangle(0, 5, 2, 9)
-    cr.rectangle(int(xBar), int(bar_low), int(line_w), int(bar_len))
-    # cr.move_to(xBar, bar_low)
-    # cr.line_to(xBar, bar_low + bar_len)
+    bar_low = bar_low + pt2px(deltaLows)
+    bar_len = pt2px(yHigh - yLow)
+    bar(centerX - 6,
+        bar_low,
+        bar_len,
+        pt2px(yDeltaOL),
+        pt2px(yDeltaPL),
+        0.3,
+        "bar")
 
-    #today arm open
-    # cr.rectangle(int(xBar), int(bar_low + pt2px(deltaOL)), int(xBar - arm_len), int(bar_low + pt2px(deltaOL)))
-    # cr.move_to(xBar, bar_low + pt2px(deltaOL))
-    # cr.line_to(xBar - arm_len, bar_low + pt2px(deltaOL))
-
-    #today arm current/close
-    cr.move_to(xBar, bar_low + pt2px(deltaOH))
-    cr.line_to(xBar + arm_len, bar_low + pt2px(deltaOH))
-
-    cr.fill()
-    cr.stroke()
     ims.write_to_png(path)
 
 
