@@ -54,8 +54,7 @@ def drawBar(lenght = 226,
 
     ims.write_to_png(path)
 
-def drawCandle( lenght = 226,
-                thickness = 25,
+def drawCandle( lenght = 226, thickness = 25,
 
                 avgRange = 10.17,
                 dayRange = 19,
@@ -69,7 +68,8 @@ def drawCandle( lenght = 226,
                 price = 2560.75, #taken from [-1]
                 dayLow = 2542.5, #taken from [-1]
 
-                path = "gui/candle.png"):
+                path = "gui/candle.png",
+                type_="bar"):
 
     def background():
         cr.set_source_rgba(0.4, 0.4, 0.4, 0.5)
@@ -93,8 +93,8 @@ def drawCandle( lenght = 226,
     deltaOL = dayOpen - dayLow
     deltaPL = price - dayLow
     deltaLows =  yLow - dayLow
-    yDeltaOL = yOpen - yLow
-    yDeltaPL = yClose - yLow
+    deltaOL_y = yOpen - yLow
+    deltaPL_y = yClose - yLow
 
     ims = cairo.ImageSurface(cairo.FORMAT_ARGB32, thickness, lenght)
     cr = cairo.Context(ims)
@@ -116,7 +116,7 @@ def drawCandle( lenght = 226,
     def pt2px(pts):
         return pts * pt2px_rt
 
-    def bar(x_start, y_start, len_LH, len_O, len_P, alpha, type_="bar"):
+    def bar(x_start, y_start, len_LH, len_O, len_P, alpha, type_func):
         if len_O < len_P:
             cr.set_source_rgba(1, 1, 1, alpha)
         else:
@@ -129,7 +129,7 @@ def drawCandle( lenght = 226,
                      int(line_w),
                      int(len_LH))
 
-        if type_ == "bar":
+        if type_func == "bar":
             #today arm open
             cr.rectangle(int(x_start),
                          int(y_start + len_O - half_lw),
@@ -157,17 +157,17 @@ def drawCandle( lenght = 226,
         pt2px(deltaOL),
         pt2px(deltaPL),
         1,
-        "bar")
+        type_)
 
-    bar_low = bar_low + pt2px(deltaLows)
-    bar_len = pt2px(yHigh - yLow)
+    bar_low_y = bar_low + pt2px(deltaLows)
+    bar_len_y = pt2px(yHigh - yLow)
     bar(centerX - 6,
-        bar_low,
-        bar_len,
-        pt2px(yDeltaOL),
-        pt2px(yDeltaPL),
+        bar_low_y,
+        bar_len_y,
+        pt2px(deltaOL_y),
+        pt2px(deltaPL_y),
         0.3,
-        "bar")
+        type_)
 
     ims.write_to_png(path)
 
