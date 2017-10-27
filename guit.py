@@ -9,6 +9,7 @@ import time
 import datetime
 from pandas.tseries.offsets import BDay #to make operation betwen dates where only BusinessDays are considered
 from PyQt5.QtCore import QDate
+from drawit import drawCandle
 
 today = time.strftime('%Y-%m-%d')
 
@@ -86,6 +87,21 @@ class Box(QTextBrowser):
 
         imgpath = 'img/{}.png'.format(thisDatait.file_name)
         thisDatait.drawBar2(imgpath, 190, 8)
+        imgpath_candles = 'img/{}_candles.png'.format(thisDatait.file_name)
+        drawCandle( 190,
+                    25,
+                    float(thisDatait.dayr_avg), #avgRange = 10.17,
+                    float(thisDatait.dayr_std), # stdRange = 4.0235,
+                    float(thisDatait.dayr), # dayRange = 19,
+                    thisDatait.dayDataFrame['yclose'].values[-1],# yClose = 2560, #taken from [-1]
+                    thisDatait.dayDataFrame['open'].values[-2],# yOpen = 2556.50, #taken from [-2]
+                    thisDatait.dayDataFrame['dayl'].values[-2],# yLow = 2556.25, #taken from [-2]
+                    thisDatait.dayDataFrame['dayh'].values[-2],# yHigh = 2562.25, #taken from [-2]
+                    thisDatait.dayDataFrame['open'].values[-1],# dayOpen = 2560, #taken from [-1]
+                    thisDatait.dayDataFrame['price'].values[-1], # price = 2560.75, #taken from [-1]
+                    thisDatait.dayDataFrame['dayl'].values[-1],# dayLow = 2542.5, #taken from [-1]
+                    imgpath_candles,# path = "gui/candle.png",
+                    "bar")
 
         with open(labelhtml) as f:
     	    html = f.read()
@@ -112,6 +128,7 @@ class Box(QTextBrowser):
         html = html.replace('<!--15-->', '')
         html = html.replace('<!--16-->', '')
         html = html.replace('<!--imgpath-->', imgpath)
+        html = html.replace('<!--imgpath_candles-->', imgpath_candles)
 
         with open('gui/labellist.css') as f:
                text = f.read()
@@ -128,14 +145,14 @@ class MainFrame(QScrollArea):
         self.run(self.date_input)
 
     def run(self, date_input):
-        inst_list = read_guilist('csv/guilist_lite.csv')
+        inst_list = read_guilist('csv/guilist.csv')
         rows = inst_list[1]
         cols = inst_list[2]
         inst_list = inst_list[0]
 
         container = QFrame(self)
-        # container.resize(3600,1300)
-        container.resize(1000,400)
+        container.resize(4300,1300)
+        # container.resize(1000,400)
 
         layout = QGridLayout(container)
         layout.setSpacing(0)

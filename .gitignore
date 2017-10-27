@@ -6,8 +6,10 @@
 logs
 bin
 data
+img
 *.png
 Transfer
 *.csv#
 *.pem
 *.png
+rootkey.csv

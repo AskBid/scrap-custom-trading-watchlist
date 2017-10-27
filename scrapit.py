@@ -536,11 +536,11 @@ def selector(address):
     if 'cmegroup' in address:
         return scrapCmegroup(address)
 
-def writeit(csvFile):
+def writeit(csvFile, db, dbCDS):
 
-    conn = sqlite3.connect('scrapData.db')
+    conn = sqlite3.connect(db)
     c = conn.cursor()
-    connCDS = sqlite3.connect('scrapDataCDS.db')
+    connCDS = sqlite3.connect(dbCDS)
     cCDS = connCDS.cursor()
 
     csvlist = open(csvFile, 'r')
@@ -721,9 +721,11 @@ def writeit(csvFile):
 if __name__ == '__main__':
     parser = argparse.ArgumentParser()
     parser.add_argument("file_csv", help = "file where to read all the instruments to scrap from")
+    parser.add_argument("db", help = "main database")
+    parser.add_argument("dbCDS", help = "databae for CDS")
     args = parser.parse_args()
 
-    writeit(args.file_csv)
-    #writeit('macrowatchlist.csv')
+    writeit(args.file_csv, args.db, args.dbCDS)
+    # writeit('csv/macrowatchlist.csv', 'scrapData.db', 'scrapData.db')
 
 logfile.close()

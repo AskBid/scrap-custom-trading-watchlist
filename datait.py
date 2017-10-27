@@ -11,7 +11,7 @@ import datetime as dt
 from pandas.tseries.offsets import BDay #to make operation betwen dates where only BusinessDays are considered
 
 from scrapit import getDataFormat, getTimestamp
-from drawit import drawBar
+from drawit import draw52RangeBar
 
 import sqlite3
 
@@ -35,6 +35,8 @@ class Calc_dataframe():
         self.lastdate = self.dayDataFrame.index[-1][0]
         self.price = self.getPrice()
         self.dayr = self.getDayR()
+        self.dayr_std = self.getDayR_std()
+        self.dayr_avg = self.getDayR_avg()
         self.day52r = self.get52wR()
 
     def getDataFrame(self):
@@ -72,13 +74,14 @@ class Calc_dataframe():
     def drawBar2(self, path, lenght, thickness):
         day = self.dayDataFrame
         low52 = day['l52'].values[-1]
-        drawBar(lenght,
-                thickness,
-                low52,
-                self.day52r,
-                day['open'].values[-1],
-                day['dayr'].values[-1],
-                path)
+        draw52RangeBar(
+                    lenght,
+                    thickness,
+                    low52,
+                    self.day52r,
+                    day['open'].values[-1],
+                    day['dayr'].values[-1],
+                    path)
 
         return '{} bar has been drawn'.format(path)
 
