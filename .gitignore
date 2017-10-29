@@ -7,6 +7,9 @@ logs
 bin
 data
 img
+img\*.png
+trash
+DB_upuntil20OCT_tobemerged
 *.png
 Transfer
 *.csv#

@@ -93,7 +93,7 @@ class Box(QTextBrowser):
                     float(thisDatait.dayr_avg), #avgRange = 10.17,
                     float(thisDatait.dayr_std), # stdRange = 4.0235,
                     float(thisDatait.dayr), # dayRange = 19,
-                    thisDatait.dayDataFrame['yclose'].values[-1],# yClose = 2560, #taken from [-1]
+                    thisDatait.dayDataFrame['price'].values[-2],# yClose = 2560, #taken from [-1]
                     thisDatait.dayDataFrame['open'].values[-2],# yOpen = 2556.50, #taken from [-2]
                     thisDatait.dayDataFrame['dayl'].values[-2],# yLow = 2556.25, #taken from [-2]
                     thisDatait.dayDataFrame['dayh'].values[-2],# yHigh = 2562.25, #taken from [-2]

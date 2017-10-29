@@ -1,35 +1,23 @@
-import sys
-from PyQt5.QtWidgets import QMainWindow, QAction, QMenu, QApplication
+from io import TextIOWrapper
 
-class Example(QMainWindow):
+d = 'inizio'
 
-    def __init__(self):
-        super().__init__()
+logfile = TextIOWrapper
 
-        self.initUI()
+print(type(logfile))
 
+print(d)
 
-    def initUI(self):
+def func_inizio():
+    print('func inizio: ' + d)
 
-        menubar = self.menuBar()
-        fileMenu = menubar.addMenu('File')
-
-        impMenu = QMenu('Import', self)
-        impAct = QAction('Import mail', self)
-        impMenu.addAction(impAct)
-
-        newAct = QAction('New', self)
-
-        fileMenu.addAction(newAct)
-        fileMenu.addMenu(impMenu)
-
-        self.setGeometry(300, 300, 300, 200)
-        self.setWindowTitle('Submenu')
-        self.show()
-
+def func():
+    global d
+    d = 'dentro'
+    func_inizio()
+    print('inside func: ' + d)
 
 if __name__ == '__main__':
+    func()
 
-    app = QApplication(sys.argv)
-    ex = Example()
-    sys.exit(app.exec_())
+logfile.close()

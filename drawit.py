@@ -7,6 +7,7 @@ try:
 except:
     pass
 from math import radians
+from math import isnan
 
 def draw52RangeBar(lenght = 226,
             thickness = 6,
@@ -72,15 +73,22 @@ def drawCandle( lenght = 200, thickness = 25,
                 path = "gui/candle.png",
                 type_="bar"):
 
-    def background():
-        cr.set_source_rgb(0.95, 0.95, 0.95)
-        # cr.set_source_rgb(0.28, 0.408, 0.58)
-        # cr.set_source_rgb(0.02, 0.02, 0.02)
+    def background(r,g,b):
+        cr.set_source_rgb(r, g, b)
         cr.set_line_width(0)
         cr.rectangle(0, 0, thickness, lenght)
         cr.set_line_join(cairo.LINE_JOIN_MITER)
         cr.fill()
         cr.stroke()
+
+    values = (avgRange, stdRange, dayRange, yClose, yOpen, yLow, yHigh, dayOpen, price, dayLow)
+    for value in values:
+        if isnan(value):
+            ims = cairo.ImageSurface(cairo.FORMAT_ARGB32, thickness, lenght)
+            cr = cairo.Context(ims)
+            background(1,0,0)
+            ims.write_to_png(path)
+            return 'NaN'
 
     centerY = lenght / 2
 
@@ -109,7 +117,7 @@ def drawCandle( lenght = 200, thickness = 25,
     cr.scale(1,-1)
     cr.translate(0, -lenght)
     cr.set_line_join(cairo.LINE_CAP_SQUARE)
-    background()
+    background(0.95,0.95,0.95)
 
     if ratio < 2:
         ## find max points that fit inside canvas
@@ -124,25 +132,24 @@ def drawCandle( lenght = 200, thickness = 25,
     def pt2px(pts):
         return pts * pt2px_rt
 
-    def bar(x_start, y_start, len_LH, len_O, len_P, type_func):
-        cr.set_source_rgb(0.3, 0.3, 0.3)
+    def bar(x_start, y_start, len_LH, len_O, len_P, type_func, a):
         def arms():
             #today arm open
-            cr.rectangle(int(x_start + trunk_w),
+            cr.rectangle(int(x_start),
                          int(y_start + len_O - half_arm_line_w),
-                         int(-(arm_len + trunk_w)),
+                         int(-arm_len),
                          int(arm_line_w))
             #today arm current/close
-            cr.rectangle(int(x_start),
+            cr.rectangle(int(x_start + trunk_w),
                          int(y_start + len_P - half_arm_line_w),
-                         int(arm_len + trunk_w),
+                         int(arm_len),
                          int(arm_line_w))
             cr.fill()
 
         if len_O < len_P:
-            cr.set_source_rgb(0.1, 0.8, 0.35)
+            cr.set_source_rgba(0.1, 0.8, 0.35,a)
         else:
-            cr.set_source_rgb(1, 0.29, 0.3)
+            cr.set_source_rgba(1, 0.29, 0.3,a)
         cr.set_line_width(0)
 
         arms()
@@ -197,14 +204,16 @@ def drawCandle( lenght = 200, thickness = 25,
         bar_len_y,
         pt2px(deltaOL_y),
         pt2px(deltaPL_y),
-        type_)
+        type_,
+        0.5)
 
     bar(space_border + (arm_len*3) + trunk_w + space_bars,
         bar_low,
         bar_len,
         pt2px(deltaOL),
         pt2px(deltaPL),
-        type_)
+        type_,
+        0.9)
 
     ims.write_to_png(path)
 

@@ -20,7 +20,6 @@ def clean_db(db_name):
                 d.execute("DELETE FROM {} WHERE dayh = ''".format(table))
                 d.execute("DELETE FROM {} WHERE dayl = ''".format(table))
                 d.execute("DELETE FROM {} WHERE open = ''".format(table))
-                d.execute("DELETE FROM {} WHERE yclose = ''".format(table))
 
     conn.commit()
 
@@ -33,15 +32,8 @@ def merge_db(db_name_old, db_name_new):
     conn_old = sqlite3.connect(db_name_old)
     c_old = conn_old.cursor()
 
-    c_new.execute("SELECT * FROM ES_F")
+    c_new.execute("SELECT date,timestamp FROM ES_F")
     c_old.execute("SELECT * FROM ES_F")
-
-    for row in c_new:
-        pass
-        # if row in c_old:
-        #     print("true")
-        # else:
-        #     c_old.execute("SELECT * FROM ES_F")
 
     print("c_new\n")
     for i in c_new:
@@ -50,5 +42,6 @@ def merge_db(db_name_old, db_name_new):
     print("\n\nc_old\n")
     for i in c_old:
         print(i)
+
 if __name__ == '__main__':
-    merge_db("scrapData.db", "db_2_merge/scrapData.db")
+    merge_db("DB_upuntil20OCT_tobemerged/scrapData.db", "db_2_merge/scrapData.db")
