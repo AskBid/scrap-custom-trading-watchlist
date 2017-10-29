@@ -35,8 +35,7 @@ def merge_db(db_name_old, db_name_new):
     c_new.execute("SELECT date,timestamp FROM ES_F")
     c_old.execute("SELECT * FROM ES_F")
 
-    print("c_new\n")
-    for i in c_new:
+    for row in c_new:
         print(i)
 
     print("\n\nc_old\n")

@@ -18,7 +18,7 @@ hour = time.strftime('%H:%M')
 timestamp = getTimestamp(hour)
 day = time.strftime('%a')
 
-logfile = open('logs/' + date + '_log.txt', 'a+')
+logfile = None
 
 #data shared format between Marketwatch and Bloomberg
 def getDataFormat():
@@ -537,6 +537,8 @@ def selector(address):
         return scrapCmegroup(address)
 
 def writeit(csvFile, db):
+    global logfile
+    logfile = open('logs/' + date + '_' + db + '_log.txt', 'a+')
 
     conn = sqlite3.connect(db)
     c = conn.cursor()
