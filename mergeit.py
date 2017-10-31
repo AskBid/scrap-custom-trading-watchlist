@@ -26,21 +26,56 @@ def clean_db(db_name):
     c.close()
     conn.close()
 
-def merge_db(db_name_old, db_name_new):
+def merge_db(db_name_old, db_name_new, tolerance):
     conn_new = sqlite3.connect(db_name_new)
     c_new = conn_new.cursor()
     conn_old = sqlite3.connect(db_name_old)
     c_old = conn_old.cursor()
 
     c_new.execute("SELECT date,timestamp FROM ES_F")
-    c_old.execute("SELECT * FROM ES_F")
+    data_new = c_new.fetchall()
+    c_old.execute("SELECT date,timestamp FROM ES_F")
+    data_old = c_old.fetchall()
 
+    toAdd = []
+
+    for timestamp_N in data_new:
+        date_N = timestamp_N[0]
+        mins_N = timestamp_N[1]
+        check = False
+
+        for timestamp_O in data_old:
+            date_O = timestamp_O[0]
+            mins_O = timestamp_O[1]
+            if date_N == date_O:
+                mins_D = abs(mins_N - mins_O)
+                if mins_D < tolerance:
+                    check = True
+                    break #this timestamp_N has found a similar item so is discarded
+
+        if check == False: #then this timestamp_N did not match any c_old row and we shld add it
+            toAdd.append(timestamp_N)
+
+# ('2017-10-20', 567)
+# ('2017-10-20', 825)
+# ('2017-10-20', 975)
+    a = '2017-10-23'
+    for row in toAdd:
+        c_new.execute('''SELECT * FROM ES_F
+                         WHERE date = ?
+                         AND timestamp = ?''', (row[0],row[1]))
+        row = c_new.fetchone()
+        c_old.execute("INSERT INTO ES_F SELECT * FROM ?", (row))
+        # c_old.execute("INSERT INTO ES_F select * from table2
+
+
+    print("\n\nc_new\n")
     for row in c_new:
-        print(i)
-
-    print("\n\nc_old\n")
-    for i in c_old:
-        print(i)
+        print(row)
+    #
+    # print("\n\nc_old\n")
+    # for i in data_old:
+    #     print(i)
 
 if __name__ == '__main__':
-    merge_db("DB_upuntil20OCT_tobemerged/scrapData.db", "db_2_merge/scrapData.db")
+    merge_db("to_BE_merged_upuntil20OCT/scrapData.db", "db_2_merge/scrapData.db", 5)

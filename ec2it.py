@@ -35,15 +35,14 @@ class EC2connection():
     def getAllFiles(self, dir_, to_dir):
         files = self.cmd('ls {}'.format(dir_))
         for file_name in files:
-            file_path = dir_ + '/' + file_name
-            print(file_path)
-            self.getFiles(file_path, to_dir)
+            if '.' in file_name:
+                file_path = dir_ + '/' + file_name
+                self.getFiles(file_path, to_dir)
 
     def rmAll(self, dir_):
         files = self.cmd('ls {}'.format(dir_))
         for file_name in files:
             file_path = dir_ + '/' + file_name
-            print(file_path)
             self.cmd('rm {}'.format(file_path))
 
     def cmd(self, command = "ls"):
@@ -82,7 +81,7 @@ if __name__ == '__main__':
     ec2 = EC2connection()
     # ec2.getFiles(['watchlistdaily.csv', 'macrowatchlist.csv'], 'trash')
     # ec2.cmd('ls')
-    # ec2.getAllFiles('logs','trash')
+    # ec2.getAllFiles('~/','trash')
     # ec2.cmd('ls')
     # ec2.rmAll('logs')
-    ec2.putFile('scrapit.py')
+    # ec2.putFile('scrapit.py')
