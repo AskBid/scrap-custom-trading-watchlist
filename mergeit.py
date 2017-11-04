@@ -1,8 +1,14 @@
 import sqlite3
+import os
+from shutil import copyfile
+import ec2it
 
-# c.execute('SELECT * FROM ES_F')
-# for row in c:
-#     print(row)
+def mergym(iteration = '1'):
+    try:
+        os.remove('merge/old_' + iteration + '.db')
+    except:
+        print('no file to delete')
+    copyfile('merge/old.db', 'merge/old_' + iteration +'.db')
 
 def clean_db(db_name):
     conn = sqlite3.connect(db_name)
@@ -16,6 +22,8 @@ def clean_db(db_name):
         table = table[0]
         print(table)
         if '_cme' not in table and '_YC' not in table:
+                d.execute("DELETE FROM {} WHERE date = ''".format(table))
+                d.execute("DELETE FROM {} WHERE timestamp = ''".format(table))
                 d.execute("DELETE FROM {} WHERE price = ''".format(table))
                 d.execute("DELETE FROM {} WHERE dayh = ''".format(table))
                 d.execute("DELETE FROM {} WHERE dayl = ''".format(table))
@@ -26,56 +34,82 @@ def clean_db(db_name):
     c.close()
     conn.close()
 
-def merge_db(db_name_old, db_name_new, tolerance):
-    conn_new = sqlite3.connect(db_name_new)
-    c_new = conn_new.cursor()
-    conn_old = sqlite3.connect(db_name_old)
+def merge_db(db_old_name, db_new_name, tolerance = 10):
+
+    clean_db(db_old_name)
+    clean_db(db_new_name)
+
+    conn_old = sqlite3.connect(db_old_name)
     c_old = conn_old.cursor()
 
-    c_new.execute("SELECT date,timestamp FROM ES_F")
-    data_new = c_new.fetchall()
-    c_old.execute("SELECT date,timestamp FROM ES_F")
-    data_old = c_old.fetchall()
+    c_old.execute("SELECT name FROM sqlite_master WHERE type = 'table'")
+    list_table_names = c_old.fetchall()
+    print()
 
-    toAdd = []
+    c_old.execute("ATTACH DATABASE ? AS ToMerge", (db_new_name,))
+    avg_adds = []
 
-    for timestamp_N in data_new:
-        date_N = timestamp_N[0]
-        mins_N = timestamp_N[1]
-        check = False
+    for table in list_table_names:
+        c_old.execute("SELECT date,timestamp FROM {!r}".format(table[0]))
+        data_old = c_old.fetchall()
 
-        for timestamp_O in data_old:
-            date_O = timestamp_O[0]
-            mins_O = timestamp_O[1]
-            if date_N == date_O:
-                mins_D = abs(mins_N - mins_O)
-                if mins_D < tolerance:
-                    check = True
-                    break #this timestamp_N has found a similar item so is discarded
+        attch_tab = str('ToMerge.' + table[0])
+        c_old.execute("SELECT date,timestamp FROM {}".format(attch_tab))
+        data_new = c_old.fetchall()
 
-        if check == False: #then this timestamp_N did not match any c_old row and we shld add it
-            toAdd.append(timestamp_N)
+        toAdd = []
 
-# ('2017-10-20', 567)
-# ('2017-10-20', 825)
-# ('2017-10-20', 975)
-    a = '2017-10-23'
-    for row in toAdd:
-        c_new.execute('''SELECT * FROM ES_F
-                         WHERE date = ?
-                         AND timestamp = ?''', (row[0],row[1]))
-        row = c_new.fetchone()
-        c_old.execute("INSERT INTO ES_F SELECT * FROM ?", (row))
-        # c_old.execute("INSERT INTO ES_F select * from table2
+        for timestamp_N in data_new:
+            date_N = timestamp_N[0]
+            mins_N = timestamp_N[1]
+            check = False
 
+            for timestamp_O in data_old:
+                date_O = timestamp_O[0]
+                mins_O = timestamp_O[1]
+                if date_N == date_O:
+                    mins_D = abs(mins_N - mins_O)
+                    if mins_D < tolerance:
+                        check = True
+                        break #this timestamp_N has found a similar item so is discarded
 
-    print("\n\nc_new\n")
-    for row in c_new:
-        print(row)
-    #
-    # print("\n\nc_old\n")
-    # for i in data_old:
-    #     print(i)
+            if check == False: #then this timestamp_N did not match any c_old row and we shld add it
+                toAdd.append(timestamp_N)
+
+        print(table[0])
+        print('adding ' + str(len(toAdd)) + ' rows\n')
+        avg_adds.append(len(toAdd))
+
+        for row in toAdd:
+            date = row[0]
+            mins = row[1]
+            c_old.execute("""INSERT INTO {!r}
+                             SELECT * FROM {}
+                             WHERE date = {!r}
+                             AND timestamp = {}""".format(table[0], attch_tab, date, mins))
+
+            conn_old.commit()
+
+    c_old.close()
+    conn_old.close()
+
+    print('AVERAGE OF ROWS ADDED:')
+    try:
+        print(sum(avg_adds) / float(len(avg_adds)))
+    except:
+        print("DB '{}' to add with merging was empty (no tables)".format(db_new_name))
+    print(len(avg_adds))
 
 if __name__ == '__main__':
-    merge_db("to_BE_merged_upuntil20OCT/scrapData.db", "db_2_merge/scrapData.db", 5)
+
+    # iteration = '1'
+    # mergym(iteration)
+    # merge_db("merge/old_{}.db".format(iteration), "merge/new.db")
+
+    ec2 = ec2it.EC2connection()
+    ec2.getFiles(( 'scrapData.db', 'scrapData_2.db'), 'fetch/')
+    merge_db('fetch/scrapData.db', 'fetch/scrapData_2.db')
+    os.remove('fetch/scrapData_2.db')
+
+    merge_db('scrapData.db', 'fetch/scrapData.db')
+    os.remove('fetch/scrapData.db')
