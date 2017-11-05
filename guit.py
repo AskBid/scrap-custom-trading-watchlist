@@ -65,7 +65,8 @@ class Box(QTextBrowser):
         }
         """
         ncol = randint(2, 9)
-        cstring = cstring.replace('-.-.-.-.-.-.', 'rgba(150, 150, 150, 1)')
+        # cstring = cstring.replace('-.-.-.-.-.-.', 'rgba(150, 150, 150, 1)')
+        cstring = cstring.replace('-.-.-.-.-.-.', 'rgba(1{0}0, 1{0}0, 1{0}0, 1)'.format(ncol))
         self.setStyleSheet(cstring)
 
         self.setSizePolicy(QSizePolicy.Preferred, QSizePolicy.Preferred)
@@ -152,7 +153,7 @@ class MainFrame(QScrollArea):
         inst_list = inst_list[0]
 
         container = QFrame(self)
-        container.resize(4300,1300)
+        container.resize(3900,1370)
         # container.resize(1000,400)
 
         layout = QGridLayout(container)

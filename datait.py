@@ -236,7 +236,6 @@ def isnumber(x):
     except:
         return False
 
-
 def writeNum(num):
     if num == '-' or isnan(num):
         return '-'

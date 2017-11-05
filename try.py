@@ -1,23 +1,14 @@
-from io import TextIOWrapper
+#libs required
+from scipy import stats
+import pandas as pd
+import numpy as np
 
-d = 'inizio'
+#generate ramdom data with same seed (to be reproducible)
+np.random.seed(seed=1)
+df = pd.DataFrame(np.random.uniform(0,1,(10)), columns=['a'])
 
-logfile = TextIOWrapper
+#quantile function
+x = df.quantile(0.5)[0]
 
-print(type(logfile))
-
-print(d)
-
-def func_inizio():
-    print('func inizio: ' + d)
-
-def func():
-    global d
-    d = 'dentro'
-    func_inizio()
-    print('inside func: ' + d)
-
-if __name__ == '__main__':
-    func()
-
-logfile.close()
+#inverse of quantile
+stats.percentileofscore(df['a'],x)
