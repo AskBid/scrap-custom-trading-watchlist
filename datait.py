@@ -10,7 +10,7 @@ import time
 import datetime as dt
 from pandas.tseries.offsets import BDay #to make operation betwen dates where only BusinessDays are considered
 
-from scrapit import getDataFormat, getTimestamp
+from scrapit import getTimestamp
 from drawit import draw52RangeBar
 
 import sqlite3

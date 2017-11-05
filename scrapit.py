@@ -582,7 +582,7 @@ def writeit(csvFile, db):
                     c.execute("""INSERT INTO {tablename} VALUES (
                     ?,?,?,?,?,?,?,?,?,?,?,?,?,?)""".format(tablename = fileName),(
                     this_dic['date'],
-                    this_dic['time'],
+                    time.strftime('%H:%M'),
                     timestamp,
                     this_dic['day'],
                     this_dic['price'],
@@ -627,7 +627,7 @@ def writeit(csvFile, db):
                     c.execute("""INSERT INTO {tablename} VALUES (
                     ?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)""".format(tablename = fileName + '_cme'),(
                     date,
-                    hour,
+                    time.strftime('%H:%M'),
                     timestamp,
                     day,
                     dic_totals['totalVol'],
@@ -664,7 +664,7 @@ def writeit(csvFile, db):
                     c.execute("""INSERT INTO {tablename} VALUES (
                     ?,?,?,?,?,?)""".format(tablename = fileName),(
                     date,
-                    hour,
+                    time.strftime('%H:%M'),
                     timestamp,
                     day,
                     str(maturity),
@@ -694,7 +694,7 @@ def writeit(csvFile, db):
                         cCDS.execute("""INSERT INTO {} VALUES
                         (?,?,?,?,?,?)""".format(tablename),(
                         date,
-                        hour,
+                        time.strftime('%H:%M'),
                         timestamp,
                         day,
                         dictCDS['Value'],
@@ -729,4 +729,7 @@ if __name__ == '__main__':
 
     writeit(args.file_csv, args.db)
 
-logfile.close()
+try:
+    logfile.close()
+except:
+    pass

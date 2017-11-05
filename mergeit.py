@@ -1,7 +1,9 @@
 import sqlite3
-import os
+from os import remove
 from shutil import copyfile
 import ec2it
+from time import strftime
+from sys import exit
 
 def mergym(iteration = '1'):
     try:
@@ -100,16 +102,48 @@ def merge_db(db_old_name, db_new_name, tolerance = 10):
         print("DB '{}' to add with merging was empty (no tables)".format(db_new_name))
     print(len(avg_adds))
 
+def fetch():
+    try:
+        ec2 = ec2it.EC2connection()
+    except:
+        print('No EC2 Connection.')
+
+    try:
+        ec2.getFiles(('data/scrapData.db', 'data/scrapData_2.db', 'data/scrapData_cds.db', 'data/scrapData_2_cds.db'), 'fetch/')
+        ec2.rmAll('data')
+
+        copyfile('fetch/scrapData.db', '_bak/scrapData_{}.db'.format(strftime('%Y-%m-%d_%H:%M')))
+        copyfile('fetch/scrapData_2.db', '_bak/scrapData_2_{}.db'.format(strftime('%Y-%m-%d_%H:%M')))
+        copyfile('fetch/scrapData_cds.db', '_bak/scrapData_cds_{}.db'.format(strftime('%Y-%m-%d_%H:%M')))
+        copyfile('fetch/scrapData_2_cds.db', '_bak/scrapData_2_cds_{}.db'.format(strftime('%Y-%m-%d_%H:%M')))
+
+        merge_db('fetch/scrapData.db', 'fetch/scrapData_2.db')
+        os.remove('fetch/scrapData_2.db')
+        merge_db('fetch/scrapData_cds.db', 'fetch/scrapData_2_cds.db')
+        os.remove('fetch/scrapData_2_cds.db')
+
+        copyfile('scrapData.db', 'scrapData_bak_{}.db'.format(strftime('%Y-%m-%d_%H:%M')))
+        merge_db('scrapData.db', 'fetch/scrapData.db')
+        os.remove('fetch/scrapData.db')
+        copyfile('scrapData_cds.db', 'scrapData_bak_cds_{}.db'.format(strftime('%Y-%m-%d_%H:%M')))
+        merge_db('scrapData_cds.db', 'fetch/scrapData_cds.db')
+        os.remove('fetch/scrapData_cds.db')
+
+        print('fetch complete.')
+    except:
+        print('No such file or directory (data/)')
+
+def getLogs():
+    try:
+        ec2.getAllFiles('~/logs','logs')
+        ec2.rmAll('logs')
+    except:
+        print('No such file or directory (logs/)')
+
 if __name__ == '__main__':
 
     # iteration = '1'
     # mergym(iteration)
     # merge_db("merge/old_{}.db".format(iteration), "merge/new.db")
 
-    ec2 = ec2it.EC2connection()
-    ec2.getFiles(( 'scrapData.db', 'scrapData_2.db'), 'fetch/')
-    merge_db('fetch/scrapData.db', 'fetch/scrapData_2.db')
-    os.remove('fetch/scrapData_2.db')
-
-    merge_db('scrapData.db', 'fetch/scrapData.db')
-    os.remove('fetch/scrapData.db')
+    fetch()

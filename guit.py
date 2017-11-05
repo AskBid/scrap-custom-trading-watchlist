@@ -10,6 +10,7 @@ import datetime
 from pandas.tseries.offsets import BDay #to make operation betwen dates where only BusinessDays are considered
 from PyQt5.QtCore import QDate
 from drawit import drawCandle
+import mergeit
 
 today = time.strftime('%Y-%m-%d')
 
@@ -107,7 +108,7 @@ class Box(QTextBrowser):
     	    html = f.read()
 
         html = html.replace('/*--bgcolor--*/', 'rgba(226, 70, 70, 0.5)')
-        html = html.replace('<!--name-->', str(thisDatait.file_name))
+        html = html.replace('<!--name-->', str(thisDatait.file_name + thisDatait.lastdate.split('-')[2]))
         html = html.replace('<!--prc-->', str(thisDatait.price))
         html = html.replace('<!--prc_C-->', thisDatait.getYClose())
         html = html.replace('<!--prc_O-->', thisDatait.getOpen())
@@ -174,21 +175,24 @@ class MainWidget(QWidget):
         dic_datait = {
             "enddate": today,
             "sample_days": 30,
-            "period_start": "09:00",
-            "period_end": "09:30",
+            "period_start": "16:00",
+            "period_end": "20:00",
         }
 
         bar = QWidget()
         bar.setFixedHeight(35)
-        cal = QPushButton("...")
-        cal.setFixedWidth(20)
-        cal.setFixedHeight(20)
+        calend = QPushButton("...")
+        calend.setFixedWidth(20)
+        calend.setFixedHeight(20)
         btnP = QPushButton("<")
         btnP.setFixedWidth(20)
         btnP.setFixedHeight(20)
-        btn1 = QPushButton("Calculate")
+        btn1 = QPushButton("calculate")
         btn1.setFixedWidth(120)
         btn1.setFixedHeight(35)
+        btnFetch = QPushButton("Fetch")
+        btnFetch.setFixedWidth(120)
+        btnFetch.setFixedHeight(35)
         btnN = QPushButton(">")
         btnN.setFixedWidth(20)
         btnN.setFixedHeight(20)
@@ -199,11 +203,11 @@ class MainWidget(QWidget):
         self.day = QLabel()
         self.day.setText(getWeekDay(today))
         self.time_start = QTextEdit()
-        self.time_start.setText("16:00")
+        self.time_start.setText(dic_datait['period_start'])
         self.time_start.setFixedWidth(50)
         self.time_start.setFixedHeight(27)
         self.time_end = QTextEdit()
-        self.time_end.setText("20:00")
+        self.time_end.setText(dic_datait['period_end'])
         self.time_end.setFixedWidth(50)
         self.time_end.setFixedHeight(27)
         self.sample = QTextEdit()
@@ -212,7 +216,7 @@ class MainWidget(QWidget):
         self.sample.setFixedHeight(27)
         layout_bar = QHBoxLayout(bar)
         # adding to widget
-        layout_bar.addWidget(cal)
+        layout_bar.addWidget(calend)
         layout_bar.addWidget(self.date)
         layout_bar.addWidget(self.day)
         layout_bar.addWidget(btnP)
@@ -221,6 +225,7 @@ class MainWidget(QWidget):
         layout_bar.addWidget(self.sample)
         layout_bar.addWidget(self.time_start)
         layout_bar.addWidget(self.time_end)
+        layout_bar.addWidget(btnFetch)
         layout_bar.addStretch(1)
         layout_bar.setContentsMargins(10,0,0,0)
 
@@ -238,7 +243,8 @@ class MainWidget(QWidget):
         btn1.clicked.connect(self.updateContainer)
         btnP.clicked.connect(self.updatePrevContainer)
         btnN.clicked.connect(self.updateNextContainer)
-        cal.clicked.connect(self.selectDates)
+        calend.clicked.connect(self.selectDates)
+        btnFetch.clicked.connect(self.updateFetch)
 
     def updateContainer(self):
         dic_datait = {
@@ -249,6 +255,10 @@ class MainWidget(QWidget):
         }
         self.day.setText(getWeekDay(self.date.toPlainText()))
         self.main_canvas.run(dic_datait)
+
+    def updateFetch(self):
+        mergeit.fetch()
+        self.updateContainer()
 
     def updatePrevContainer(self):
         start_date = datetime.datetime.strptime(self.date.toPlainText(), '%Y-%m-%d') - BDay(1)
@@ -280,19 +290,19 @@ class MainWidget(QWidget):
 
     def selectDates(self):
         self.dateWindow = QWidget()
-        self.cal = QCalendarWidget(self)
+        self.calend = QCalendarWidget(self)
         current_date = QDate.fromString(self.date.toPlainText(), "yyyy-MM-dd")
-        self.cal.setSelectedDate(current_date)
-        self.cal.clicked[QDate].connect(self.showDate)
+        self.calend.setSelectedDate(current_date)
+        self.calend.clicked[QDate].connect(self.showDate)
         self.hbox = QHBoxLayout()
-        self.hbox.addWidget(self.cal)
+        self.hbox.addWidget(self.calend)
         self.dateWindow.setLayout(self.hbox)
         self.dateWindow.setGeometry(300, 300, 350, 300)
         self.dateWindow.setWindowTitle('Calendar')
         self.dateWindow.show()
 
     def showDate(self):
-        qdate = self.cal.selectedDate()
+        qdate = self.calend.selectedDate()
         qdate_str = qdate.toString("yyyy-MM-dd")
         self.date.setText(qdate_str)
 
@@ -305,6 +315,10 @@ class MainWindow(QMainWindow):
     def initUI(self):
         mainMenu = self.menuBar()
         fileMenu = mainMenu.addMenu('File')
+        getLogs = QAction('Get logs...', self)
+        getLogs.triggered.connect(self.getLogs)
+
+        fileMenu.addAction(getLogs)
         mainMenu.setNativeMenuBar(False)
 
         self.centerWidget = MainWidget()
@@ -313,8 +327,13 @@ class MainWindow(QMainWindow):
 
         self.show()
 
+    def getLogs(self):
+        mergeit.getLogs()
+
+
 if __name__ == '__main__':
 
+    mergeit.fetch()
     app = QApplication(sys.argv)
     ex = MainWindow()
     ex.show()

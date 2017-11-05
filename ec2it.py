@@ -79,9 +79,9 @@ class EC2connection():
 
 if __name__ == '__main__':
     ec2 = EC2connection()
-    # ec2.getFiles(['watchlistdaily.csv', 'macrowatchlist.csv'], 'trash')
+    # ec2.getFiles(, 'trash')
     # ec2.cmd('ls')
-    ec2.getAllFiles('~/','trash')
+    # ec2.getAllFiles('~/','trash')
     # ec2.cmd('ls')
     # ec2.rmAll('logs')
     # ec2.putFile('scrapit.py')
