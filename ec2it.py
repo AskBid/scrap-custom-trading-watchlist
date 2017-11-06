@@ -84,4 +84,4 @@ if __name__ == '__main__':
     # ec2.getAllFiles('~/','trash')
     # ec2.cmd('ls')
     # ec2.rmAll('logs')
-    # ec2.putFile('scrapit.py')
+    ec2.putFile('scrapit.py')

@@ -102,7 +102,7 @@ def merge_db(db_old_name, db_new_name, tolerance = 10):
         print("DB '{}' to add with merging was empty (no tables)".format(db_new_name))
     print(len(avg_adds))
 
-def fetch():
+def fetch(del_onEC2 = 'leave'):
     try:
         ec2 = ec2it.EC2connection()
     except:
@@ -110,7 +110,8 @@ def fetch():
 
     try:
         ec2.getFiles(('data/scrapData.db', 'data/scrapData_2.db', 'data/scrapData_cds.db', 'data/scrapData_2_cds.db'), 'fetch/')
-        ec2.rmAll('data')
+        if del_onEC2 == 'delete':
+            ec2.rmAll('data')
 
         copyfile('fetch/scrapData.db', '_bak/scrapData_{}.db'.format(strftime('%Y-%m-%d_%H:%M')))
         copyfile('fetch/scrapData_2.db', '_bak/scrapData_2_{}.db'.format(strftime('%Y-%m-%d_%H:%M')))
@@ -141,9 +142,9 @@ def getLogs():
         print('No such file or directory (logs/)')
 
 if __name__ == '__main__':
-
+    pass
     # iteration = '1'
     # mergym(iteration)
     # merge_db("merge/old_{}.db".format(iteration), "merge/new.db")
-
-    fetch()
+    #
+    # fetch()

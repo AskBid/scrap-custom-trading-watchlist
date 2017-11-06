@@ -257,8 +257,8 @@ class MainWidget(QWidget):
         self.day.setText(getWeekDay(self.date.toPlainText()))
         self.main_canvas.run(dic_datait)
 
-    def updateFetch(self):
-        mergeit.fetch()
+    def updateFetch(self, on_EC2 = 'leave'):
+        mergeit.fetch(on_EC2)
         self.updateContainer()
 
     def updatePrevContainer(self):
@@ -318,8 +318,11 @@ class MainWindow(QMainWindow):
         fileMenu = mainMenu.addMenu('File')
         getLogs = QAction('Get logs...', self)
         getLogs.triggered.connect(self.getLogs)
-
         fileMenu.addAction(getLogs)
+        del_EC2data = QAction('Fetch and Delete Data on EC2...', self)
+        del_EC2data.triggered.connect(self.deleteDataEC2)
+        fileMenu.addAction(del_EC2data)
+
         mainMenu.setNativeMenuBar(False)
 
         self.centerWidget = MainWidget()
@@ -331,6 +334,8 @@ class MainWindow(QMainWindow):
     def getLogs(self):
         mergeit.getLogs()
 
+    def deleteDataEC2(self):
+        mergeit.fetch('delete')
 
 if __name__ == '__main__':
 

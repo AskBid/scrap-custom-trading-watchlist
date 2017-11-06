@@ -538,7 +538,7 @@ def selector(address):
 
 def writeit(csvFile, db):
     global logfile
-    logfile = open('logs/' + date + '_' + db + '_log.txt', 'a+')
+    logfile = open('logs/' + date + '_' + db.split('/')[-1] + '_log.txt', 'a+')
 
     conn = sqlite3.connect(db)
     c = conn.cursor()
