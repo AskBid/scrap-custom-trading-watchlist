@@ -74,7 +74,7 @@ class Box(QTextBrowser):
         self.setContentsMargins(0, 0, 0, 0)
 
     def write_label_html(self, inst, date_input):
-        labelhtml = 'gui/labellistVbar3.html'
+        labelhtml = 'gui/table.html'
 
         if '_Fr' in inst or '_YC' in inst or inst == '':
             # with open(labelhtml) as f:
@@ -319,7 +319,7 @@ class MainWindow(QMainWindow):
         getLogs = QAction('Get logs...', self)
         getLogs.triggered.connect(self.getLogs)
         fileMenu.addAction(getLogs)
-        del_EC2data = QAction('Fetch and Delete Data on EC2...', self)
+        del_EC2data = QAction('Fetch-DELETE EC2 data/*', self)
         del_EC2data.triggered.connect(self.deleteDataEC2)
         fileMenu.addAction(del_EC2data)
 

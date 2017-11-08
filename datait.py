@@ -187,7 +187,7 @@ class Calc_dataframe():
 
 def writePrice(num, price = None):
     if num == '-' or isnan(num):
-        return '-'
+        return 'NaN'
 
     if price == None:
         price = str(num).split('.')

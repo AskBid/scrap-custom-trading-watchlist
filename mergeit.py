@@ -22,8 +22,7 @@ def clean_db(db_name):
 
     for table in list_table_names:
         table = table[0]
-        print(table)
-        if '_cme' not in table and '_YC' not in table:
+        if '_cme' not in table and '_YC' not in table and 'CDS' not in table:
                 d.execute("DELETE FROM {} WHERE date = ''".format(table))
                 d.execute("DELETE FROM {} WHERE timestamp = ''".format(table))
                 d.execute("DELETE FROM {} WHERE price = ''".format(table))
@@ -43,15 +42,23 @@ def merge_db(db_old_name, db_new_name, tolerance = 10):
 
     conn_old = sqlite3.connect(db_old_name)
     c_old = conn_old.cursor()
+    conn_new = sqlite3.connect(db_new_name)
+    c_new = conn_new.cursor()
 
     c_old.execute("SELECT name FROM sqlite_master WHERE type = 'table'")
     list_table_names = c_old.fetchall()
-    print()
+    c_new.execute("SELECT name FROM sqlite_master WHERE type = 'table'")
+    list_table_names_new = c_new.fetchall()
+    if len(list_table_names) != len(list_table_names_new):
+        print('THE TWO DATABASE HAVE NOT MATCHING TABLES NUMBERS {} vs {}'.format(list_table_names, list_table_names_new))
+    c_new.close()
+    conn_new.close()
 
     c_old.execute("ATTACH DATABASE ? AS ToMerge", (db_new_name,))
     avg_adds = []
 
     for table in list_table_names:
+        print(table)
         c_old.execute("SELECT date,timestamp FROM {!r}".format(table[0]))
         data_old = c_old.fetchall()
 
@@ -95,6 +102,7 @@ def merge_db(db_old_name, db_new_name, tolerance = 10):
     c_old.close()
     conn_old.close()
 
+
     print('AVERAGE OF ROWS ADDED:')
     try:
         print(sum(avg_adds) / float(len(avg_adds)))
@@ -109,32 +117,81 @@ def fetch(del_onEC2 = 'leave'):
         print('No EC2 Connection.')
 
     try:
-        ec2.getFiles(('data/scrapData.db', 'data/scrapData_2.db', 'data/scrapData_cds.db', 'data/scrapData_2_cds.db'), 'fetch/')
+        try:
+            ec2.getFiles('data/scrapData.db', 'fetch/')
+        except:
+            print("'data/scrapData.db' No such file or directory ")
+        try:
+            ec2.getFiles('data/scrapData_2.db', 'fetch/')
+        except:
+            print("'data/scrapData_2.db' No such file or directory ")
+        try:
+            ec2.getFiles('data/scrapData_cds.db', 'fetch/')
+        except:
+            print("'data/scrapData_cds.db' No such file or directory ")
+        try:
+            ec2.getFiles('data/scrapData_2_cds.db', 'fetch/')
+        except:
+            print("'data/scrapData_2_cds.db' No such file or directory ")
         if del_onEC2 == 'delete':
             ec2.rmAll('data')
 
-        copyfile('fetch/scrapData.db', '_bak/scrapData_{}.db'.format(strftime('%Y-%m-%d_%H:%M')))
-        copyfile('fetch/scrapData_2.db', '_bak/scrapData_2_{}.db'.format(strftime('%Y-%m-%d_%H:%M')))
-        copyfile('fetch/scrapData_cds.db', '_bak/scrapData_cds_{}.db'.format(strftime('%Y-%m-%d_%H:%M')))
-        copyfile('fetch/scrapData_2_cds.db', '_bak/scrapData_2_cds_{}.db'.format(strftime('%Y-%m-%d_%H:%M')))
+        try:
+            copyfile('fetch/scrapData.db', 'fetch/_bak/{}_scrapData.db'.format(strftime('%Y-%m-%d_%H')))
+            copyfile('fetch/scrapData_2.db', 'fetch/_bak/{}_scrapData_2.db'.format(strftime('%Y-%m-%d_%H')))
+            copyfile('fetch/scrapData_cds.db', 'fetch/_bak/{}_scrapData_cds.db'.format(strftime('%Y-%m-%d_%H')))
+            copyfile('fetch/scrapData_2_cds.db', 'fetch/_bak/{}_scrapData_2_cds.db'.format(strftime('%Y-%m-%d_%H')))
+        except:
+            print('baking up EC2 files not worked')
 
-        merge_db('fetch/scrapData.db', 'fetch/scrapData_2.db')
-        os.remove('fetch/scrapData_2.db')
-        merge_db('fetch/scrapData_cds.db', 'fetch/scrapData_2_cds.db')
-        os.remove('fetch/scrapData_2_cds.db')
+        try:
+            merge_db('fetch/scrapData.db', 'fetch/scrapData_2.db')
+        except:
+            print('Failed to merge EC2 dbs')
 
-        copyfile('scrapData.db', 'scrapData_bak_{}.db'.format(strftime('%Y-%m-%d_%H:%M')))
-        merge_db('scrapData.db', 'fetch/scrapData.db')
-        os.remove('fetch/scrapData.db')
-        copyfile('scrapData_cds.db', 'scrapData_bak_cds_{}.db'.format(strftime('%Y-%m-%d_%H:%M')))
-        merge_db('scrapData_cds.db', 'fetch/scrapData_cds.db')
-        os.remove('fetch/scrapData_cds.db')
+        try:
+            merge_db('fetch/scrapData_cds.db', 'fetch/scrapData_2_cds.db')
+        except:
+            print('merge for cds from EC2 not completed')
+
+        try:
+            remove('fetch/scrapData_2.db')
+            remove('fetch/scrapData_2_cds.db')
+        except:
+            print('removing EC2 files not worked')
+
+        copyfile('scrapData.db', '_bak/{}_scrapData.db'.format(strftime('%Y-%m-%d_%H')))
+
+        try:
+            merge_db('scrapData.db', 'fetch/scrapData.db')
+        except:
+            print('merge for scrapData.db not completed')
+
+        copyfile('scrapData_cds.db', '_bak/{}_scrapData_cds.db'.format(strftime('%Y-%m-%d_%H')))
+
+        try:
+            merge_db('scrapData_cds.db', 'fetch/scrapData_cds.db')
+        except:
+            print('merge for cds not completed')
+
+        try:
+            remove('fetch/scrapData.db')
+            remove('fetch/scrapData_cds.db')
+        except:
+            print('removing fetching files not worked')
 
         print('fetch complete.')
+
+    # except Exception as e:
+    #     logger.error(str(e))
     except:
         print('No such file or directory (data/)')
 
 def getLogs():
+    try:
+        ec2 = ec2it.EC2connection()
+    except:
+        print('No EC2 Connection.')
     try:
         ec2.getAllFiles('~/logs','logs')
         ec2.rmAll('logs')
@@ -143,6 +200,7 @@ def getLogs():
 
 if __name__ == '__main__':
     pass
+    getLogs()
     # iteration = '1'
     # mergym(iteration)
     # merge_db("merge/old_{}.db".format(iteration), "merge/new.db")

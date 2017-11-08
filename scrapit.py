@@ -542,9 +542,6 @@ def writeit(csvFile, db):
 
     conn = sqlite3.connect(db)
     c = conn.cursor()
-    dbCDS = db.split('.')[0] + '_cds.db'
-    connCDS = sqlite3.connect(dbCDS)
-    cCDS = connCDS.cursor()
 
     csvlist = open(csvFile, 'r')
     count = 0
@@ -681,7 +678,7 @@ def writeit(csvFile, db):
                         name = regex.sub('', dictCDS['Name'])
                         tablename = 'CDS_' + name.replace(' ','_')
 
-                        cCDS.execute("""CREATE TABLE IF NOT EXISTS {}(
+                        c.execute("""CREATE TABLE IF NOT EXISTS {}(
                         date text,
                         time text,
                         timestamp integer,
@@ -689,9 +686,9 @@ def writeit(csvFile, db):
                         value integer,
                         unit text)""".format(tablename))
 
-                        connCDS.commit()
+                        conn.commit()
 
-                        cCDS.execute("""INSERT INTO {} VALUES
+                        c.execute("""INSERT INTO {} VALUES
                         (?,?,?,?,?,?)""".format(tablename),(
                         date,
                         time.strftime('%H:%M'),
@@ -700,7 +697,7 @@ def writeit(csvFile, db):
                         dictCDS['Value'],
                         dictCDS['Unit']))
 
-                        connCDS.commit()
+                        conn.commit()
 
                 print("End writing DataBase for {}.".format(fileName))
                 print('///////////')
@@ -716,8 +713,6 @@ def writeit(csvFile, db):
 
     c.close()
     conn.close()
-    cCDS.close()
-    connCDS.close()
 
     csvlist.close
 
