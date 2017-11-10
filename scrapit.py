@@ -560,8 +560,7 @@ def writeit(csvFile, db):
         h52 real,
         l52 real,
         vol integer,
-        oi integer,
-        ticker text)""")
+        oi integer)""")
     conn.commit()
 
     c.execute("""CREATE TABLE IF NOT EXISTS CME(
@@ -582,7 +581,7 @@ def writeit(csvFile, db):
         vol_max integer,
         oi_max integer,
         bt_max integer,
-        tableFutures text)""".format(tablename = fileName + '_cme'))
+        tableFutures text)""")
     conn.commit()
 
     c.execute("""CREATE TABLE IF NOT EXISTS YELDS(
@@ -691,7 +690,7 @@ def writeit(csvFile, db):
 
                         c.execute("""INSERT INTO CDS VALUES
                         (?,?,?,?,?,?,?)""",(
-                            tablename
+                            tablename,
                             date,
                             time.strftime('%H:%M'),
                             timestamp,
@@ -705,7 +704,8 @@ def writeit(csvFile, db):
 
                 count += 1
 
-            except:
+            except Exception as e:
+                print(str(e))
                 print("Writing DataBase for {} did not work".format(fileName))
                 print("X X X X X X")
                 logfile.write('{}: Writing DataBase for {} did not work...\n'.format(hour, fileName))

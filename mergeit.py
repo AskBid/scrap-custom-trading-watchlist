@@ -167,25 +167,18 @@ def makeit_1tab(db_name, db_1table):
 
 def clean_db(db_name):
     conn = sqlite3.connect(db_name)
-    c = conn.cursor()
-
-    c.execute("SELECT name FROM sqlite_master WHERE type = 'table'")
-    list_table_names = c
     d = conn.cursor()
 
-    for table in list_table_names:
-        table = table[0]
-        if '_cme' not in table and '_YC' not in table and 'CDS' not in table:
-                d.execute("DELETE FROM {} WHERE date = ''".format(table))
-                d.execute("DELETE FROM {} WHERE timestamp = ''".format(table))
-                d.execute("DELETE FROM {} WHERE price = ''".format(table))
-                d.execute("DELETE FROM {} WHERE dayh = ''".format(table))
-                d.execute("DELETE FROM {} WHERE dayl = ''".format(table))
-                d.execute("DELETE FROM {} WHERE open = ''".format(table))
+    d.execute("DELETE FROM MARKETS WHERE date = ''")
+    d.execute("DELETE FROM MARKETS WHERE timestamp = ''")
+    d.execute("DELETE FROM MARKETS WHERE price = ''")
+    d.execute("DELETE FROM MARKETS WHERE dayh = ''")
+    d.execute("DELETE FROM MARKETS WHERE dayl = ''")
+    d.execute("DELETE FROM MARKETS WHERE open = ''")
 
     conn.commit()
 
-    c.close()
+    d.close()
     conn.close()
 
 def merge_db(db_old_name, db_new_name, tolerance = 10):
@@ -195,73 +188,76 @@ def merge_db(db_old_name, db_new_name, tolerance = 10):
 
     conn_old = sqlite3.connect(db_old_name)
     c_old = conn_old.cursor()
-    conn_new = sqlite3.connect(db_new_name)
-    c_new = conn_new.cursor()
 
-    c_old.execute("SELECT name FROM sqlite_master WHERE type = 'table'")
-    list_table_names = c_old.fetchall()
-    c_new.execute("SELECT name FROM sqlite_master WHERE type = 'table'")
-    list_table_names_new = c_new.fetchall()
-    if len(list_table_names) != len(list_table_names_new):
-        print('THE TWO DATABASE HAVE NOT MATCHING TABLES NUMBERS {} vs {}'.format(list_table_names, list_table_names_new))
-    c_new.close()
-    conn_new.close()
+    c_old.execute("ATTACH DATABASE ? AS ToAdd", (db_new_name,))
 
-    c_old.execute("ATTACH DATABASE ? AS ToMerge", (db_new_name,))
-    avg_adds = []
+    def merge_inst(table):
+        avg_adds = []
 
-    for table in list_table_names:
-        print(table)
-        c_old.execute("SELECT date,timestamp FROM {!r}".format(table[0]))
-        data_old = c_old.fetchall()
+        table_toAdd = str('ToAdd.' + table)
+        c_old.execute("SELECT DISTINCT name FROM {}".format(table_toAdd))
+        inst_list = c_old.fetchall()
 
-        attch_tab = str('ToMerge.' + table[0])
-        c_old.execute("SELECT date,timestamp FROM {}".format(attch_tab))
-        data_new = c_old.fetchall()
+        for inst in inst_list:
+            inst = inst[0]
 
-        toAdd = []
+            c_old.execute("""SELECT date,timestamp FROM {}
+                             WHERE name = {!r}""".format(table_toAdd, inst))
+            data_new = c_old.fetchall()
 
-        for timestamp_N in data_new:
-            date_N = timestamp_N[0]
-            mins_N = timestamp_N[1]
-            check = False
+            c_old.execute("""SELECT date,timestamp FROM {}
+                             WHERE name = {!r}""".format(table, inst))
+            data_old = c_old.fetchall()
 
-            for timestamp_O in data_old:
-                date_O = timestamp_O[0]
-                mins_O = timestamp_O[1]
-                if date_N == date_O:
-                    mins_D = abs(mins_N - mins_O)
-                    if mins_D < tolerance:
-                        check = True
-                        break #this timestamp_N has found a similar item so is discarded
+            rowsToAdd = []
 
-            if check == False: #then this timestamp_N did not match any c_old row and we shld add it
-                toAdd.append(timestamp_N)
+            for timestamp_N in data_new:
+                date_N = timestamp_N[0]
+                mins_N = timestamp_N[1]
+                check = False
 
-        print(table[0])
-        print('adding ' + str(len(toAdd)) + ' rows\n')
-        avg_adds.append(len(toAdd))
+                for timestamp_O in data_old:
+                    date_O = timestamp_O[0]
+                    mins_O = timestamp_O[1]
+                    if date_N == date_O:
+                        mins_D = abs(mins_N - mins_O)
+                        if mins_D < tolerance:
+                            check = True
+                            break #this timestamp_N has found a similar item so is discarded
 
-        for row in toAdd:
-            date = row[0]
-            mins = row[1]
-            c_old.execute("""INSERT INTO {!r}
-                             SELECT * FROM {}
-                             WHERE date = {!r}
-                             AND timestamp = {}""".format(table[0], attch_tab, date, mins))
+                if check == False: #then this timestamp_N did not match any c_old row and we shld add it
+                    rowsToAdd.append(timestamp_N)
 
-            conn_old.commit()
+            # print(inst)
+            # print('adding ' + str(len(rowsToAdd)) + ' rows\n')
+
+            avg_adds.append(len(rowsToAdd))
+
+            for row in rowsToAdd:
+                date = row[0]
+                mins = row[1]
+                c_old.execute("""INSERT INTO {}
+                                 SELECT * FROM {}
+                                 WHERE name = {!r}
+                                 AND date = {!r}
+                                 AND timestamp = {}""".format(table, table_toAdd, inst, date, mins))
+
+                conn_old.commit()
+
+        print("AVERAGE OF ROWS ADDED in table '{}':".format(table))
+        try:
+            print(sum(avg_adds) / float(len(avg_adds)))
+        except:
+            print("DB '{}' to add with merging was empty (no tables)".format(db_new_name))
+        print("rows added to '{}' instruments\n\n".format(len(avg_adds)))
+
+    merge_inst('MARKETS')
+    merge_inst('CME')
+    merge_inst('YELDS')
+    merge_inst('CDS')
 
     c_old.close()
     conn_old.close()
-
-
-    print('AVERAGE OF ROWS ADDED:')
-    try:
-        print(sum(avg_adds) / float(len(avg_adds)))
-    except:
-        print("DB '{}' to add with merging was empty (no tables)".format(db_new_name))
-    print(len(avg_adds))
 
 def fetch(del_onEC2 = 'leave'):
     try:
@@ -278,24 +274,15 @@ def fetch(del_onEC2 = 'leave'):
             ec2.getFiles('data/scrapData_2.db', 'fetch/')
         except:
             print("'data/scrapData_2.db' No such file or directory ")
-        try:
-            ec2.getFiles('data/scrapData_cds.db', 'fetch/')
-        except:
-            print("'data/scrapData_cds.db' No such file or directory ")
-        try:
-            ec2.getFiles('data/scrapData_2_cds.db', 'fetch/')
-        except:
-            print("'data/scrapData_2_cds.db' No such file or directory ")
+
         if del_onEC2 == 'delete':
             ec2.rmAll('data')
 
         try:
             copyfile('fetch/scrapData.db', 'fetch/_bak/{}_scrapData.db'.format(strftime('%Y-%m-%d_%H')))
             copyfile('fetch/scrapData_2.db', 'fetch/_bak/{}_scrapData_2.db'.format(strftime('%Y-%m-%d_%H')))
-            copyfile('fetch/scrapData_cds.db', 'fetch/_bak/{}_scrapData_cds.db'.format(strftime('%Y-%m-%d_%H')))
-            copyfile('fetch/scrapData_2_cds.db', 'fetch/_bak/{}_scrapData_2_cds.db'.format(strftime('%Y-%m-%d_%H')))
         except:
-            print('baking up EC2 files not worked')
+            print('baking up EC2 files locally did not work')
 
         try:
             merge_db('fetch/scrapData.db', 'fetch/scrapData_2.db')
@@ -303,15 +290,9 @@ def fetch(del_onEC2 = 'leave'):
             print('Failed to merge EC2 dbs')
 
         try:
-            merge_db('fetch/scrapData_cds.db', 'fetch/scrapData_2_cds.db')
-        except:
-            print('merge for cds from EC2 not completed')
-
-        try:
             remove('fetch/scrapData_2.db')
-            remove('fetch/scrapData_2_cds.db')
         except:
-            print('removing EC2 files not worked')
+            print('removing EC2 file not worked')
 
         copyfile('scrapData.db', '_bak/{}_scrapData.db'.format(strftime('%Y-%m-%d_%H')))
 
@@ -320,24 +301,15 @@ def fetch(del_onEC2 = 'leave'):
         except:
             print('merge for scrapData.db not completed')
 
-        copyfile('scrapData_cds.db', '_bak/{}_scrapData_cds.db'.format(strftime('%Y-%m-%d_%H')))
-
-        try:
-            merge_db('scrapData_cds.db', 'fetch/scrapData_cds.db')
-        except:
-            print('merge for cds not completed')
-
         try:
             remove('fetch/scrapData.db')
-            remove('fetch/scrapData_cds.db')
         except:
             print('removing fetching files not worked')
 
         print('fetch complete.')
 
-    # except Exception as e:
-    #     logger.error(str(e))
-    except:
+    except Exception as e:
+        print(str(e))
         print('No such file or directory (data/)')
 
 def getLogs():
@@ -353,8 +325,8 @@ def getLogs():
 
 if __name__ == '__main__':
     pass
-    makeit_1tab('scrapData.db', 'db_1table.db')
-    makeit_1tab('scrapDataCDS.db', 'db_1table.db')
+    # makeit_1tab('scrapData.db', 'db_1table.db')
+    # makeit_1tab('scrapDataCDS.db', 'db_1table.db')
     # getLogs()
     # iteration = '1'
     # mergym(iteration)

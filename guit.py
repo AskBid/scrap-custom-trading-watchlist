@@ -94,15 +94,15 @@ class Box(QTextBrowser):
                     25,
                     float(thisDatait.dayr_avg), #avgRange = 10.17,
                     float(thisDatait.dayr_std), # stdRange = 4.0235,
-                    float(thisDatait.dayr), # dayRange = 19,
-                    thisDatait.dayDataFrame['price'].values[-2],# yClose = 2560, #taken from [-1]
-                    thisDatait.dayDataFrame['open'].values[-2],# yOpen = 2556.50, #taken from [-2]
-                    thisDatait.dayDataFrame['dayl'].values[-2],# yLow = 2556.25, #taken from [-2]
-                    thisDatait.dayDataFrame['dayh'].values[-2],# yHigh = 2562.25, #taken from [-2]
-                    thisDatait.dayDataFrame['open'].values[-1],# dayOpen = 2560, #taken from [-1]
+                    float(thisDatait.dayr.replace(',','')), # dayRange = 19,
+                    thisDatait.dayDataFrame['price'].values[-2], # yClose = 2560, #taken from [-1]
+                    thisDatait.dayDataFrame['open'].values[-2], # yOpen = 2556.50, #taken from [-2]
+                    thisDatait.dayDataFrame['dayl'].values[-2], # yLow = 2556.25, #taken from [-2]
+                    thisDatait.dayDataFrame['dayh'].values[-2], # yHigh = 2562.25, #taken from [-2]
+                    thisDatait.dayDataFrame['open'].values[-1], # dayOpen = 2560, #taken from [-1]
                     thisDatait.dayDataFrame['price'].values[-1], # price = 2560.75, #taken from [-1]
-                    thisDatait.dayDataFrame['dayl'].values[-1],# dayLow = 2542.5, #taken from [-1]
-                    imgpath_candles,# path = "gui/candle.png",
+                    thisDatait.dayDataFrame['dayl'].values[-1], # dayLow = 2542.5, #taken from [-1]
+                    imgpath_candles, # path = "gui/candle.png",
                     "bar")
 
         with open(labelhtml) as f:

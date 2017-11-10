@@ -49,18 +49,20 @@ class Calc_dataframe():
         end_date_str = "'" + self.enddate + "'"
 
         df = pd.read_sql_query('''
-            SELECT * FROM {0}
-            WHERE date BETWEEN {1} AND {2}
+            SELECT * FROM MARKETS
+            WHERE
+            name = {0}
+            AND date BETWEEN {1} AND {2}
             AND timestamp BETWEEN {3} AND {4};
             '''.format(
-            self.file_name,
+            '"' + str(self.file_name) + '"',
             start_date_str,
             end_date_str,
             self.period_start,
             self.period_end), conn)
 
         df.drop('day', axis=1, inplace=True)
-        df.drop('ticker', axis=1, inplace=True)
+        df.drop('name', axis=1, inplace=True)
 
         df.set_index(['date', 'time'], inplace=True)
 
@@ -187,7 +189,7 @@ class Calc_dataframe():
 
 def writePrice(num, price = None):
     if num == '-' or isnan(num):
-        return '-'
+        return 'NaN'
 
     if price == None:
         price = str(num).split('.')
@@ -203,7 +205,7 @@ def writePrice(num, price = None):
 
 def writePercent(num):
     if num == '-':
-        return '-'
+        return 'NaN'
     string = str(num).split('.')
     # if string[1].count('0') > 1:
     return ("{:.2%}".format(num))
@@ -216,7 +218,7 @@ def writeVolume(num):
     symbols = ['Y', 'T', 'G', 'M', 'k', '', 'm', 'u', 'n']
 
     if num == '-' or isnan(num):
-        return '-'
+        return 'NaN'
     if num == 0:
         return '0'
 
@@ -238,7 +240,7 @@ def isnumber(x):
 
 def writeNum(num):
     if num == '-' or isnan(num):
-        return '-'
+        return 'NaN'
     string = str(num)
     if len(string[0]) > 1:
         return ("{:20,.0f}".format(num)).replace(' ','')
@@ -252,7 +254,7 @@ if __name__ == '__main__':
 
     today = time.strftime('%Y-%m-%d')
 
-    calc = Calc_dataframe('ES_F',today,30,'16:00','16:30')
+    calc = Calc_dataframe('ES_F',today,30,'13:00','13:10')
     print(calc.dayDataFrame)
     print('\n')
 
@@ -271,7 +273,7 @@ if __name__ == '__main__':
     print('dayR_avg =   {}'.format(calc.getDayR_avg()))
     print('dayR_med =   {}'.format(calc.getDayR_med()))
     print('dayR_std =   {}'.format(calc.getDayR_std()))
-    print('chpt_describe =   \n{}'.format(calc.get_describe()))
+    print('chpt_describe = \n {}'.format(calc.get_describe()))
     print('52r =        {}'.format(calc.day52r))
 
     print('VOLUME =     {}'.format(calc.getVolume()))
