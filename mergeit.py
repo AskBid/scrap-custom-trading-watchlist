@@ -244,6 +244,7 @@ def merge_db(db_old_name, db_new_name, tolerance = 10):
 
                 conn_old.commit()
 
+        print("'{}'-->'{}' merging:".format(db_new_name,db_old_name))
         print("AVERAGE OF ROWS ADDED in table '{}':".format(table))
         try:
             print(sum(avg_adds) / float(len(avg_adds)))

@@ -13,6 +13,8 @@ from pandas.tseries.offsets import BDay #to make operation betwen dates where on
 from scrapit import getTimestamp
 from drawit import draw52RangeBar
 
+from scipy import stats
+
 import sqlite3
 
 class Calc_dataframe():
@@ -26,7 +28,7 @@ class Calc_dataframe():
 
         self.file_name = file_name
         self.enddate = enddate
-        self.sample_days = sample_days
+        self.sample_days = sample_days + 1
         self.period_start = getTimestamp(period_start)
         self.period_end = getTimestamp(period_end)
 
@@ -35,8 +37,8 @@ class Calc_dataframe():
         self.lastdate = self.dayDataFrame.index[-1][0]
         self.price = self.getPrice()
         self.dayr = self.getDayR()
-        self.dayr_std = self.getDayR_std()
-        self.dayr_avg = self.getDayR_avg()
+        self.dayr_std = self.getStats('dayr', 'std')
+        self.dayr_avg = self.getStats('dayr', 'avg')
         self.day52r = self.get52wR()
 
     def getDataFrame(self):
@@ -49,11 +51,17 @@ class Calc_dataframe():
         end_date_str = "'" + self.enddate + "'"
 
         df = pd.read_sql_query('''
-            SELECT * FROM MARKETS
-            WHERE
-            name = {0}
-            AND date BETWEEN {1} AND {2}
-            AND timestamp BETWEEN {3} AND {4};
+            SELECT * FROM (
+                SELECT * FROM MARKETS
+                WHERE
+                name = {0}
+                AND date BETWEEN {1} AND {2}
+                AND timestamp BETWEEN {3} AND {4}
+                GROUP BY date, timestamp
+                ORDER BY date(date), timestamp
+                )
+            GROUP BY date
+            ORDER BY date(date);
             '''.format(
             '"' + str(self.file_name) + '"',
             start_date_str,
@@ -104,6 +112,11 @@ class Calc_dataframe():
         close = day['yclose'].values[-1]
         return writePrice(close, self.price)
 
+    def getVolume(self):
+        day = self.dayDataFrame
+        vol = day['vol'].values[-1]
+        return writeVolume(vol)
+
     def get52wR(self):
         day = self.dayDataFrame
         day52r = day['h52'].values[-1] - day['l52'].values[-1]
@@ -113,23 +126,6 @@ class Calc_dataframe():
         day = self.dayDataFrame
         self.dayDataFrame['dayr'] = day['dayh'] - day['dayl'] #we actually add a column to the day dataframe
         return writePrice(self.dayDataFrame['dayr'].values[-1], self.price)
-
-    def getDayR_avg(self):
-        day = self.dayDataFrame
-        return writePrice(day['dayr'].mean())
-
-    def getDayR_med(self):
-        day = self.dayDataFrame
-        return writePrice(day['dayr'].median())
-
-    def getDayR_std(self):
-        day = self.dayDataFrame
-        return writePrice(day['dayr'].std())
-
-    def get_describe(self):
-        day = self.dayDataFrame
-        x = day['changept'].describe()
-        return x
 
     def getPcChange(self, start_type, prc_or_R): #start_type defines if the starting price to calculate the move of the day is yesterday 'close' price or todays 'open' price
         day = self.dayDataFrame
@@ -141,32 +137,7 @@ class Calc_dataframe():
         if prc_or_R == 'range':
             self.dayDataFrame['changepc'] = day['changept'] / self.day52r
             return writePercent(self.dayDataFrame['changepc'].values[-1])
-        return '-err'
-
-    def getPcChange_avg(self, switch_abs = None):
-        if switch_abs == 'abs':
-            day = self.dayDataFrame['changepc'].abs()
-        else:
-            day = self.dayDataFrame['changepc']
-        dayr_avg = day.mean()
-        return writePercent(dayr_avg)
-
-    def getVolume(self):
-        day = self.dayDataFrame
-        vol = day['vol'].values[-1]
-        return writeVolume(vol)
-
-    def getVolume_avg(self):
-        day = self.dayDataFrame
-        return writeVolume(day['vol'].mean())
-
-    def getVolume_med(self):
-        day = self.dayDataFrame
-        return writeVolume(day['vol'].median())
-
-    def getVolume_std(self):
-        day = self.dayDataFrame
-        return writeVolume(day['vol'].std())
+        return 'NaN'
 
     def getVolR_rt(self):
         day = self.dayDataFrame
@@ -177,13 +148,51 @@ class Calc_dataframe():
             return '-'
         return writeVolume(self.dayDataFrame['thinness'].values[-1])
 
-    def getVolR_rt_avg(self):
+    def getPercentile(self, col):
+        #here col is not string but the actual panda column
         day = self.dayDataFrame
-        try:
-            VolR_rt_avg = day['thinness'].sum() / day['thinness'].dropna(axis=0).size
-        except:
-            return '-'
-        return writeVolume(VolR_rt_avg)
+        percentile = stats.percentileofscore(col, col.values[-1])
+        return (percentile / 100)
+
+    def getStats(self, col, stat_type, abs_ = False):
+        #example: getStats('dayr', 'std', True)
+        day = self.dayDataFrame
+
+        if abs_:
+            if stat_type == 'avg':
+                val = day[col].abs().mean()
+            if stat_type == 'med':
+                val = day[col].abs().median()
+            if stat_type == 'std':
+                val = day[col].abs().std()
+            if stat_type == 'pct':
+                val = self.getPercentile(day[col].abs())
+
+        else:
+            if stat_type == 'avg':
+                val = day[col].mean()
+            if stat_type == 'med':
+                val = day[col].median()
+            if stat_type == 'std':
+                val = day[col].std()
+            if stat_type == 'pct':
+                val = self.getPercentile(day[col])
+
+        if stat_type in 'pct':
+            return val
+        elif col in 'changept, dayr':
+            return writePrice(val)
+        elif col in 'changepc':
+            return writePercent(val)
+        elif col in 'vol, oi':
+            return writeVolume(val)
+        else:
+            return writeNum(val)
+
+    def get_describe(self, col):
+        day = self.dayDataFrame
+        x = day[col].abs().describe()
+        return x
 
     ### /STATISTIC FUNCTION ###
 
@@ -247,38 +256,38 @@ def writeNum(num):
     return ("{:20,.2f}".format(num)).replace(' ','')
 
 if __name__ == '__main__':
-    # pd.set_option('display.height', 1000)
     pd.set_option('display.max_rows', 500)
     pd.set_option('display.max_columns', 500)
     pd.set_option('display.width', 1000)
 
     today = time.strftime('%Y-%m-%d')
 
-    calc = Calc_dataframe('ES_F',today,30,'13:00','13:10')
-    print(calc.dayDataFrame)
-    print('\n')
+    calc = Calc_dataframe('ES_F',today,30,'08:00','17:10')
 
-    print('----> ' + calc.file_name +  ' <----''\n')
+    print('----> ' + calc.file_name +  ' <----\n')
 
     print('prc chgPc =  {}'.format(calc.getPcChange('open','price')))
-    print('avg "=       {}'.format(calc.getPcChange_avg('abs')))
+    print('avg "=       {}'.format(calc.getStats('changepc', 'avg', abs_ = True)))
 
     print('rng chgPc =  {}'.format(calc.getPcChange('open','range')))
-    print('avg "=       {}'.format(calc.getPcChange_avg('abs')))
+    print('avg "=       {}'.format(calc.getStats('changepc', 'avg', abs_ = True)))
 
     print('price =      ' + calc.price)
     print('open =       {}'.format(calc.getOpen()))
     print('yclose =     {}'.format(calc.getYClose()))
     print('dayR =       {}'.format(calc.dayr))
-    print('dayR_avg =   {}'.format(calc.getDayR_avg()))
-    print('dayR_med =   {}'.format(calc.getDayR_med()))
-    print('dayR_std =   {}'.format(calc.getDayR_std()))
-    print('chpt_describe = \n {}'.format(calc.get_describe()))
+    print('dayR_pct =   {}'.format(calc.getStats('dayr', 'pct')))
+    print('dayR_avg =   {}'.format(calc.getStats('dayr', 'avg')))
+    print('dayR_med =   {}'.format(calc.getStats('dayr', 'med')))
+    print('dayR_std =   {}'.format(calc.getStats('dayr', 'std')))
+    # print('chpt_describe = \n {}'.format(calc.get_describe('dayr')))
     print('52r =        {}'.format(calc.day52r))
 
     print('VOLUME =     {}'.format(calc.getVolume()))
-    print('VOLUME AVG = {}'.format(calc.getVolume_avg()))
-    print('VOLUME MED = {}'.format(calc.getVolume_med()))
-    print('VOLUME STD = {}'.format(calc.getVolume_std()))
+    print('VOLUME_avg = {}'.format(calc.getStats('vol', 'avg')))
+    print('VOLUME_med = {}'.format(calc.getStats('vol', 'med')))
+    print('VOLUME_std = {}'.format(calc.getStats('vol', 'std')))
     print('Vol/rng =    {}'.format(calc.getVolR_rt()))
-    print('Vol/rng AVG= {}'.format(calc.getVolR_rt_avg()))
+    print('Vol/rng_avg= {}'.format(calc.getStats('thinness', 'avg')))
+
+    print(calc.dayDataFrame)
