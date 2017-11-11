@@ -325,8 +325,8 @@ def getLogs():
 
 if __name__ == '__main__':
     pass
-    # makeit_1tab('scrapData.db', 'db_1table.db')
-    # makeit_1tab('scrapDataCDS.db', 'db_1table.db')
+    makeit_1tab('scrapData.db', 'db_1table.db')
+    makeit_1tab('scrapDataCDS.db', 'db_1table.db')
     # getLogs()
     # iteration = '1'
     # mergym(iteration)

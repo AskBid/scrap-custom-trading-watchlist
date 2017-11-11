@@ -706,7 +706,7 @@ def writeit(csvFile, db):
 
             except Exception as e:
                 print(str(e))
-                print("Writing DataBase for {} did not work".format(fileName))
+                print("Writing DataBase for {} did not work because of: {}".format(fileName, e))
                 print("X X X X X X")
                 logfile.write('{}: Writing DataBase for {} did not work...\n'.format(hour, fileName))
 
