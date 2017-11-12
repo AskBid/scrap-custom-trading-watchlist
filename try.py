@@ -1,20 +1,23 @@
-#libs required
-from scipy import stats
-import pandas as pd
-import numpy as np
+class Switcher(object):
+    def numbers_to_methods_to_strings(self, argument):
 
-#generate ramdom data with same seed (to be reproducible)
-np.random.seed(seed=10)
-df = pd.DataFrame(np.random.uniform(0,0.5,(10)), columns=['a'])
+        args = ['try']
+        method_name = 'number_' + str(argument)
+        method = getattr(self, method_name, lambda: "nothing")
 
-print(df)
+        return method(*args)
 
-#quantile function
-x = df.quantile(1)[0]
+    def number_0(self):
+        return "zero"
 
-x = 0.5
-#inverse of quantile
-percentile = stats.percentileofscore(df['a'],x)
-percentile = percentile / 100
+    def number_1(self):
+        return "one"
 
-print("the percentile of the value '{}' is '{}'".format(x,percentile))
+    def number_2(self, string):
+        return string
+
+switch = Switcher()
+
+x = switch.numbers_to_methods_to_strings(2)
+
+print(x)

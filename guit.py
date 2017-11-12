@@ -9,7 +9,7 @@ import time
 import datetime
 from pandas.tseries.offsets import BDay #to make operation betwen dates where only BusinessDays are considered
 from PyQt5.QtCore import QDate
-from drawit import drawCandle
+from drawit import drawCandle, draw52RangeBar
 import mergeit
 
 today = time.strftime('%Y-%m-%d')
@@ -74,56 +74,63 @@ class Box(QTextBrowser):
         self.setContentsMargins(0, 0, 0, 0)
 
     def write_label_html(self, inst, date_input):
-        labelhtml = 'gui/labellistVbar3.html'
+        labelhtml = 'gui/inst_tab.html'
 
         if '_Fr' in inst or '_YC' in inst or inst == '':
             # with open(labelhtml) as f:
         	#     html = f.read()
             return ''
 
-        thisDatait = datait.Calc_dataframe( inst,
+        instData = datait.Calc_dataframe( inst,
                                             date_input['enddate'],
                                             int(date_input['sample_days']),
                                             date_input['period_start'],
                                             date_input['period_end'])
 
-        imgpath = 'img/{}.png'.format(thisDatait.file_name)
-        thisDatait.drawBar2(imgpath, 190, 8)
-        imgpath_candles = 'img/{}_candles.png'.format(thisDatait.file_name)
+        imgpath = 'img/{}.png'.format(instData.file_name)
+        imgpath_candles = 'img/{}_candles.png'.format(instData.file_name)
         drawCandle( 190,
                     25,
-                    float(thisDatait.dayr_avg), #avgRange = 10.17,
-                    float(thisDatait.dayr_std), # stdRange = 4.0235,
-                    float(thisDatait.dayr.replace(',','')), # dayRange = 19,
-                    thisDatait.dayDataFrame['price'].values[-2], # yClose = 2560, #taken from [-1]
-                    thisDatait.dayDataFrame['open'].values[-2], # yOpen = 2556.50, #taken from [-2]
-                    thisDatait.dayDataFrame['dayl'].values[-2], # yLow = 2556.25, #taken from [-2]
-                    thisDatait.dayDataFrame['dayh'].values[-2], # yHigh = 2562.25, #taken from [-2]
-                    thisDatait.dayDataFrame['open'].values[-1], # dayOpen = 2560, #taken from [-1]
-                    thisDatait.dayDataFrame['price'].values[-1], # price = 2560.75, #taken from [-1]
-                    thisDatait.dayDataFrame['dayl'].values[-1], # dayLow = 2542.5, #taken from [-1]
+                    float(instData.dayr_avg), #avgRange = 10.17,
+                    float(instData.dayr_std), # stdRange = 4.0235,
+                    float(instData.dayr.replace(',','')), # dayRange = 19,
+                    instData.df['price'].values[-2], # yClose = 2560, #taken from [-1]
+                    instData.df['open'].values[-2], # yOpen = 2556.50, #taken from [-2]
+                    instData.df['dayl'].values[-2], # yLow = 2556.25, #taken from [-2]
+                    instData.df['dayh'].values[-2], # yHigh = 2562.25, #taken from [-2]
+                    instData.df['open'].values[-1], # dayOpen = 2560, #taken from [-1]
+                    instData.df['price'].values[-1], # price = 2560.75, #taken from [-1]
+                    instData.df['dayl'].values[-1], # dayLow = 2542.5, #taken from [-1]
                     imgpath_candles, # path = "gui/candle.png",
                     "bar")
+        draw52RangeBar(
+                    190,
+                    8,
+                    instData.df['l52'].values[-1],
+                    instData.day52r,
+                    instData.df['open'].values[-1],
+                    instData.df['dayr'].values[-1],
+                    imgpath)
 
         with open(labelhtml) as f:
     	    html = f.read()
 
         html = html.replace('/*--bgcolor--*/', 'rgba(226, 70, 70, 0.5)')
-        html = html.replace('<!--name-->', str(thisDatait.file_name + thisDatait.lastdate.split('-')[2]))
-        html = html.replace('<!--prc-->', str(thisDatait.price))
-        html = html.replace('<!--prc_C-->', thisDatait.getYClose())
-        html = html.replace('<!--prc_O-->', thisDatait.getOpen())
-        # html = html.replace('<!--00-->', thisDatait.getPcChange('open','price'))
-        # html = html.replace('<!--02-->', thisDatait.getPcChange_avg('abs'))
-        # html = html.replace('<!--03-->', str(thisDatait.dayr))
-        # html = html.replace('<!--04-->', thisDatait.getDayR_avg())
-        # html = html.replace('<!--05-->', thisDatait.getPcChange('open','range'))
-        # html = html.replace('<!--06-->', thisDatait.getPcChange_avg('abs'))
-        # html = html.replace('<!--07-->', thisDatait.getVolume())
-        # html = html.replace('<!--08-->', thisDatait.getVolume_avg())
-        # html = html.replace('<!--09-->', thisDatait.getVolR_rt())
-        # html = html.replace('<!--10-->', thisDatait.getVolR_rt_avg())
-        # html = html.replace('<!--11-->', thisDatait.getVolume_std())
+        html = html.replace('<!--name-->', str(instData.file_name + instData.lastdate.split('-')[2]))
+        html = html.replace('<!--prc-->', str(instData.price))
+        html = html.replace('<!--prc_C-->', instData.get('yclose'))
+        html = html.replace('<!--prc_O-->', instData.get('open'))
+        # html = html.replace('<!--00-->', instData.getPcChange('open','price'))
+        # html = html.replace('<!--02-->', instData.getPcChange_avg('abs'))
+        # html = html.replace('<!--03-->', str(instData.dayr))
+        # html = html.replace('<!--04-->', instData.getDayR_avg())
+        # html = html.replace('<!--05-->', instData.getPcChange('open','range'))
+        # html = html.replace('<!--06-->', instData.getPcChange_avg('abs'))
+        # html = html.replace('<!--07-->', instData.getVolume())
+        # html = html.replace('<!--08-->', instData.getVolume_avg())
+        # html = html.replace('<!--09-->', instData.getVolR_rt())
+        # html = html.replace('<!--10-->', instData.getVolR_rt_avg())
+        # html = html.replace('<!--11-->', instData.getVolume_std())
         # html = html.replace('<!--12-->', '')
         # html = html.replace('<!--13-->', '')
         # html = html.replace('<!--14-->', '')
