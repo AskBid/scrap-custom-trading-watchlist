@@ -11,6 +11,7 @@ from pandas.tseries.offsets import BDay #to make operation betwen dates where on
 from PyQt5.QtCore import QDate
 from drawit import drawCandle, draw52RangeBar
 import mergeit
+from math import isnan
 
 today = time.strftime('%Y-%m-%d')
 
@@ -54,7 +55,7 @@ class Box(QTextBrowser):
         cstring = """
         QTextEdit {
             border: 0;
-            background-color: -.-.-.-.-.-.;
+            background-color: rgba(150, 150, 150, 1);
             margin: 0px;
             padding-left:0;
             padding-top:0;
@@ -64,9 +65,6 @@ class Box(QTextBrowser):
             text-align: center;
         }
         """
-        ncol = randint(2, 9)
-        # cstring = cstring.replace('-.-.-.-.-.-.', 'rgba(150, 150, 150, 1)')
-        cstring = cstring.replace('-.-.-.-.-.-.', 'rgba(1{0}0, 1{0}0, 1{0}0, 1)'.format(ncol))
         self.setStyleSheet(cstring)
 
         self.setSizePolicy(QSizePolicy.Preferred, QSizePolicy.Preferred)
@@ -82,6 +80,7 @@ class Box(QTextBrowser):
             return ''
 
         instData = datait.Calc_dataframe( inst,
+
                                             date_input['enddate'],
                                             int(date_input['sample_days']),
                                             date_input['period_start'],
@@ -91,8 +90,8 @@ class Box(QTextBrowser):
         imgpath_candles = 'img/{}_candles.png'.format(instData.file_name)
         drawCandle( 190,
                     25,
-                    float(instData.dayr_avg), #avgRange = 10.17,
-                    float(instData.dayr_std), # stdRange = 4.0235,
+                    float(instData.stat('dayr','avg')), #avgRange = 10.17,
+                    float(instData.stat('dayr','std')), # stdRange = 4.0235,
                     float(instData.dayr.replace(',','')), # dayRange = 19,
                     instData.df['price'].values[-2], # yClose = 2560, #taken from [-1]
                     instData.df['open'].values[-2], # yOpen = 2556.50, #taken from [-2]
@@ -115,11 +114,25 @@ class Box(QTextBrowser):
         with open(labelhtml) as f:
     	    html = f.read()
 
-        html = html.replace('/*--bgcolor--*/', 'rgba(226, 70, 70, 0.5)')
-        html = html.replace('<!--name-->', str(instData.file_name + instData.lastdate.split('-')[2]))
-        html = html.replace('<!--prc-->', str(instData.price))
-        html = html.replace('<!--prc_C-->', instData.get('yclose'))
-        html = html.replace('<!--prc_O-->', instData.get('open'))
+        # get: 'price open dayr yclose vol oi'
+        # change: 'open close'_'price_range'
+        # stats: 'changept dayr changepc vol oi thinness'_'avg med std pct'_'abs '
+        # volR_rt:
+
+        color_a = instData.func('stat: vol pct')
+        if isnan(color_a):
+            color_a = instData.func('stat: dayr pct')
+        color_a = float("{0:.1f}".format(color_a))
+
+        html = html.replace('<--color-->', 'rgba(226, 70, 70, {})'.format(color_a))
+        html = html.replace('<!--name-->',  str(instData.file_name + instData.lastdate.split('-')[2]))
+        html = html.replace('<!--prc-->',   str(instData.price))
+        html = html.replace('<!--prc_C-->', instData.func('last: yclose'))
+        html = html.replace('<!--prc_O-->', instData.func('last: open'))
+        html = html.replace('<!--v00-->',   instData.func('change: open price'))
+        html = html.replace('<!--v01-->',   instData.func('stat: changepc avg abs'))
+        html = html.replace('<!--v02-->',   instData.func('stat: changepc std abs'))
+        html = html.replace('<!--v03-->',   instData.func('stat: changepc med abs'))
         # html = html.replace('<!--00-->', instData.getPcChange('open','price'))
         # html = html.replace('<!--02-->', instData.getPcChange_avg('abs'))
         # html = html.replace('<!--03-->', str(instData.dayr))

@@ -35,10 +35,9 @@ class Calc_dataframe(object):
         self.df = self.getDataFrame() #all calculation are done on this not on self.price for instance as that it is a string only given as information
 
         self.lastdate = self.df.index[-1][0]
-        self.price = self.get('price')
+        self.price = self.last('price')
+
         self.dayr = self.dayR()
-        self.dayr_std = self.stats('dayr', 'std')
-        self.dayr_avg = self.stats('dayr', 'avg')
         self.day52r = self.r52w()
 
     def getDataFrame(self):
@@ -84,7 +83,7 @@ class Calc_dataframe(object):
     def func(self, func_str):
         # dispatch function from string
         func_name = func_str.split(': ')[0]
-        args = func_str.split(': ')[1].split('_')
+        args = func_str.split(': ')[1].split(' ')
 
         method = getattr(self, func_name, lambda: "nothing")
 
@@ -92,11 +91,11 @@ class Calc_dataframe(object):
 
     ### :STATISTIC FUNCTION ###
 
-    def get(self, col):
+    def last(self, col):
         day = self.df
         val = day[col].values[-1]
 
-        if col in 'price open yclose':
+        if col in 'price open dayr yclose':
             return writePrice(val)
 
         elif col in 'vol oi':
@@ -114,7 +113,7 @@ class Calc_dataframe(object):
         self.df['dayr'] = day['dayh'] - day['dayl'] #we actually add a column to the day dataframe
         return writePrice(self.df['dayr'].values[-1], self.price)
 
-    def pcChange(self, start_type, prc_or_R): #start_type defines if the starting price to calculate the move of the day is yesterday 'close' price or todays 'open' price
+    def change(self, start_type, prc_or_R): #start_type defines if the starting price to calculate the move of the day is yesterday 'close' price or todays 'open' price
         day = self.df
         self.df['changept'] = day['price'] - day[start_type]
         day = self.df
@@ -141,7 +140,7 @@ class Calc_dataframe(object):
         perc = stats.percentileofscore(col, col.values[-1])
         return round((perc / 100), 2)
 
-    def stats(self, col, stat_type, absSW = None):
+    def stat(self, col, stat_type, absSW = None):
         #example: getStats('dayr', 'std', True)
         day = self.df
 
@@ -253,30 +252,31 @@ if __name__ == '__main__':
 
     print('----> ' + calc.file_name +  ' <----\n')
 
-    print('prc chgPc =  {}'.format(calc.pcChange('open','price')))
-    print('avg "=       {}'.format(calc.stats('changepc', 'avg', 'abs')))
+    print('prc chgPc =  {}'.format(calc.change('open','price')))
+    print('avg "=       {}'.format(calc.stat('changepc', 'avg', 'abs')))
 
-    print('rng chgPc =  {}'.format(calc.pcChange('open','range')))
-    print('avg "=       {}'.format(calc.stats('changepc', 'avg', 'abs')))
+    print('rng chgPc =  {}'.format(calc.change('open','range')))
+    print('avg "=       {}'.format(calc.stat('changepc', 'avg', 'abs')))
 
     print('price =      ' + calc.price)
-    print('open =       {}'.format(calc.get('open')))
-    print('yclose =     {}'.format(calc.get('yclose')))
+    print('open =       {}'.format(calc.last('open')))
+    print('yclose =     {}'.format(calc.last('yclose')))
     print('dayR =       {}'.format(calc.dayr))
-    print('dayR_pct =   {}'.format(calc.stats('dayr', 'pct')))
-    print('dayR_avg =   {}'.format(calc.stats('dayr', 'avg')))
-    print('dayR_med =   {}'.format(calc.stats('dayr', 'med')))
-    print('dayR_std =   {}'.format(calc.stats('dayr', 'std')))
+    print('dayR_pct =   {}'.format(calc.stat('dayr', 'pct')))
+    print('dayR_avg =   {}'.format(calc.stat('dayr', 'avg')))
+    print('dayR_med =   {}'.format(calc.stat('dayr', 'med')))
+    print('dayR_std =   {}'.format(calc.stat('dayr', 'std')))
     # print('chpt_describe = \n {}'.format(calc.getDescribe('dayr')))
     print('52r =        {}'.format(calc.day52r))
 
-    print('VOLUME =     {}'.format(calc.get('vol')))
-    print('VOLUME_avg = {}'.format(calc.stats('vol', 'avg')))
-    print('VOLUME_med = {}'.format(calc.stats('vol', 'med')))
-    print('VOLUME_std = {}'.format(calc.stats('vol', 'std')))
+    print('VOLUME =     {}'.format(calc.last('vol')))
+    print('VOLUME_avg = {}'.format(calc.stat('vol', 'avg')))
+    print('VOLUME_med = {}'.format(calc.stat('vol', 'med')))
+    print('VOLUME_std = {}'.format(calc.stat('vol', 'std')))
     print('Vol/rng =    {}'.format(calc.volR_rt()))
-    print('Vol/rng_avg= {}'.format(calc.stats('thinness', 'avg')))
+    print('Vol/rng_avg= {}'.format(calc.stat('thinness', 'avg')))
 
-    print('\ndispatch =   {}'.format(calc.func('stats: changepc_avg_abs')))
+    print('\ndispatch =   {}'.format(calc.func('stat: changepc avg abs')))
+    print('dispatch =   {}'.format(calc.func('last: yclose')))
 
     print(calc.df)

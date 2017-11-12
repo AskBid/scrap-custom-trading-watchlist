@@ -4,6 +4,7 @@ bin
 data
 img
 trash
+_bak
 .DS_Store
 Thumbs.db
 *.ipynb

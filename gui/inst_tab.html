@@ -1,5 +1,5 @@
 <table border="0" cellspacing="0" cellpadding="0" width="100%"
-style="background-color: /*--bgcolor--*/;">
+style="background-color: <--color-->;">
 
     <tr>
 
@@ -13,7 +13,23 @@ style="background-color: /*--bgcolor--*/;">
 
                 <tr>
                     <td rowspan="3" valign="middle" align="left" style="padding: 0px 0px 0px 10px;">
-                        <div id="theValue"><!--00--></div>
+                        <table  border="0" cellspacing="0" cellpadding="0">
+                            <tr>
+                                <td align="left" colspan="2" style="padding: 0px 0px 7px 0px;">
+                                    <div id="theValue"><!--v00--></div>
+                                </td>
+                            </tr>
+                            <tr>
+                                <td align="center">
+                                    <div id="average" title="stat: changepc avg abs"><!--v01--></div>
+                                    <div id="average" title="stat: changepc med abs"><!--v03--></div>
+                                </td>
+                                <td align="center">
+                                    <div id="average" title="stat: changepc std abs">(<!--v02-->)</div>
+                                    <div id="average" title=""><!--v04--></div>
+                                </td>
+                            </tr>
+                        </table>
                     </td>
 
                     <td rowspan="3" width="15" style="padding: 0px 0px 0px 0px;">
@@ -43,11 +59,11 @@ style="background-color: /*--bgcolor--*/;">
                         <table border"0" width="100%">
 
                             <tr>
-                                <td id="values_cells1">
+                                <td id="celltype_1" title="prova: avg_r">
                                     <table  border"0" cellspacing="0" cellpadding="0">
                                         <tr>
                                             <td align="left">
-                                                <text id="label">PR<!--lab00--></text>
+                                                <text id="label"><!--lab00--></text>
                                             </td>
                                             <td  width=100% align="right">
                                                 <text id="value"><!--00--></text>
@@ -56,11 +72,11 @@ style="background-color: /*--bgcolor--*/;">
                                     </table>
                                 </td>
 
-                                <td id="values_cells1">
+                                <td id="celltype_2">
                                     <table  border"0" cellspacing="0" cellpadding="0">
                                         <tr>
                                             <td align="left">
-                                                <text id="label">PR<!--lab00--></text>
+                                                <text id="label"><!--lab00--></text>
                                             </td>
                                             <td  width=100% align="right">
                                                 <text id="value"><!--01--></text>
@@ -69,11 +85,11 @@ style="background-color: /*--bgcolor--*/;">
                                     </table>
                                 </td>
 
-                                <td id="values_cells1">
+                                <td id="celltype_3">
                                     <table  border"0" cellspacing="0" cellpadding="0">
                                         <tr>
                                             <td align="left">
-                                                <text id="label">PR<!--lab00--></text>
+                                                <text id="label"><!--lab00--></text>
                                             </td>
                                             <td  width=100% align="right">
                                                 <text id="value"><!--02--></text>
@@ -82,58 +98,6 @@ style="background-color: /*--bgcolor--*/;">
                                     </table>
                                 </td>
                             </tr>
-
-                            <tr>
-                                <td id="values_cells2" align="right">
-                                    <text id="label">PR<!--lab00--></text>
-                                    <text id="value"><!--03--></text>
-                                </td>
-
-                                <td id="values_cells2" align="right">
-                                    <text id="label">PR<!--lab00--></text>
-                                    <text id="value"><!--04--></text>
-                                </td>
-
-                                <td id="values_cells2" align="right">
-                                    <text id="label">PR<!--lab00--></text>
-                                    <text id="value"><!--05--></text>
-                                </td>
-                            </tr>
-
-                            <tr>
-                                <td id="values_cells1" align="right">
-                                    <text id="label">PR<!--lab00--></text>
-                                    <text id="value"><!--06--></text>
-                                </td>
-
-                                <td id="values_cells1" align="right">
-                                    <text id="label">PR<!--lab00--></text>
-                                    <text id="value"><!--07--></text>
-                                </td>
-
-                                <td id="values_cells1" align="right">
-                                    <text id="label">PR<!--lab00--></text>
-                                    <text id="value"><!--08--></text>
-                                </td>
-                            </tr>
-
-                            <tr>
-                                <td id="values_cells2" align="right">
-                                    <text id="label">PR<!--lab00--></text>
-                                    <text id="value"><!--09--></text>
-                                </td>
-
-                                <td id="values_cells2" align="right">
-                                    <text id="label">PR<!--lab00--></text>
-                                    <text id="value"><!--10--></text>
-                                </td>
-
-                                <td id="values_cells2" align="right">
-                                    <text id="label">PR<!--lab00--></text>
-                                    <text id="value"><!--11--></text>
-                                </td>
-                            </tr>
-
 
                         </table>
 
