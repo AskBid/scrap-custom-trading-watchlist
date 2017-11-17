@@ -89,13 +89,33 @@ class Calc_dataframe(object):
 
         return method(*args)
 
+    def color(self):
+        #first index positive, second index negative
+        pct_0 = 'rgba(254, 255, 75,'
+        pct_1 = ('rgba(240, 255, 73,', 'rgba(255, 243, 75,')
+        pct_2 = ('rgba(188, 232, 36,', 'rgba(255, 101, 41,')
+        pct_3 = ('rgba(81, 189, 54,', 'rgba(255, 191, 39,')
+        pct_4 = ('rgba(37, 139, 63,', 'rgba(239, 45, 23,')
+        pct_5 = ('rgba(0, 255, 234,', 'rgba(234, 0, 255,')
+
+        color = self.func('stat: changept pct abs')
+        print(color)
+        print(self.func('stat: changept pct'))
+
+        alpha = self.func('stat: vol pct')
+        if isnan(alpha):
+            alpha = self.func('stat: dayr pct')
+        alpha = " {0:.3f})".format(alpha)
+
+        return (str(color) + str(alpha))
+
     ### :STATISTIC FUNCTION ###
 
     def last(self, col):
         day = self.df
         val = day[col].values[-1]
 
-        if col in 'price open dayr yclose':
+        if col in 'price open dayr yclose changept':
             return writePrice(val)
 
         elif col in 'vol oi':
@@ -266,7 +286,7 @@ if __name__ == '__main__':
     print('dayR_avg =   {}'.format(calc.stat('dayr', 'avg')))
     print('dayR_med =   {}'.format(calc.stat('dayr', 'med')))
     print('dayR_std =   {}'.format(calc.stat('dayr', 'std')))
-    # print('chpt_describe = \n {}'.format(calc.getDescribe('dayr')))
+    print('chpt_describe = \n {}'.format(calc.getDescribe('changept')))
     print('52r =        {}'.format(calc.day52r))
 
     print('VOLUME =     {}'.format(calc.last('vol')))
@@ -278,5 +298,6 @@ if __name__ == '__main__':
 
     print('\ndispatch =   {}'.format(calc.func('stat: changepc avg abs')))
     print('dispatch =   {}'.format(calc.func('last: yclose')))
+    print('color: {}'.format(calc.color()))
 
     print(calc.df)

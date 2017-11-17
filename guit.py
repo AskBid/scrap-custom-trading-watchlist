@@ -119,20 +119,16 @@ class Box(QTextBrowser):
         # stats: 'changept dayr changepc vol oi thinness'_'avg med std pct'_'abs '
         # volR_rt:
 
-        color_a = instData.func('stat: vol pct')
-        if isnan(color_a):
-            color_a = instData.func('stat: dayr pct')
-        color_a = float("{0:.1f}".format(color_a))
-
-        html = html.replace('<--color-->', 'rgba(226, 70, 70, {})'.format(color_a))
         html = html.replace('<!--name-->',  str(instData.file_name + instData.lastdate.split('-')[2]))
         html = html.replace('<!--prc-->',   str(instData.price))
         html = html.replace('<!--prc_C-->', instData.func('last: yclose'))
         html = html.replace('<!--prc_O-->', instData.func('last: open'))
         html = html.replace('<!--v00-->',   instData.func('change: open price'))
+        html = html.replace('<--color-->', 'rgba(226, 70, 70, {!r})'.format(instData.color()))
         html = html.replace('<!--v01-->',   instData.func('stat: changepc avg abs'))
         html = html.replace('<!--v02-->',   instData.func('stat: changepc std abs'))
         html = html.replace('<!--v03-->',   instData.func('stat: changepc med abs'))
+        html = html.replace('<!--v04-->',   instData.func('last: changept'))
         # html = html.replace('<!--00-->', instData.getPcChange('open','price'))
         # html = html.replace('<!--02-->', instData.getPcChange_avg('abs'))
         # html = html.replace('<!--03-->', str(instData.dayr))
