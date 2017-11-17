@@ -13,4 +13,5 @@ Thumbs.db
 *.png
 *.csv#
 *.pem
+*.db
 rootkey.csv
