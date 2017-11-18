@@ -12,150 +12,15 @@ from PyQt5.QtCore import QDate
 from drawit import drawCandle, draw52RangeBar
 import mergeit
 from math import isnan
+import htmit
 
 today = time.strftime('%Y-%m-%d')
-
-def read_guilist(guilist):
-    col_list = []
-    rows = 0
-    cols = 0
-
-    with open(guilist) as f:
-        csv = f.readlines()
-
-    rows = len(csv)
-    csv_arr = []
-
-    for line in csv:
-        line = line.replace('\n','').split(',')
-        cols = len(line)
-        csv_arr.append(line)
-
-    return csv_arr, rows, cols
 
 def getWeekDay(dt):
     year, month, day = (int(x) for x in dt.split('-'))
     ans = datetime.date(year, month, day)
 
     return ans.strftime("%a")
-
-class Box(QTextBrowser):
-    def __init__(self, inst, date_input, parent=None):
-        QTextBrowser.__init__(self, parent)
-        self.inst = inst
-        self.date_input = date_input
-        self.run(self.inst, date_input)
-
-    def run(self, inst, date_input):
-        self.setContentsMargins(0, 0, 0, 0)
-        self.setVerticalScrollBarPolicy(Qt.ScrollBarAlwaysOff)
-        self.setHorizontalScrollBarPolicy(Qt.ScrollBarAlwaysOff)
-        self.setText(self.write_label_html(inst, date_input))
-
-        cstring = """
-        QTextEdit {
-            border: 0;
-            background-color: rgba(150, 150, 150, 1);
-            margin: 0px;
-            padding-left:0;
-            padding-top:0;
-            padding-bottom:0;
-            padding-right:0;
-            vertical-align: middle;
-            text-align: center;
-        }
-        """
-        self.setStyleSheet(cstring)
-
-        self.setSizePolicy(QSizePolicy.Preferred, QSizePolicy.Preferred)
-        self.setAlignment(Qt.AlignCenter)
-        self.setContentsMargins(0, 0, 0, 0)
-
-    def write_label_html(self, inst, date_input):
-        labelhtml = 'gui/inst_tab.html'
-
-        if '_Fr' in inst or '_YC' in inst or inst == '':
-            # with open(labelhtml) as f:
-        	#     html = f.read()
-            return ''
-
-        instData = datait.Calc_dataframe( inst,
-
-                                            date_input['enddate'],
-                                            int(date_input['sample_days']),
-                                            date_input['period_start'],
-                                            date_input['period_end'])
-
-        imgpath = 'img/{}.png'.format(instData.file_name)
-        imgpath_candles = 'img/{}_candles.png'.format(instData.file_name)
-        drawCandle( 190,
-                    25,
-                    float(instData.stat('dayr','avg')), #avgRange = 10.17,
-                    float(instData.stat('dayr','std')), # stdRange = 4.0235,
-                    float(instData.dayr.replace(',','')), # dayRange = 19,
-                    instData.df['price'].values[-2], # yClose = 2560, #taken from [-1]
-                    instData.df['open'].values[-2], # yOpen = 2556.50, #taken from [-2]
-                    instData.df['dayl'].values[-2], # yLow = 2556.25, #taken from [-2]
-                    instData.df['dayh'].values[-2], # yHigh = 2562.25, #taken from [-2]
-                    instData.df['open'].values[-1], # dayOpen = 2560, #taken from [-1]
-                    instData.df['price'].values[-1], # price = 2560.75, #taken from [-1]
-                    instData.df['dayl'].values[-1], # dayLow = 2542.5, #taken from [-1]
-                    imgpath_candles, # path = "gui/candle.png",
-                    "bar")
-        draw52RangeBar(
-                    190,
-                    8,
-                    instData.df['l52'].values[-1],
-                    instData.day52r,
-                    instData.df['open'].values[-1],
-                    instData.df['dayr'].values[-1],
-                    imgpath)
-
-        with open(labelhtml) as f:
-    	    html = f.read()
-
-        # get: 'price open dayr yclose vol oi'
-        # change: 'open close'_'price_range'
-        # stats: 'changept dayr changepc vol oi thinness'_'avg med std pct'_'abs '
-        # volR_rt:
-
-        html = html.replace('<!--name-->',  str(instData.file_name + instData.lastdate.split('-')[2]))
-        html = html.replace('<!--prc-->',   str(instData.price))
-        html = html.replace('<!--prc_C-->', instData.func('last: yclose'))
-        html = html.replace('<!--prc_O-->', instData.func('last: open'))
-        html = html.replace('<!--v00-->',   instData.func('change: open price'))
-        html = html.replace('<!--v01-->',   instData.func('last: changept'))
-        html = html.replace('<--color0-->',  instData.color()[0])
-        html = html.replace('<--color1-->', instData.color()[1])
-        html = html.replace('<!--v02-->',   instData.func('stat: changepc avg abs'))
-        html = html.replace('<!--v03-->',   instData.func('stat: changepc std abs'))
-        html = html.replace('<!--v04-->',   instData.func('stat: changepc med abs'))
-        html = html.replace('<!--v05-->',   instData.func('stat: changepc pct abs'))
-        # html = html.replace('<!--00-->', instData.getPcChange('open','price'))
-        # html = html.replace('<!--02-->', instData.getPcChange_avg('abs'))
-        # html = html.replace('<!--03-->', str(instData.dayr))
-        # html = html.replace('<!--04-->', instData.getDayR_avg())
-        # html = html.replace('<!--05-->', instData.getPcChange('open','range'))
-        # html = html.replace('<!--06-->', instData.getPcChange_avg('abs'))
-        # html = html.replace('<!--07-->', instData.getVolume())
-        # html = html.replace('<!--08-->', instData.getVolume_avg())
-        # html = html.replace('<!--09-->', instData.getVolR_rt())
-        # html = html.replace('<!--10-->', instData.getVolR_rt_avg())
-        # html = html.replace('<!--11-->', instData.getVolume_std())
-        # html = html.replace('<!--12-->', '')
-        # html = html.replace('<!--13-->', '')
-        # html = html.replace('<!--14-->', '')
-        # html = html.replace('<!--15-->', '')
-        # html = html.replace('<!--16-->', '')
-        html = html.replace('<!--imgpath-->', imgpath)
-        html = html.replace('<!--imgpath_candles-->', imgpath_candles)
-
-        with open('gui/labellist.css') as f:
-               text = f.read()
-
-        html = str(text) + html
-
-        return html
 
 
 class MainFrame(QScrollArea):
@@ -165,25 +30,22 @@ class MainFrame(QScrollArea):
         self.run(self.date_input)
 
     def run(self, date_input):
-        inst_list = read_guilist('csv/guilist.csv')
-        rows = inst_list[1]
-        cols = inst_list[2]
-        inst_list = inst_list[0]
 
         container = QFrame(self)
         container.resize(3900,1370)
-        # container.resize(1000,400)
+
+        qtext = QTextBrowser()
+        qtext.setVerticalScrollBarPolicy(Qt.ScrollBarAlwaysOff)
+        qtext.setHorizontalScrollBarPolicy(Qt.ScrollBarAlwaysOff)
+        qtext.setText(htmit.read_guilist(date_input))
 
         layout = QGridLayout(container)
         layout.setSpacing(0)
         layout.setContentsMargins(0, 0, 0, 0)
         self.show()
 
-        for row, line in enumerate(inst_list):
-            for col, inst in enumerate(line):
-                box = Box(inst, date_input, container)
-                layout.addWidget(box, row, col)
-                box.show()
+        layout.addWidget(qtext, 0, 0)
+        qtext.show()
 
         self.setWidget(container)
 

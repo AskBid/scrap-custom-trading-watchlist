@@ -35,7 +35,7 @@ class Calc_dataframe(object):
         self.df = self.getDataFrame() #all calculation are done on this not on self.price for instance as that it is a string only given as information
 
         self.lastdate = self.df.index[-1][0]
-        self.price = self.last('price')
+        self.price = writePrice(self.df['price'][-1])
 
         self.dayr = self.dayR()
         self.day52r = self.r52w()
@@ -104,7 +104,7 @@ class Calc_dataframe(object):
         pct_2 = ('rgba(188, 232, 36', 'rgba(255, 101, 41')
         pct_3 = ('rgba(81, 189, 54', 'rgba(255, 191, 39')
         pct_4 = ('rgba(37, 139, 63', 'rgba(239, 45, 23')
-        pct_5 = ('rgba(0, 255, 234', 'rgba(234, 0, 255')
+        pct_5 = ('rgba(18, 219, 202', 'rgba(223, 95, 234')
 
         i = 0
         if self.df['changept'].values[-1] < 0:
@@ -142,9 +142,12 @@ class Calc_dataframe(object):
         val = day[col].values[-1]
 
         if col in 'price open dayr yclose changept':
-            return writePrice(val)
+            return writePrice(val, self.price)
 
         elif col in 'vol oi':
+            return writeVolume(val)
+
+        elif col in 'thinness':
             return writeVolume(val)
 
         return np.nan
@@ -171,14 +174,14 @@ class Calc_dataframe(object):
             return writePercent(self.df['changepc'].values[-1])
         return np.nan
 
-    def volR_rt(self):
+    def dayr_vol_ratio(self):
         day = self.df
         # self.df['thickness'] = (day['vol'] / day['dayr'])
         try:
             self.df['thinness'] = (day['dayr'] / day['vol'])*1000000
         except:
             return '-'
-        return writeVolume(self.df['thinness'].values[-1])
+        return writeNum(self.df['thinness'].values[-1])
 
     def percentile(self, col):
         #here col is not string but the actual panda column
@@ -189,6 +192,7 @@ class Calc_dataframe(object):
     def percentage(self, col):
         np.seterr(divide='ignore', invalid='ignore')
         day = self.df
+
         max_ = day[col].abs().max()
         last = day[col].abs().values[-1]
         try:
@@ -220,12 +224,14 @@ class Calc_dataframe(object):
                 val = day[col].std()
             if stat_type == 'pct':
                 val = self.percentile(day[col])
+            if stat_type == 'pc':
+                val = self.percentage(col)
 
         if  stat_type in 'pct':
             return writeNum(val)
         elif col in 'changept, dayr':
             return writePrice(val)
-        elif col in 'changepc':
+        elif col in 'changepc, pc':
             return writePercent(val)
         elif col in 'vol, oi':
             return writeVolume(val)
@@ -307,7 +313,7 @@ if __name__ == '__main__':
 
     today = time.strftime('%Y-%m-%d')
 
-    calc = Calc_dataframe('GER2_F',today,30,'08:00','17:10')
+    calc = Calc_dataframe('ES_F',today,30,'08:00','17:10')
 
     print('----> ' + calc.file_name +  ' <----\n')
 
@@ -332,11 +338,11 @@ if __name__ == '__main__':
     print('VOLUME_avg = {}'.format(calc.stat('vol', 'avg')))
     print('VOLUME_med = {}'.format(calc.stat('vol', 'med')))
     print('VOLUME_std = {}'.format(calc.stat('vol', 'std')))
-    # print('Vol/rng =    {}'.format(calc.volR_rt()))
-    # print('Vol/rng_avg= {}'.format(calc.stat('thinness', 'avg')))
+    print('dayr/vol =    {}'.format(calc.dayr_vol_ratio()))
+    print('dayr/vol_avg= {}'.format(calc.stat('thinness', 'avg')))
 
     print('\ndispatch =   {}'.format(calc.func('stat: changepc avg abs')))
-    print('\npct =   {}'.format(calc.func('stat: changepc pct abs')))
+    print('\npct =   {}'.format(calc.func('stat: vol pc')))
     print('dispatch =   {}'.format(calc.func('last: yclose')))
 
     print('color: {}'.format(calc.color()))
