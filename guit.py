@@ -124,11 +124,13 @@ class Box(QTextBrowser):
         html = html.replace('<!--prc_C-->', instData.func('last: yclose'))
         html = html.replace('<!--prc_O-->', instData.func('last: open'))
         html = html.replace('<!--v00-->',   instData.func('change: open price'))
-        html = html.replace('<--color-->', 'rgba(226, 70, 70, {!r})'.format(instData.color()))
-        html = html.replace('<!--v01-->',   instData.func('stat: changepc avg abs'))
-        html = html.replace('<!--v02-->',   instData.func('stat: changepc std abs'))
-        html = html.replace('<!--v03-->',   instData.func('stat: changepc med abs'))
-        html = html.replace('<!--v04-->',   instData.func('last: changept'))
+        html = html.replace('<!--v01-->',   instData.func('last: changept'))
+        html = html.replace('<--color0-->',  instData.color()[0])
+        html = html.replace('<--color1-->', instData.color()[1])
+        html = html.replace('<!--v02-->',   instData.func('stat: changepc avg abs'))
+        html = html.replace('<!--v03-->',   instData.func('stat: changepc std abs'))
+        html = html.replace('<!--v04-->',   instData.func('stat: changepc med abs'))
+        html = html.replace('<!--v05-->',   instData.func('stat: changepc pct abs'))
         # html = html.replace('<!--00-->', instData.getPcChange('open','price'))
         # html = html.replace('<!--02-->', instData.getPcChange_avg('abs'))
         # html = html.replace('<!--03-->', str(instData.dayr))
@@ -355,7 +357,7 @@ class MainWindow(QMainWindow):
 
 if __name__ == '__main__':
 
-    mergeit.fetch()
+    # mergeit.fetch()
     app = QApplication(sys.argv)
     ex = MainWindow()
     ex.show()

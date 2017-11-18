@@ -90,24 +90,50 @@ class Calc_dataframe(object):
         return method(*args)
 
     def color(self):
+        color = '0'
+
         #first index positive, second index negative
-        pct_0 = 'rgba(254, 255, 75,'
-        pct_1 = ('rgba(240, 255, 73,', 'rgba(255, 243, 75,')
-        pct_2 = ('rgba(188, 232, 36,', 'rgba(255, 101, 41,')
-        pct_3 = ('rgba(81, 189, 54,', 'rgba(255, 191, 39,')
-        pct_4 = ('rgba(37, 139, 63,', 'rgba(239, 45, 23,')
-        pct_5 = ('rgba(0, 255, 234,', 'rgba(234, 0, 255,')
+        # pct_0 = 'rgba(0.9961, 1.0000, 0.2941,'
+        # pct_1 = ('rgba(0.9412, 1.0000, 0.2863,', 'rgba(1.0000, 0.9529, 0.2941,')
+        # pct_2 = ('rgba(0.7373, 0.9098, 0.1412,', 'rgba(1.0000, 0.3961, 0.1608,')
+        # pct_3 = ('rgba(0.3176, 0.7412, 0.2118,', 'rgba(1.0000, 0.7490, 0.1529,')
+        # pct_4 = ('rgba(0.1451, 0.5451, 0.2471,', 'rgba(20.1529, 0.1765, 0.0902,')
+        # pct_5 = ('rgba(0, 1.0000, 0.9176,', 'rgba(0.9176, 0, 1.0000,')
+        pct_0 = 'rgba(254, 255, 75'
+        pct_1 = ('rgba(240, 255, 73', 'rgba(255, 243, 75')
+        pct_2 = ('rgba(188, 232, 36', 'rgba(255, 101, 41')
+        pct_3 = ('rgba(81, 189, 54', 'rgba(255, 191, 39')
+        pct_4 = ('rgba(37, 139, 63', 'rgba(239, 45, 23')
+        pct_5 = ('rgba(0, 255, 234', 'rgba(234, 0, 255')
 
-        color = self.func('stat: changept pct abs')
-        print(color)
-        print(self.func('stat: changept pct'))
+        i = 0
+        if self.df['changept'].values[-1] < 0:
+            i = 1
 
-        alpha = self.func('stat: vol pct')
+        pc = self.percentage('changept')
+
+        if pc <= 0.01:
+            color = pct_0
+        elif pc <= 0.1:
+            color = pct_1[i]
+        elif pc <= 0.37:
+            color = pct_2[i]
+        elif pc <= 0.64:
+            color = pct_3[i]
+        elif pc <= 0.91:
+            color = pct_4[i]
+        elif pc <= 1:
+            color = pct_5[i]
+
+        alpha = self.percentage('vol')
         if isnan(alpha):
-            alpha = self.func('stat: dayr pct')
-        alpha = " {0:.3f})".format(alpha)
+            alpha = self.percentage('dayr')
+        if isnan(alpha):
+            alpha = 0.01
+        alpha = alpha/1.5
+        alpha = ", {0:.3f})".format(alpha)
 
-        return (str(color) + str(alpha))
+        return (str(color) + str(alpha)), (str(color) + ')' )
 
     ### :STATISTIC FUNCTION ###
 
@@ -121,7 +147,7 @@ class Calc_dataframe(object):
         elif col in 'vol oi':
             return writeVolume(val)
 
-        return 'NaN'
+        return np.nan
 
     def r52w(self):
         day = self.df
@@ -143,7 +169,7 @@ class Calc_dataframe(object):
         if prc_or_R == 'range':
             self.df['changepc'] = day['changept'] / self.day52r
             return writePercent(self.df['changepc'].values[-1])
-        return 'NaN'
+        return np.nan
 
     def volR_rt(self):
         day = self.df
@@ -159,6 +185,17 @@ class Calc_dataframe(object):
         day = self.df
         perc = stats.percentileofscore(col, col.values[-1])
         return round((perc / 100), 2)
+
+    def percentage(self, col):
+        np.seterr(divide='ignore', invalid='ignore')
+        day = self.df
+        max_ = day[col].abs().max()
+        last = day[col].abs().values[-1]
+        try:
+            pc = last / max_
+        except:
+            pc = np.nan
+        return pc
 
     def stat(self, col, stat_type, absSW = None):
         #example: getStats('dayr', 'std', True)
@@ -184,8 +221,8 @@ class Calc_dataframe(object):
             if stat_type == 'pct':
                 val = self.percentile(day[col])
 
-        if stat_type in 'pct':
-            return val
+        if  stat_type in 'pct':
+            return writeNum(val)
         elif col in 'changept, dayr':
             return writePrice(val)
         elif col in 'changepc':
@@ -202,9 +239,11 @@ class Calc_dataframe(object):
 
     ### /STATISTIC FUNCTION ###
 
+
+
 def writePrice(num, price = None):
     if num == '-' or isnan(num):
-        return 'NaN'
+        return np.nan
 
     if price == None:
         price = str(num).split('.')
@@ -220,7 +259,7 @@ def writePrice(num, price = None):
 
 def writePercent(num):
     if num == '-':
-        return 'NaN'
+        return np.nan
     string = str(num).split('.')
     # if string[1].count('0') > 1:
     return ("{:.2%}".format(num))
@@ -233,7 +272,7 @@ def writeVolume(num):
     symbols = ['Y', 'T', 'G', 'M', 'k', '', 'm', 'u', 'n']
 
     if num == '-' or isnan(num):
-        return 'NaN'
+        return np.nan
     if num == 0:
         return '0'
 
@@ -255,7 +294,7 @@ def isnumber(x):
 
 def writeNum(num):
     if num == '-' or isnan(num):
-        return 'NaN'
+        return np.nan
     string = str(num)
     if len(string[0]) > 1:
         return ("{:20,.0f}".format(num)).replace(' ','')
@@ -268,7 +307,7 @@ if __name__ == '__main__':
 
     today = time.strftime('%Y-%m-%d')
 
-    calc = Calc_dataframe('ES_F',today,30,'08:00','17:10')
+    calc = Calc_dataframe('GER2_F',today,30,'08:00','17:10')
 
     print('----> ' + calc.file_name +  ' <----\n')
 
@@ -293,11 +332,13 @@ if __name__ == '__main__':
     print('VOLUME_avg = {}'.format(calc.stat('vol', 'avg')))
     print('VOLUME_med = {}'.format(calc.stat('vol', 'med')))
     print('VOLUME_std = {}'.format(calc.stat('vol', 'std')))
-    print('Vol/rng =    {}'.format(calc.volR_rt()))
-    print('Vol/rng_avg= {}'.format(calc.stat('thinness', 'avg')))
+    # print('Vol/rng =    {}'.format(calc.volR_rt()))
+    # print('Vol/rng_avg= {}'.format(calc.stat('thinness', 'avg')))
 
     print('\ndispatch =   {}'.format(calc.func('stat: changepc avg abs')))
+    print('\npct =   {}'.format(calc.func('stat: changepc pct abs')))
     print('dispatch =   {}'.format(calc.func('last: yclose')))
+
     print('color: {}'.format(calc.color()))
 
     print(calc.df)

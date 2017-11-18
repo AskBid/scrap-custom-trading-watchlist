@@ -3,7 +3,7 @@
 td {
     /*font-family: Andale Mono;*/
     font-family: Lucida Console;
-    color: white;
+    color: black;
 }
 
 #bar {
@@ -83,11 +83,19 @@ td {
     /*Top right Bottom left*/
 }
 
+#theValue {
+    font-family: Helvetica, sans-serif;
+    font-size: 19px;
+    font-weight: 500;
+    padding: 0px 10px 0px 0px;
+    /*Top right Bottom left*/
+}
+
 #average {
     text-align: right;
     font-size: 12px;
     font-weight: 300;
-    color: rgba(255, 255, 255, 0.6);
+    color: rgba(55, 55, 55, 0.6);
     padding: 0px 6px 0px 0px; /*Top right Bottom left*/
 }
 
