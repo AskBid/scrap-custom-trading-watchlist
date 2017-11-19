@@ -37,7 +37,8 @@ class MainFrame(QScrollArea):
         qtext = QTextBrowser()
         qtext.setVerticalScrollBarPolicy(Qt.ScrollBarAlwaysOff)
         qtext.setHorizontalScrollBarPolicy(Qt.ScrollBarAlwaysOff)
-        qtext.setText(htmit.read_guilist(date_input))
+        page = htmit.Page(date_input)
+        qtext.setText(page.html)
 
         layout = QGridLayout(container)
         layout.setSpacing(0)

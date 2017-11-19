@@ -28,13 +28,14 @@ class Calc_dataframe(object):
 
         self.file_name = file_name
         self.enddate = enddate
-        self.sample_days = sample_days + 1
+        self.sample_days = sample_days - 1
         self.period_start = getTimestamp(period_start)
         self.period_end = getTimestamp(period_end)
 
         self.df = self.getDataFrame() #all calculation are done on this not on self.price for instance as that it is a string only given as information
 
         self.lastdate = self.df.index[-1][0]
+        self.daysAmount = len(self.df.index)
         self.price = writePrice(self.df['price'][-1])
 
         self.dayr = self.dayR()
@@ -133,7 +134,7 @@ class Calc_dataframe(object):
         alpha = alpha/1.5
         alpha = ", {0:.3f})".format(alpha)
 
-        return (str(color) + str(alpha)), (str(color) + ')' )
+        return (str(color) + str(alpha)), (str(color.replace('rgba','rgb')) + ')' )
 
     ### :STATISTIC FUNCTION ###
 
@@ -185,13 +186,16 @@ class Calc_dataframe(object):
 
     def percentile(self, col):
         #here col is not string but the actual panda column
-        day = self.df
+        if isnan(col.values[-1]):
+            return np.nan
         perc = stats.percentileofscore(col, col.values[-1])
         return round((perc / 100), 2)
 
     def percentage(self, col):
-        np.seterr(divide='ignore', invalid='ignore')
+        np.seterr(invalid='ignore')
         day = self.df
+        if isnan(day[col].values[-1]):
+            return np.nan
 
         max_ = day[col].abs().max()
         last = day[col].abs().values[-1]
@@ -311,9 +315,10 @@ if __name__ == '__main__':
     pd.set_option('display.max_columns', 500)
     pd.set_option('display.width', 1000)
 
-    today = time.strftime('%Y-%m-%d')
+    # today = time.strftime('%Y-%m-%d')
+    today = '2017-11-15'
 
-    calc = Calc_dataframe('ES_F',today,30,'08:00','17:10')
+    calc = Calc_dataframe('ES_F',today,30,'16:00','20:00')
 
     print('----> ' + calc.file_name +  ' <----\n')
 
@@ -338,8 +343,9 @@ if __name__ == '__main__':
     print('VOLUME_avg = {}'.format(calc.stat('vol', 'avg')))
     print('VOLUME_med = {}'.format(calc.stat('vol', 'med')))
     print('VOLUME_std = {}'.format(calc.stat('vol', 'std')))
-    print('dayr/vol =    {}'.format(calc.dayr_vol_ratio()))
-    print('dayr/vol_avg= {}'.format(calc.stat('thinness', 'avg')))
+    print('dayr/vol =   {}'.format(calc.dayr_vol_ratio()))
+    print('dayr/vol_avg={}'.format(calc.stat('thinness', 'avg')))
+    print('days amount= {}'.format(calc.daysAmount))
 
     print('\ndispatch =   {}'.format(calc.func('stat: changepc avg abs')))
     print('\npct =   {}'.format(calc.func('stat: vol pc')))

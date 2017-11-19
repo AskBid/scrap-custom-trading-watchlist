@@ -376,12 +376,6 @@ def scrapMarketwatch(address):
     data["day"] = day
 
     try:
-        data["ticker"] = sup.find("span",{"class": "company__ticker"}).text.replace(' ','')
-    except:
-        print("'{}' No 'Ticker'".format(address))
-        logfile.write("{}: '{}' No 'Ticker'...\n".format(hour, address))
-
-    try:
         priceTab = sup.find("h3",{"class": lambda x: x and 'intraday__price' in x})
         if priceTab.find('bg-quote') != None:
             bgquote = priceTab.find('bg-quote')
@@ -393,47 +387,52 @@ def scrapMarketwatch(address):
         else:
             data["price"] = priceTab.find("span",{"class":"value"}).text.replace(",","").replace(" ","")
         float(data["price"]) #check that an actual number was found for Price
-    except:
+    except Exception as e:
+        print(str(e))
         print("'{}' No 'Price'".format(address))
-        logfile.write("{}: '{}' No 'Price'...\n".format(hour, address))
+        logfile.write("{}: '{}' No 'Price'...\n {} \n".format(hour, address, str(e)))
 
     try:
         div = sup.find("div",{"class": lambda x: x and 'intraday__close' in x})
         data["yclose"] = re.sub("[^0-9. -]", "", div.find('tbody').text)
-    except:
+    except Exception as e:
+        print(str(e))
         print("'{}' No 'yClose'".format(address))
-        logfile.write("{}: '{}' No 'yClose'...\n".format(hour, address))
+        logfile.write("{}: '{}' No 'yClose'...\n {} \n".format(hour, address, str(e)))
 
     try:
         data["open"] = scrapData["Open"].replace(" ","")
-    except:
+    except Exception as e:
+        print(str(e))
         print("'{}' No 'Open'".format(address))
-        logfile.write("{}: '{}' No 'Open'...\n".format(hour, address))
+        logfile.write("{}: '{}' No 'Open'...\n {} \n".format(hour, address, str(e)))
 
     try:
         data["dayh"] = scrapData["DayRange"].replace(" - ",";;").replace(" ","").split(";;")[1]
         data["dayl"] = scrapData["DayRange"].replace(" - ",";;").replace(" ","").split(";;")[0]
-    except:
+    except Exception as e:
+        print(str(e))
         print("'{}' No 'DayRange'".format(address))
-        logfile.write("{}: '{}' No 'DayRange'...\n".format(hour, address))
+        logfile.write("{}: '{}' No 'DayRange'...\n {} \n".format(hour, address, str(e)))
 
     try:
         data["h52"] = scrapData["52WeekRange"].replace(" - ",";;").replace(" ","").split(";;")[1]
         data["l52"] = scrapData["52WeekRange"].replace(" - ",";;").replace(" ","").split(";;")[0]
-    except:
+    except Exception as e:
+        print(str(e))
         print("'{}' No '52WeekRange'".format(address))
-        logfile.write("{}: '{}' No '52WeekRange'...\n".format(hour, address))
+        logfile.write("{}: '{}' No '52WeekRange'...\n {} \n".format(hour, address, str(e)))
 
     try:
         data["vol"] = str(mkTranslator(sup.find("span",{"class":"volume last-value"}).text))
-    except:
+    except Exception as e:
         if 'index' not in address:
             print("'{}' No 'Volume'".format(address))
-            logfile.write("{}: '{}' No 'Volume'...\n".format(hour, address))
+            logfile.write("{}: '{}' No 'Volume'...\n {} \n".format(hour, address, str(e)))
 
     try:
         data["oi"] = scrapData["OpenInterest"].replace(" ","")
-    except:
+    except Exception as e:
         if 'index' not in address:
             print("'{}' No 'OpenInterest'".format(address))
             logfile.write("{}: '{}' No 'OpenInterest'...\n".format(hour, address))
@@ -466,42 +465,42 @@ def scrapBloomberg(address):
     data["day"] = day
 
     try:
-        data["ticker"] = sup.find("div",{"class": "ticker"}).text.replace(' ','')
-    except:
-        print("'{}' No 'Ticker'".format(address))
-        logfile.write("{}: '{}' No 'Ticker'...\n".format(hour, address))
-
-    try:
         data["price"] = sup.find("div",{"class":"price"}).text.replace(",","").replace(" ","")
-    except:
+    except Exception as e:
+        print(str(e))
         print("'{}' No 'Price'".format(address))
-        logfile.write("{}: '{}' No 'Price'...\n".format(hour, address))
+        logfile.write("{}: '{}' No 'Price'...\n {} \n".format(hour, address, str(e)))
 
     try:
         data["open"] = scrapData["Open"].replace(" ","")
-    except:
+    except Exception as e:
+        print(str(e))
         print("'{}' No 'Open'".format(address))
-        logfile.write("{}: '{}' No 'Open'...\n".format(hour, address))
+        logfile.write("{}: '{}' No 'Open'...\n {} \n".format(hour, address, str(e)))
 
     try:
         data["yclose"] = scrapData["PreviousClose"].replace(" ","")
-    except:
+    except Exception as e:
+        print(str(e))
         print("'{}' No 'yClose'".format(address))
-        logfile.write("{}: '{}' No 'yClose'...\n".format(hour, address))
+        logfile.write("{}: '{}' No 'yClose'...\n {} \n".format(hour, address, str(e)))
 
     try:
         data["dayh"] = scrapData["DayRange"].replace(" - ",";;").replace(" ","").split(";;")[1]
         data["dayl"] = scrapData["DayRange"].replace(" - ",";;").replace(" ","").split(";;")[0]
-    except:
+    except Exception as e:
+        print(str(e))
         print("'{}' No 'DayRange'".format(address))
-        logfile.write("{}: '{}' No 'DayRange'...\n".format(hour, address))
+        logfile.write("{}: '{}' No 'DayRange'...\n {} \n".format(hour, address, str(e)))
 
     try:
         data["h52"] = scrapData["52WkRange"].replace(" - ",";;").replace(" ","").split(";;")[1]
         data["l52"] = scrapData["52WkRange"].replace(" - ",";;").replace(" ","").split(";;")[0]
-    except:
+    except Exception as e:
+        print(str(e))
         print("'{}' No '52WkRange'".format(address))
-        logfile.write("{}: '{}' No '52WkRange'...\n".format(hour, address))
+        logfile.write("{}: '{}' No '52WkRange'...\n {} \n".format(hour, address, str(e)))
+
 
     try:
         data["vol"] = scrapData["Volume"].replace(" ","")
@@ -708,7 +707,7 @@ def writeit(csvFile, db):
                 print(str(e))
                 print("Writing DataBase for {} did not work because of: {}".format(fileName, e))
                 print("X X X X X X")
-                logfile.write('{}: Writing DataBase for {} did not work...\n'.format(hour, fileName))
+                logfile.write('{}: Writing DataBase for {} did not work...\n{} \n'.format(hour, fileName, str(e)))
 
     logfile.write('{}: -->:{}:<-- inst_x have been written on {}...\n'.format(hour, count, db))
 
