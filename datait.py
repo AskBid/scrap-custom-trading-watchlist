@@ -349,7 +349,7 @@ if __name__ == '__main__':
 
     print('\ndispatch =   {}'.format(calc.func('stat: changepc avg abs')))
     print('\npct =   {}'.format(calc.func('stat: vol pc')))
-    print('dispatch =   {}'.format(calc.func('last: yclose')))
+    print('dispatch =   {}'.format(calc.func('last: price')))
 
     print('color: {}'.format(calc.color()))
 

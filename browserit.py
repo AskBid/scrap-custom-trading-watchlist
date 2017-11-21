@@ -1,5 +1,5 @@
 import sys
-from os import listdir
+from os import listdir, system
 from PyQt5.QtWidgets import *
 from PyQt5.QtGui import *
 from PyQt5.QtCore import QCoreApplication, QRect, Qt, QSize
@@ -16,7 +16,7 @@ import htmit
 import webbrowser
 
 today = time.strftime('%Y-%m-%d')
-width, height = 800, 600
+# width, height = 800, 600
 
 def getWeekDay(dt):
     year, month, day = (int(x) for x in dt.split('-'))
@@ -206,7 +206,10 @@ class MainWidget(QWidget):
         self.show()
         self.page = htmit.Page(self.input_date)
         webbrowser.open(self.page.path, new=1, autoraise=True)
-
+        try:
+            system('open {}'.format(self.page.path))
+        except:
+            pass
 
     def updateContainer(self):
         self.input_date = {
@@ -270,9 +273,11 @@ class MainWidget(QWidget):
         self.date.setText(qdate_str)
 
 class MainWindow(QMainWindow):
-    def __init__(self):
-        super().__init__()
 
+    def __init__(self, width, height):
+        super().__init__()
+        self.width = width
+        self.height = height
         self.initUI()
 
     def initUI(self):
@@ -290,7 +295,11 @@ class MainWindow(QMainWindow):
         self.centerWidget = MainWidget()
         self.setCentralWidget(self.centerWidget)
         self.statusbar = self.statusBar()
-        self.setFixedSize(width/20, height-30)
+        if self.width/20 < 120:
+            self.width = 120
+        else:
+            self.width = self.width/20
+        self.setFixedSize(self.width, self.height-30)
         self.show()
 
     def getLogs(self):
@@ -305,6 +314,6 @@ if __name__ == '__main__':
     app = QApplication(sys.argv)
     screen_resolution = app.desktop().screenGeometry()
     width, height = screen_resolution.width(), screen_resolution.height()
-    ex = MainWindow()
+    ex = MainWindow(width, height)
     ex.show()
     sys.exit(app.exec_())

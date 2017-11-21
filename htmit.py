@@ -109,21 +109,34 @@ class Page():
         html = head
 
         html = html.replace('<!--name-->',  str(instData.file_name))
-        html = html.replace('<!--day-->',  str('[ ' + instData.lastdate.split('-')[2] + ' ] '))
+        html = html.replace('<!--day-->',  str('[date: ' + instData.lastdate.split('-')[2] + ' ] '))
         html = html.replace('<!--days-->',  str('[ '+ str(instData.daysAmount) +' ]'))
-        html = html.replace('<!--prc_2-->', instData.func('last: price'))
-        html = html.replace('<!--prc_0-->', instData.func('last: yclose'))
-        html = html.replace('<!--prc_1-->', instData.func('last: open'))
-        val = instData.func('change: open price')
+        funclist = text[0].replace('\n','').split(' --- ')
+        html = html.replace('<!--prc_2-->', str(instData.func(funclist[2])))
+        html = html.replace('<!--prc_0-->', str(instData.func(funclist[0])))
+        html = html.replace('<!--prc_1-->', str(instData.func(funclist[1])))
+        html = html.replace('<!--prc_2_t-->', str(funclist[2]))
+        html = html.replace('<!--prc_0_t-->', str(funclist[0]))
+        html = html.replace('<!--prc_1_t-->', str(funclist[1]))
+
+        funclist = text[1].replace('\n','').split(' --- ')
+        val = instData.func(funclist[0])
         if '-' not in val: val = '+' + val
         html = html.replace('<!--v0-->',    val)
-        val = instData.func('last: changept')
+        html = html.replace('<!--v0_t-->', funclist[0])
+        val = instData.func(funclist[1])
         if '-' not in val: val = '+' + val
-        html = html.replace('<!--v1-->',    val)
-        html = html.replace('<!--v2-->',    instData.func('stat: changepc avg abs'))
-        html = html.replace('<!--v3-->',    instData.func('stat: changepc std abs'))
-        html = html.replace('<!--v4-->',    instData.func('stat: changepc med abs'))
-        html = html.replace('<!--v5-->',    instData.func('stat: changepc pct abs'))
+        html = html.replace('<!--v1-->', val)
+        html = html.replace('<!--v2-->', str(instData.func(funclist[2])))
+        html = html.replace('<!--v3-->', str(instData.func(funclist[3])))
+        html = html.replace('<!--v4-->', str(instData.func(funclist[4])))
+        html = html.replace('<!--v5-->', str(instData.func(funclist[5])))
+
+        html = html.replace('<!--v1_t-->', funclist[1])
+        html = html.replace('<!--v2_t-->', str(funclist[2]))
+        html = html.replace('<!--v3_t-->', str(funclist[3]))
+        html = html.replace('<!--v4_t-->', str(funclist[4]))
+        html = html.replace('<!--v5_t-->', str(funclist[5]))
 
         for i in range(2,len(text)):
             html += '<tr>\n'
@@ -137,7 +150,7 @@ class Page():
                 func = cell_string.split('_')[2].replace('\n','')
 
                 if func == 'none':
-                    cell = blankcell
+                    cell = blankcell.replace('<n>', '1')
                 else:
                     cell = blankcell.replace('<n>', celltype)
                     if 'stat' in func:
@@ -173,7 +186,7 @@ if __name__ == '__main__':
     #     "period_start": "16:00",
     #     "period_end": "20:00"}
     date_ex = {
-        "enddate": '2017-11-17',
+        "enddate": '2017-11-20',
         "sample_days": 60,
         "period_start": "16:00",
         "period_end": "20:00"}
