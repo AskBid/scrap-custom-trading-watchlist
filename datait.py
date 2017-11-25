@@ -35,15 +35,16 @@ class Calc_dataframe(object):
         self.df = self.getDataFrame() #all calculation are done on this not on self.price for instance as that it is a string only given as information
 
         self.lastdate = self.df.index[-1][0]
+        self.lasthour = self.df.index[-1][1]
         self.daysAmount = len(self.df.index)
         self.price = writePrice(self.df['price'][-1])
 
         self.dayr = self.dayR()
         self.day52r = self.r52w()
 
-    def getDataFrame(self):
+    def getDataFrame(self, path = "data/scrapData.db"):
 
-        conn = sqlite3.connect("scrapData.db")
+        conn = sqlite3.connect(path)
 
         start_date = dt.datetime.strptime(self.enddate, '%Y-%m-%d') - BDay(self.sample_days)
         start_date = start_date.strftime('%Y-%m-%d')
@@ -234,7 +235,7 @@ class Calc_dataframe(object):
         if  stat_type in 'pct':
             return writeNum(val)
         elif col in 'changept, dayr':
-            return writePrice(val)
+            return writePrice(val, self.price)
         elif col in 'changepc, pc':
             return writePercent(val)
         elif col in 'vol, oi':

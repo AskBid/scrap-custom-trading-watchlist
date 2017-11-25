@@ -5,14 +5,18 @@ class Page():
 
     def __init__(self, date_input):
         self.date_input = date_input
-        self.path = 'main.html'
+        self.path = 'pages/{}_{}-{}_{}.html'.format(
+            date_input['enddate'],
+            date_input['period_start'].replace(':',''),
+            date_input['period_end'].replace(':',''),
+            date_input['sample_days'])
         self.html = self.writePage()
 
     def updateDate(self, new_date_input):
         self.date_input = new_date_input
 
     def writePage(self):
-        htmlPage = open(self.path, 'w')
+        htmlPage = open(self.path, 'w+')
         html = self.makePage()
         htmlPage.write(html)
         htmlPage.close()
@@ -109,7 +113,7 @@ class Page():
         html = head
 
         html = html.replace('<!--name-->',  str(instData.file_name))
-        html = html.replace('<!--day-->',  str('[date: ' + instData.lastdate.split('-')[2] + ' ] '))
+        html = html.replace('<!--day-->',  str('[ ' + instData.lastdate + ' ' + instData.lasthour + ' ] '))
         html = html.replace('<!--days-->',  str('[ '+ str(instData.daysAmount) +' ]'))
         funclist = text[0].replace('\n','').split(' --- ')
         html = html.replace('<!--prc_2-->', str(instData.func(funclist[2])))
@@ -170,8 +174,8 @@ class Page():
         html = html.replace('<--color0-->',  instData.color()[0])
         html = html.replace('<--color1-->', instData.color()[1])
         html = html.replace('<--colorid-->', ' rgba(150, 150, 150, 0.99)')
-        html = html.replace('<!--imgpath-->', imgpath)
-        html = html.replace('<!--imgpath_candles-->', imgpath_candles)
+        html = html.replace('<!--imgpath-->', '../{}'.format(imgpath))
+        html = html.replace('<!--imgpath_candles-->', '../{}'.format(imgpath_candles))
 
         return html
 

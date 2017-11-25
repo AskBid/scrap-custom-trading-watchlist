@@ -10,7 +10,8 @@ import datetime
 from pandas.tseries.offsets import BDay #to make operation betwen dates where only BusinessDays are considered
 from PyQt5.QtCore import QDate
 from drawit import drawCandle, draw52RangeBar
-import mergeit
+# import mergeit
+import ec2it
 from math import isnan
 import htmit
 import webbrowser
@@ -18,12 +19,19 @@ import webbrowser
 today = time.strftime('%Y-%m-%d')
 # width, height = 800, 600
 
+def prev_weekday(adate):
+    adate -= datetime.timedelta(days=1)
+    while adate.weekday() > 4: # Mon-Fri are 0-4
+        adate -= datetime.timedelta(days=1)
+    return adate
+
 def getWeekDay(dt):
     year, month, day = (int(x) for x in dt.split('-'))
     ans = datetime.date(year, month, day)
 
     return ans.strftime("%a")
 
+today = prev_weekday(datetime.datetime.strptime(today, '%Y-%m-%d')).strftime("%Y-%m-%d")
 
 # class MainFrame(QScrollArea):
 #     def __init__(self, date_input, parent=None):
@@ -129,87 +137,174 @@ def getWeekDay(dt):
 #         btnN.clicked.connect(self.updateNextContainer)
 #         calend.clicked.connect(self.selectDates)
 #         btnFetch.clicked.connect(self.updateFetch)
+
 class MainWidget(QWidget):
     def __init__(self):
         super().__init__()
 
         self.input_date = {
             "enddate": today,
-            "sample_days": 30,
+            "sample_days": 60,
             "period_start": "16:00",
             "period_end": "20:00"}
 
         # bar.setFixedHeight(35)
         self.calend = QPushButton("...")
-        self.calend.setFixedWidth(20)
+        self.calend.setFixedWidth(120)
         self.calend.setFixedHeight(20)
-        self.btnP = QPushButton("<")
-        self.btnP.setFixedWidth(20)
-        self.btnP.setFixedHeight(20)
+
+        self.sample = QTextEdit()
+        self.sample.setText("60")
+        self.sample.setFixedWidth(35)
+        self.sample.setFixedHeight(35)
+        self.sample.setAlignment(Qt.AlignCenter)
         self.btnCalculate = QPushButton("calculate")
-        self.btnCalculate.setFixedWidth(120)
+        self.btnCalculate.setFixedWidth(85)
         self.btnCalculate.setFixedHeight(35)
+        self.calc = QWidget()
+        self.calc.setFixedWidth(120)
+        self.calc.setFixedHeight(35)
+        layout_calc = QHBoxLayout(self.calc)
+        layout_calc.addWidget(self.sample)
+        layout_calc.addWidget(self.btnCalculate)
+        layout_calc.setSpacing(0)
+        layout_calc.setContentsMargins(0, 0, 0, 0)
+
         self.btnFetch = QPushButton("Fetch")
         self.btnFetch.setFixedWidth(120)
         self.btnFetch.setFixedHeight(35)
+
+        self.btnP = QPushButton("<")
+        self.btnP.setFixedWidth(60)
+        self.btnP.setFixedHeight(20)
         self.btnN = QPushButton(">")
-        self.btnN.setFixedWidth(20)
+        self.btnN.setFixedWidth(60)
         self.btnN.setFixedHeight(20)
+        self.daybrowse = QWidget()
+        layout_daybrowse = QHBoxLayout(self.daybrowse)
+        layout_daybrowse.addWidget(self.btnP)
+        layout_daybrowse.addWidget(self.btnN)
+        layout_daybrowse.setSpacing(0)
+        layout_daybrowse.setContentsMargins(0, 0, 0, 0)
+
         self.date = QTextEdit()
         self.date.setText(today)
-        self.date.setFixedWidth(85)
-        self.date.setFixedHeight(27)
+        self.date.setFixedWidth(94)
+        self.date.setFixedHeight(25)
+        self.date.setAlignment(Qt.AlignCenter)
         self.day = QLabel()
         self.day.setText(getWeekDay(today))
+        self.day.setFixedWidth(26)
+        self.day.setFixedHeight(25)
+        self.day.setAlignment(Qt.AlignCenter)
+        self.dateinput = QWidget()
+        layout_date = QHBoxLayout(self.dateinput)
+        layout_date.addWidget(self.day)
+        layout_date.addWidget(self.date)
+        layout_date.setSpacing(0)
+        layout_date.setContentsMargins(0, 0, 0, 0)
+
+        self.index = 7
+        self.periods =(
+        '09:00-09:40',
+        '10:00-10:10',
+        '11:00-11:10',
+        '12:00-12:10',
+        '13:00-13:50',
+        '14:00-14:10',
+        '15:00-15:10',
+        '16:00-20:00',
+        )
+        self.btn0 = QPushButton("Open 9:30")
+        self.btn0.setFixedWidth(120)
+        self.btn0.setFixedHeight(20)
+        self.btn5 = QPushButton("Trade 14:00")
+        self.btn5.setFixedWidth(120)
+        self.btn5.setFixedHeight(20)
+        self.btn7 = QPushButton("Close 16:15")
+        self.btn7.setFixedWidth(120)
+        self.btn7.setFixedHeight(20)
+
+        self.checkCalc = QCheckBox('Self Calculate')
+        self.checkCalc.setFixedWidth(120)
+        self.checkCalc.setFixedHeight(20)
+        self.btnTimeRW = QPushButton("<")
+        self.btnTimeRW.setFixedWidth(60)
+        self.btnTimeRW.setFixedHeight(20)
+        self.btnTimeFW = QPushButton(">")
+        self.btnTimeFW.setFixedWidth(60)
+        self.btnTimeFW.setFixedHeight(20)
+        self.timeControls = QWidget()
+        layout_timeControls = QHBoxLayout(self.timeControls)
+        layout_timeControls.addWidget(self.btnTimeRW)
+        layout_timeControls.addWidget(self.btnTimeFW)
+        layout_timeControls.setSpacing(0)
+        layout_timeControls.setContentsMargins(0, 0, 0, 0)
+
         self.time_start = QTextEdit()
         self.time_start.setText(self.input_date['period_start'])
-        self.time_start.setFixedWidth(50)
-        self.time_start.setFixedHeight(27)
+        self.time_start.setFixedWidth(60)
+        self.time_start.setFixedHeight(25)
+        self.time_start.setAlignment(Qt.AlignCenter)
         self.time_end = QTextEdit()
         self.time_end.setText(self.input_date['period_end'])
-        self.time_end.setFixedWidth(50)
-        self.time_end.setFixedHeight(27)
-        self.sample = QTextEdit()
-        self.sample.setText("30")
-        self.sample.setFixedWidth(33)
-        self.sample.setFixedHeight(27)
+        self.time_end.setFixedWidth(60)
+        self.time_end.setFixedHeight(25)
+        self.time_end.setAlignment(Qt.AlignCenter)
+        self.timeperiod = QWidget()
+        self.timeperiod.setFixedWidth(120)
+        self.timeperiod.setFixedHeight(25)
+        layout_timeperiod = QHBoxLayout(self.timeperiod)
+        layout_timeperiod.addWidget(self.time_start)
+        layout_timeperiod.addWidget(self.time_end)
+        layout_timeperiod.setSpacing(0)
+        layout_timeperiod.setContentsMargins(0, 0, 0, 0)
 
         layout_bar = QVBoxLayout(self)
 
         # adding to widget
         layout_bar.addWidget(self.calend)
-        layout_bar.addWidget(self.date)
-        layout_bar.addWidget(self.day)
-        layout_bar.addWidget(self.btnP)
-        layout_bar.addWidget(self.btnN)
-        layout_bar.addWidget(self.btnCalculate)
-        layout_bar.addWidget(self.sample)
-        layout_bar.addWidget(self.time_start)
-        layout_bar.addWidget(self.time_end)
+        layout_bar.addWidget(self.dateinput)
+        layout_bar.addWidget(self.daybrowse)
+        layout_bar.addWidget(self.calc)
+        layout_bar.addWidget(self.checkCalc)
+        layout_bar.addWidget(self.btn0)
+        layout_bar.addWidget(self.btn5)
+        layout_bar.addWidget(self.btn7)
+        layout_bar.addWidget(self.timeControls)
+        layout_bar.addWidget(self.timeperiod)
         layout_bar.addWidget(self.btnFetch)
         layout_bar.addStretch(1)
-        layout_bar.setContentsMargins(10,0,0,0)
-
-        self.setWindowTitle('SnP watchlist')
+        layout_bar.setSpacing(0)
+        layout_bar.setContentsMargins(0, 0, 0, 0)
 
         self.btnCalculate.clicked.connect(self.updateContainer)
         self.btnP.clicked.connect(self.updatePrevContainer)
         self.btnN.clicked.connect(self.updateNextContainer)
         self.calend.clicked.connect(self.selectDates)
         self.btnFetch.clicked.connect(self.updateFetch)
-
+        self.btn0.clicked.connect(self.time0)
+        self.btn5.clicked.connect(self.time5)
+        self.btn7.clicked.connect(self.time7)
+        self.btnTimeFW.clicked.connect(self.timeFW)
+        self.btnTimeRW.clicked.connect(self.timeRW)
 
         self.run()
 
     def run(self):
 
-        self.show()
         self.page = htmit.Page(self.input_date)
-        webbrowser.open(self.page.path, new=1, autoraise=True)
+        try:
+            chrome_path = 'C:\Program Files (x86)\Google\Chrome\Application\chrome.exe %s'
+            webbrowser.get(chrome_path).open(self.page.path, new=1, autoraise=True)
+        except Exception as e:
+            print(str(e))
+            # webbrowser.open(self.page.path, new=1, autoraise=True)
         try:
             system('open {}'.format(self.page.path))
         except:
             pass
+        self.show()
 
     def updateContainer(self):
         self.input_date = {
@@ -218,12 +313,11 @@ class MainWidget(QWidget):
             "period_start": self.time_start.toPlainText(),
             "period_end": self.time_end.toPlainText(),
         }
-        print(self.input_date)
         self.day.setText(getWeekDay(self.date.toPlainText()))
         self.run()
 
     def updateFetch(self, on_EC2 = 'leave'):
-        mergeit.fetch(on_EC2)
+        ec2it.fetch(on_EC2)
         self.updateContainer()
 
     def updatePrevContainer(self):
@@ -272,6 +366,44 @@ class MainWidget(QWidget):
         qdate_str = qdate.toString("yyyy-MM-dd")
         self.date.setText(qdate_str)
 
+    def timeFW(self):
+
+        self.index += 1
+        if self.index > 7:
+            self.index = 0
+        self.setPeriod()
+
+    def timeRW(self):
+
+        self.index -= 1
+        if self.index < 0:
+            self.index = 7
+        self.setPeriod()
+
+    def time0(self):
+        self.index = 0
+        self.setPeriod()
+    def time5(self):
+        self.index = 0
+        self.setPeriod()
+    def time7(self):
+        self.index = 0
+        self.setPeriod()
+
+    def setPeriod(self):
+        start = self.periods[self.index].split('-')[0]
+        end = self.periods[self.index].split('-')[1]
+        self.time_start.setText(start)
+        self.time_end.setText(end)
+        self.input_date["period_start"] = start
+        self.input_date["period_end"] = end
+
+        if self.checkCalc.checkState():
+            self.run()
+        else:
+            self.show()
+
+
 class MainWindow(QMainWindow):
 
     def __init__(self, width, height):
@@ -295,22 +427,21 @@ class MainWindow(QMainWindow):
         self.centerWidget = MainWidget()
         self.setCentralWidget(self.centerWidget)
         self.statusbar = self.statusBar()
-        if self.width/20 < 120:
-            self.width = 120
-        else:
-            self.width = self.width/20
-        self.setFixedSize(self.width, self.height-30)
-        self.show()
+        self.setFixedSize(120, self.height-30)
+
+        self.setWindowTitle('SnP watchlist')
+
+        # self.show()
 
     def getLogs(self):
-        mergeit.getLogs()
+        ec2it.getLogs()
 
     def deleteDataEC2(self):
-        mergeit.fetch('delete')
+        ec2it.fetch('delete')
 
 if __name__ == '__main__':
 
-    # mergeit.fetch()
+    # ec2it.fetch()
     app = QApplication(sys.argv)
     screen_resolution = app.desktop().screenGeometry()
     width, height = screen_resolution.width(), screen_resolution.height()

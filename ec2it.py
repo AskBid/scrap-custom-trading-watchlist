@@ -77,11 +77,62 @@ class EC2connection():
 
         return data
 
+def fetch(del_onEC2 = 'leave'):
+    import mergeit
+
+    try:
+        ec2 = ec2it.EC2connection()
+    except:
+        print('No EC2 Connection.')
+
+    try:
+        try:
+            ec2.getFiles('data/scrapData.db', 'fetch/')
+        except:
+            print("'data/scrapData.db' No such file or directory ")
+
+        if del_onEC2 == 'delete':
+            ec2.rmAll('data')
+
+        try:
+            copyfile('fetch/scrapData.db', 'fetch/_bak/{}_scrapData.db'.format(strftime('%Y-%m-%d_%H')))
+        except:
+            print('baking up EC2 files locally did not work')
+
+        copyfile('scrapData.db', '_bak/{}_scrapData.db'.format(strftime('%Y-%m-%d_%H')))
+
+        try:
+            merge_db('scrapData.db', 'fetch/scrapData.db')
+        except:
+            print('merge for scrapData.db not completed')
+
+        try:
+            remove('fetch/scrapData.db')
+        except:
+            print('removing fetching files not worked')
+
+        print('fetch complete.')
+
+    except Exception as e:
+        print(str(e))
+        print('No such file or directory (data/)')
+
+def getLogs():
+    try:
+        ec2 = ec2it.EC2connection()
+    except:
+        print('No EC2 Connection.')
+    try:
+        ec2.getAllFiles('~/logs','logs')
+        ec2.rmAll('logs')
+    except:
+        print('No such file or directory (logs/)')
+
 if __name__ == '__main__':
     ec2 = EC2connection()
     # ec2.getFiles(, 'trash')
-    ec2.cmd('ls data')
+    # ec2.cmd('ls data')
     # ec2.getAllFiles('~/logs','trash')
     # ec2.cmd('ls')
     # ec2.rmAll('logs')
-    # ec2.putFile('scrapit.py')
+    ec2.putFile('mergeit.py')

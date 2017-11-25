@@ -360,9 +360,17 @@ def scrapMarketwatch(address):
     data = getDataFormat()
 
     if not len(lab) == len(val):
+        toCull = len(lab) - len(val)
+        if toCull > 0:
+            lab.pop(toCull)
+        else:
+            val.pop(toCull)
         print("'{}' labels and values mismatch".format(address))
         logfile.write("{}: '{}' labels and values mismatch...\n".format(hour, address))
-        return data
+        for i, item in enumerate(val):
+            print(lab[i])
+            print(item)
+
 
     scrapData = {}
     #we create a dictionary of scraped data with labels as key and val as values
@@ -453,7 +461,6 @@ def scrapBloomberg(address):
     if not len(lab) == len(val):
         print("'{}' labels and values mismatch".format(address))
         logfile.write("{}: '{}' labels and values mismatch...\n".format(hour, address))
-        return data
 
     scrapData = {}
     #we create a dictionary of scraped data with labels as key and val as values
@@ -603,6 +610,12 @@ def writeit(csvFile, db):
         unit text)""")
     conn.commit()
 
+    logfile.write("\n--------------------------\n")
+    logfile.write("--------- Time: ----------\n")
+    logfile.write("--------- {}   ----------\n".format(hour))
+    logfile.write("--------- START ----------\n")
+    logfile.write("--------------------------\n\n")
+
     for line in csvlist:
         if line.split(',')[0] != "": #avoids completely empty rows in spreadsheet
             fileName = line.split(',')[0]
@@ -611,7 +624,9 @@ def writeit(csvFile, db):
 
             try:
                 print('\n:::::::::::')
+                logfile.write('\n:::::::::::')
                 print("Start to write DataBase for {}...".format(fileName))
+                logfile.write("Start to write DataBase for {}...\n".format(fileName))
 
                 if address != 'empty' and fileName.split('_')[1] in 'F S Y i':
                     this_dic = selector(address)
@@ -699,7 +714,9 @@ def writeit(csvFile, db):
                         conn.commit()
 
                 print("End writing DataBase for {}.".format(fileName))
+                logfile.write("End writing DataBase for {}\n.".format(fileName))
                 print('///////////')
+                logfile.write('///////////\n')
 
                 count += 1
 
@@ -708,8 +725,11 @@ def writeit(csvFile, db):
                 print("Writing DataBase for {} did not work because of: {}".format(fileName, e))
                 print("X X X X X X")
                 logfile.write('{}: Writing DataBase for {} did not work...\n{} \n'.format(hour, fileName, str(e)))
+                logfile.write("X X X X X X\n")
 
-    logfile.write('{}: -->:{}:<-- inst_x have been written on {}...\n'.format(hour, count, db))
+    logfile.write("\n--------------------------\n")
+    logfile.write("---------  END  ----------\n")
+    logfile.write("--------------------------\n\n")
 
     c.close()
     conn.close()
@@ -723,6 +743,7 @@ if __name__ == '__main__':
     args = parser.parse_args()
 
     writeit(args.file_csv, args.db)
+    # scrapBloomberg('https://www.bloomberg.com/quote/SX5E:IND')
 
 try:
     logfile.close()
