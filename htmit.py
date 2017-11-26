@@ -3,13 +3,17 @@ from drawit import drawCandle, draw52RangeBar
 
 class Page():
 
-    def __init__(self, date_input):
+    def __init__(self, date_input, samePageSW = False):
         self.date_input = date_input
-        self.path = 'pages/{}_{}-{}_{}.html'.format(
-            date_input['enddate'],
-            date_input['period_start'].replace(':',''),
-            date_input['period_end'].replace(':',''),
-            date_input['sample_days'])
+        self.samePageSW  = samePageSW
+        if samePageSW:
+            self.path = 'pages/{}.html'.format('main')
+        else:
+            self.path = 'pages/{}_{}-{}_{}.html'.format(
+                date_input['enddate'],
+                date_input['period_start'].replace(':',''),
+                date_input['period_end'].replace(':',''),
+                date_input['sample_days'])
         self.html = self.writePage()
 
     def updateDate(self, new_date_input):
@@ -74,8 +78,9 @@ class Page():
         if instData.lastdate != self.date_input['enddate']:
             return 'last day recorded before day selected:{}\n{}\n try increasing time period'.format(instData.lastdate, instData.file_name)
 
-        imgpath = 'img/{}.png'.format(instData.file_name)
-        imgpath_candles = 'img/{}_candles.png'.format(instData.file_name)
+        pageTag = self.path.replace('page/','').replace('.html','')
+        imgpath = 'img/{}_{}.png'.format(instData.file_name, pageTag)
+        imgpath_candles = 'img/{}_candles_{}.png'.format(instData.file_name, pageTag)
         drawCandle( 190,
                     25,
                     float(instData.stat('dayr','avg')), #avgRange = 10.17,

@@ -226,6 +226,7 @@ class MainWidget(QWidget):
         self.btn7.setFixedHeight(20)
 
         self.checkCalc = QCheckBox('Self Calculate')
+        self.checkCalc.setChecked(True)
         self.checkCalc.setFixedWidth(120)
         self.checkCalc.setFixedHeight(20)
         self.btnTimeRW = QPushButton("<")
@@ -293,7 +294,7 @@ class MainWidget(QWidget):
 
     def run(self):
 
-        self.page = htmit.Page(self.input_date)
+        self.page = htmit.Page(self.input_date, samePageSW = True)
         try:
             webbrowser.get('windows-default').open(os.path.realpath(self.page.path), new=1, autoraise=True)
         except Exception as e:
