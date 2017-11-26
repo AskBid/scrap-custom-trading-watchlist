@@ -295,8 +295,7 @@ class MainWidget(QWidget):
 
         self.page = htmit.Page(self.input_date)
         try:
-            chrome_path = 'C:\Program Files (x86)\Google\Chrome\Application\chrome.exe %s'
-            webbrowser.get(chrome_path).open(self.page.path, new=1, autoraise=True)
+            webbrowser.get('windows-default').open(os.path.realpath(self.page.path), new=1, autoraise=True)
         except Exception as e:
             print(str(e))
             # webbrowser.open(self.page.path, new=1, autoraise=True)
