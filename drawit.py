@@ -1,11 +1,11 @@
 try:
     import cairo
-except:
-    pass
+except Exception as e:
+    print(str(e))
 try:
     import cairocffi as cairo
-except:
-    pass
+except Exception as e:
+    print(str(e))
 from math import radians
 from math import isnan
 

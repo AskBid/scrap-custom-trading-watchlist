@@ -1,5 +1,5 @@
 import sys
-from os import listdir, system
+from os import listdir, system, path
 from PyQt5.QtWidgets import *
 from PyQt5.QtGui import *
 from PyQt5.QtCore import QCoreApplication, QRect, Qt, QSize
@@ -17,10 +17,10 @@ import htmit
 import webbrowser
 
 today = time.strftime('%Y-%m-%d')
+
 # width, height = 800, 600
 
 def prev_weekday(adate):
-    adate -= datetime.timedelta(days=1)
     while adate.weekday() > 4: # Mon-Fri are 0-4
         adate -= datetime.timedelta(days=1)
     return adate
@@ -141,6 +141,11 @@ today = prev_weekday(datetime.datetime.strptime(today, '%Y-%m-%d')).strftime("%Y
 class MainWidget(QWidget):
     def __init__(self):
         super().__init__()
+
+        self.checkSamePage = QCheckBox('Write on same .html')
+        self.checkSamePage.setChecked(True)
+        self.checkSamePage.setFixedWidth(120)
+        self.checkSamePage.setFixedHeight(20)
 
         self.input_date = {
             "enddate": today,
@@ -264,6 +269,7 @@ class MainWidget(QWidget):
         layout_bar = QVBoxLayout(self)
 
         # adding to widget
+        layout_bar.addWidget(self.checkSamePage)
         layout_bar.addWidget(self.calend)
         layout_bar.addWidget(self.dateinput)
         layout_bar.addWidget(self.daybrowse)
@@ -294,9 +300,9 @@ class MainWidget(QWidget):
 
     def run(self):
 
-        self.page = htmit.Page(self.input_date, samePageSW = True)
+        self.page = htmit.Page(self.input_date, samePageSW = self.checkSamePage.checkState())
         try:
-            webbrowser.get('windows-default').open(os.path.realpath(self.page.path), new=1, autoraise=True)
+            webbrowser.get('windows-default').open(path.realpath(self.page.path), new=1, autoraise=True)
         except Exception as e:
             print(str(e))
             # webbrowser.open(self.page.path, new=1, autoraise=True)
@@ -318,6 +324,7 @@ class MainWidget(QWidget):
 
     def updateFetch(self, on_EC2 = 'leave'):
         ec2it.fetch(on_EC2)
+        print('fetch')
         self.updateContainer()
 
     def updatePrevContainer(self):
@@ -384,10 +391,11 @@ class MainWidget(QWidget):
         self.index = 0
         self.setPeriod()
     def time5(self):
-        self.index = 0
+        self.index = 5
         self.setPeriod()
     def time7(self):
-        self.index = 0
+        self.index = 7
+
         self.setPeriod()
 
     def setPeriod(self):

@@ -42,7 +42,7 @@ class Calc_dataframe(object):
         self.dayr = self.dayR()
         self.day52r = self.r52w()
 
-    def getDataFrame(self, path = "data/scrapData.db"):
+    def getDataFrame(self, path = "scrapData.db"):
 
         conn = sqlite3.connect(path)
 

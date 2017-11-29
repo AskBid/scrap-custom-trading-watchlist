@@ -1,5 +1,15 @@
 import datait
 from drawit import drawCandle, draw52RangeBar
+from datetime import date
+
+serverWwwPath = ''
+pageNumber = 0
+
+def getWeekDay(dt):
+    year, month, day = (int(x) for x in dt.split('-'))
+    ans = date(year, month, day)
+
+    return ans.strftime("%a")
 
 class Page():
 
@@ -14,6 +24,9 @@ class Page():
                 date_input['period_start'].replace(':',''),
                 date_input['period_end'].replace(':',''),
                 date_input['sample_days'])
+        if serverWwwPath != '':
+            self.path = '{}{}.html'.format(serverWwwPath, str(pageNumber))
+
         self.html = self.writePage()
 
     def updateDate(self, new_date_input):
@@ -31,7 +44,7 @@ class Page():
 
         with open(guilist) as f:
             csv = f.readlines()
-        # csv = ['DAX_i']
+        # csv = ['DAX_i'] #to use as testing for html table
 
         csv_temp = []
         for line in csv:
@@ -40,7 +53,7 @@ class Page():
         csv = csv_temp
         del csv_temp
 
-        with open('gui/bigpage.html') as f:
+        with open('gui/bigpage_original.html') as f:
             html = f.read()
 
         html2add = ''
@@ -57,6 +70,22 @@ class Page():
 
         html = html.replace('<tr><td>sample</td></tr>', html2add)
         html = html.replace('nan', '-')
+        weekday = getWeekDay(self.date_input['enddate'])
+        html = html.replace('<!-- pagetitle -->',
+                            '''
+                            {}<text style="font-size: 17px; font-weight: 600; color: rgba(250, 250, 250, 0.9);">{} {}  | {}</text> - {} |  {}'''.format(
+                                self.date_input['enddate'][:8],
+                                self.date_input['enddate'][-2:],
+                                weekday,
+                                self.date_input['period_start'],
+                                self.date_input['period_end'],
+                                self.date_input['sample_days']))
+        html = html.replace('<!-- title -->', '{}_{}_{}-{}_{}'.format(
+            weekday,
+            self.date_input['enddate'][-5:],
+            self.date_input['period_start'].replace(':',''),
+            self.date_input['period_end'].replace(':',''),
+            self.date_input['sample_days']))
 
         return html
 
@@ -78,10 +107,9 @@ class Page():
         if instData.lastdate != self.date_input['enddate']:
             return 'last day recorded before day selected:{}\n{}\n try increasing time period'.format(instData.lastdate, instData.file_name)
 
-        pageTag = self.path.replace('page/','').replace('.html','')
-        imgpath = 'img/{}_{}.png'.format(instData.file_name, pageTag)
-        imgpath_candles = 'img/{}_candles_{}.png'.format(instData.file_name, pageTag)
-        drawCandle( 190,
+        imgpath = '{}img/{}_{}.png'.format(serverWwwPath, str(pageNumber), instData.file_name)
+        imgpath_candles = '{}img/{}_{}_bars.png'.format(serverWwwPath, str(pageNumber), instData.file_name)
+        drawCandle( 33,
                     25,
                     float(instData.stat('dayr','avg')), #avgRange = 10.17,
                     float(instData.stat('dayr','std')), # stdRange = 4.0235,
@@ -105,10 +133,10 @@ class Page():
                     imgpath)
 
 
-        with open('gui/inst_tab.csv') as f:
+        with open('gui/inst_tab_original.csv') as f:
             text = f.readlines()
 
-        with open('gui/inst_tab.html') as f:
+        with open('gui/inst_tab_original.html') as f:
             html = f.read()
         html = html.replace('<!-- width -->', '330')
         head = html.split('<!-- HEAD -->')[1]
@@ -129,23 +157,27 @@ class Page():
         html = html.replace('<!--prc_1_t-->', str(funclist[1]))
 
         funclist = text[1].replace('\n','').split(' --- ')
-        val = instData.func(funclist[0])
+        val = instData.func(funclist[0]) #this want to be the price change based on 52wRangerather than price, must be calculated first not to let changepc column as this value
         if '-' not in val: val = '+' + val
-        html = html.replace('<!--v0-->',    val)
-        html = html.replace('<!--v0_t-->', funclist[0])
+        html = html.replace('<!--v0b-->',    val)
+        html = html.replace('<!--v0b_t-->', funclist[0])
         val = instData.func(funclist[1])
         if '-' not in val: val = '+' + val
+        html = html.replace('<!--v0-->',    val)
+        html = html.replace('<!--v0_t-->', funclist[1])
+        val = instData.func(funclist[2])
+        if '-' not in val: val = '+' + val
         html = html.replace('<!--v1-->', val)
-        html = html.replace('<!--v2-->', str(instData.func(funclist[2])))
-        html = html.replace('<!--v3-->', str(instData.func(funclist[3])))
-        html = html.replace('<!--v4-->', str(instData.func(funclist[4])))
-        html = html.replace('<!--v5-->', str(instData.func(funclist[5])))
+        html = html.replace('<!--v2-->', str(instData.func(funclist[3])))
+        html = html.replace('<!--v3-->', str(instData.func(funclist[4])))
+        html = html.replace('<!--v4-->', str(instData.func(funclist[5])))
+        html = html.replace('<!--v5-->', str(instData.func(funclist[6])))
 
-        html = html.replace('<!--v1_t-->', funclist[1])
-        html = html.replace('<!--v2_t-->', str(funclist[2]))
-        html = html.replace('<!--v3_t-->', str(funclist[3]))
-        html = html.replace('<!--v4_t-->', str(funclist[4]))
-        html = html.replace('<!--v5_t-->', str(funclist[5]))
+        html = html.replace('<!--v1_t-->', funclist[2])
+        html = html.replace('<!--v2_t-->', str(funclist[3]))
+        html = html.replace('<!--v3_t-->', str(funclist[4]))
+        html = html.replace('<!--v4_t-->', str(funclist[5]))
+        html = html.replace('<!--v5_t-->', str(funclist[6]))
 
         for i in range(2,len(text)):
             html += '<tr>\n'
@@ -178,27 +210,83 @@ class Page():
 
         html = html.replace('<--color0-->',  instData.color()[0])
         html = html.replace('<--color1-->', instData.color()[1])
-        html = html.replace('<--colorid-->', ' rgba(150, 150, 150, 0.99)')
-        html = html.replace('<!--imgpath-->', '../{}'.format(imgpath))
-        html = html.replace('<!--imgpath_candles-->', '../{}'.format(imgpath_candles))
+        html = html.replace('<--colorid-->', ' rgba(230, 230, 230, 0.99)')
+        if serverWwwPath == '':
+            html = html.replace('<!--imgpath-->', '../{}'.format(imgpath))
+            html = html.replace('<!--imgpath_candles-->', '../{}'.format(imgpath_candles))
+        else:
+            html = html.replace('<!--imgpath-->', '{}'.format(imgpath.replace(serverWwwPath, '')))
+            html = html.replace('<!--imgpath_candles-->', '{}'.format(imgpath_candles.replace(serverWwwPath, '')))
 
         return html
 
 
 if __name__ == '__main__':
-    import time
-    import webbrowser
+    import argparse
+    parser = argparse.ArgumentParser()
+    parser.add_argument("number", help = "page number .html")
+    args = parser.parse_args()
 
+    pageNumber = args.number
+
+    if pageNumber == '14':
+        start = '09:00'
+        end = '09:40'
+    if pageNumber == '15':
+        start = '10:00'
+        end = '10:10'
+    if pageNumber == '16':
+        start = '11:00'
+        end = '11:10'
+    if pageNumber == '17':
+        start = '12:00'
+        end = '12:10'
+    if pageNumber == '18':
+        start = '13:00'
+        end = '13:50'
+    if pageNumber == '19':
+        start = '14:00'
+        end = '14:10'
+    if pageNumber == '20':
+        start = '15:00'
+        end = '15:10'
+    if pageNumber == '21':
+        start = '16:00'
+        end = '20:00'
+
+
+    import time
+    import datetime
+    from mergeit import merge_db
+
+    def prev_weekday(adate):
+        while adate.weekday() > 4: # Mon-Fri are 0-4
+            adate -= datetime.timedelta(days=1)
+        return adate
+
+    merge_db('scrapData.db', 'data/scrapData.db')
+    serverWwwPath = '/var/www/html/'
+
+    today = time.strftime('%Y-%m-%d')
+    today = prev_weekday(datetime.datetime.strptime(today, '%Y-%m-%d')).strftime("%Y-%m-%d")
+
+    date_server = {
+        "enddate": today,
+        "sample_days": 60,
+        "period_start": start,
+        "period_end": end}
+
+    page = Page(date_server)
+
+    # import time
+    # import webbrowser
+    # import os
+    #
     # date_ex = {
-    #     "enddate": time.strftime('%Y-%m-%d'),
-    #     "sample_days": 30,
+    #     "enddate": '2017-11-20',
+    #     "sample_days": 60,
     #     "period_start": "16:00",
     #     "period_end": "20:00"}
-    date_ex = {
-        "enddate": '2017-11-20',
-        "sample_days": 60,
-        "period_start": "16:00",
-        "period_end": "20:00"}
-
-    page = Page(date_ex)
-    webbrowser.open(page.path, new=0, autoraise=True)
+    #
+    # page = Page(date_ex)
+    # webbrowser.get('windows-default').open(os.path.realpath(page.path), new=1, autoraise=True)

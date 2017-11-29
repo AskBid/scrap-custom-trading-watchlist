@@ -1,18 +1,30 @@
-def timeFW():
-    string ='''
-    09:00-09:40
-    10:00-10:10
-    11:00-11:10
-    12:00-12:10
-    13:00-13:50
-    14:00-14:10
-    15:00-15:10
-    16:00-20:00
-    '''
+import sys
+from os import listdir, system, path
+from PyQt5.QtWidgets import *
+from PyQt5.QtGui import *
+from PyQt5.QtCore import QCoreApplication, QRect, Qt, QSize
+import datait
+from random import *
+import time
+import datetime
+from pandas.tseries.offsets import BDay #to make operation betwen dates where only BusinessDays are considered
+from PyQt5.QtCore import QDate
+from drawit import drawCandle, draw52RangeBar
+# import mergeit
+import ec2it
+from math import isnan
+import htmit
+import webbrowser
 
-    string = string.replace(' ','').split('\n')
-    string.pop(0)
-    string.pop(-1)
-    print(string)
+today = time.strftime('%Y-%m-%d')
+print(today)
+# width, height = 800, 600
 
-timeFW()
+def prev_weekday(adate):
+    print(adate)
+    while adate.weekday() > 4: # Mon-Fri are 0-4
+        adate -= datetime.timedelta(days=1)
+    return adate
+
+today = prev_weekday(datetime.datetime.strptime(today, '%Y-%m-%d')).strftime("%Y-%m-%d")
+print(today)

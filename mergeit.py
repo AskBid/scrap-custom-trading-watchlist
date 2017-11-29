@@ -1,8 +1,8 @@
 import sqlite3
-from os import remove
-from shutil import copyfile
-import ec2it
-from time import strftime
+try: #because we don't use ex2it on ec2 instance
+    import ec2it
+except:
+    print("'ec2it' was not imported, which is correct if you are on ec2 instance")
 from sys import exit
 
 def clean_db(db_name):
@@ -103,6 +103,7 @@ def merge_db(db_old_name, db_new_name, tolerance = 10):
 
 
 if __name__ == '__main__':
+    import argparse
     parser = argparse.ArgumentParser()
     parser.add_argument("db_old_name", help = "DataBase to keep where the rows will be added")
     parser.add_argument("db_new_name", help = "DataBase to delete from which to take new rows to add to main DB")

@@ -1,6 +1,10 @@
 from boto.ec2 import connect_to_region
+import boto
 from paramiko import SSHClient, RSAKey, AutoAddPolicy
 from scp import SCPClient
+from shutil import copyfile
+from time import strftime
+from os import remove
 
 class EC2connection():
 
@@ -77,45 +81,27 @@ class EC2connection():
 
         return data
 
-def fetch(del_onEC2 = 'leave'):
+# def fetch(del_onEC2 = 'leave'): #fetch from temp DB
+#     import mergeit
+#
+#     ec2 = EC2connection()
+#     ec2.getFiles('data/scrapData.db', 'fetch/')
+#     if del_onEC2 == 'delete':
+#         ec2.rmAll('data')
+#     copyfile('fetch/scrapData.db', 'fetch/_bak/{}_scrapData.db'.format(strftime('%Y-%m-%d_%H')))
+#     copyfile('scrapData.db', '_bak/{}_scrapData.db'.format(strftime('%Y-%m-%d_%H')))
+#     mergeit.merge_db('scrapData.db', 'fetch/scrapData.db')
+#     remove('fetch/scrapData.db')
+#     print('fetch complete.')
+
+def fetch(del_onEC2 = 'leave'): #just download complete DB
     import mergeit
 
-    try:
-        ec2 = ec2it.EC2connection()
-    except:
-        print('No EC2 Connection.')
+    copyfile('scrapData.db', '_bak/{}_scrapData.db'.format(strftime('%Y-%m-%d_%H')))
+    ec2 = EC2connection()
+    ec2.getFiles('scrapData.db', '.')
+    print('fetch complete.')
 
-    try:
-        try:
-            ec2.getFiles('data/scrapData.db', 'fetch/')
-        except:
-            print("'data/scrapData.db' No such file or directory ")
-
-        if del_onEC2 == 'delete':
-            ec2.rmAll('data')
-
-        try:
-            copyfile('fetch/scrapData.db', 'fetch/_bak/{}_scrapData.db'.format(strftime('%Y-%m-%d_%H')))
-        except:
-            print('baking up EC2 files locally did not work')
-
-        copyfile('scrapData.db', '_bak/{}_scrapData.db'.format(strftime('%Y-%m-%d_%H')))
-
-        try:
-            merge_db('scrapData.db', 'fetch/scrapData.db')
-        except:
-            print('merge for scrapData.db not completed')
-
-        try:
-            remove('fetch/scrapData.db')
-        except:
-            print('removing fetching files not worked')
-
-        print('fetch complete.')
-
-    except Exception as e:
-        print(str(e))
-        print('No such file or directory (data/)')
 
 def getLogs():
     try:
@@ -132,7 +118,9 @@ if __name__ == '__main__':
     ec2 = EC2connection()
     # ec2.getFiles(, 'trash')
     # ec2.cmd('ls data')
+    # ec2.getFiles('data/scrapData.db', 'fetch/')
     # ec2.getAllFiles('~/logs','trash')
     # ec2.cmd('ls')
     # ec2.rmAll('logs')
-    ec2.putFile('mergeit.py')
+    # ec2.putFile('htmit.py', 'mergeit.py', 'drawit.py', 'datait.py')
+    ec2.putFile('htmit.py')
