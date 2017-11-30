@@ -1,120 +1,83 @@
 <!DOCTYPE html>
-<!-- Template by html.am -->
-<style>
-    td {
-        /*font-family: Andale Mono;*/
-        /*font-family: Lucida Console, Andale Mono, Courier New;*/
-        font-family: Helvetica, sans-serif;
-        font-size: 12px;
-        font-weight: 600;
-        color: black;
-    }
-
-    td.upper {
-        width: "300";
-    }
-
-    #main {
-        padding:0px 0px 0px 0px;
-        border-collapse: collapse;
-    }
-
-    #rowhead {
-        padding:4px 10px 4px 20px;
-        border-width:1px 1px 1px 0px;
-        border-style: solid;
-        border-color: #333;
-        border-collapse: collapse;
-        color: rgba(0, 0, 0, 0.95);
-    }
-
-    #truecolor {
-        padding:0px 0px 0px 0px;
-        width: 20px;
-        border-width:1px 0px 1px 1px;
-        border-style: solid;
-        border-color: #333;
-        border-collapse: collapse;
-        color: rgba(0, 0, 0, 0.95);
-    }
-
-    #cell {
-        padding:4px 5px 4px 4px;
-        width: 100px;
-        text-align: right;
-        border-width:1px 1px 1px 1px;
-        border-style: solid;
-        border-color: #333;
-        border-collapse: collapse;
-        background-color: rgba(250, 250, 250, 0.7);
-        color: rgba(0, 0, 0, 0.95);
-    }
-
-    #day {
-        vertical-align: top;
-        font-size: 10px;
-        font-weight: 500;
-        color: rgba(0, 0, 0, 0.6);
-        padding: 0px 3px 6px 2px;
-    }
-
-</style>
 <!-- HEAD -->
-<body  bgcolor="#aaaaaa">
-<table id="main">
+<table id="main" cellpadding="0">
     <tr>
-        <td id="truecolor" style="background-color: rgb(240, 255, 73);" rowspan="2">
+
+        <td id="truecolor" style="background-color: <--color1-->;">
         </td>
-        <td id="rowhead" style="background-color: rgba(240, 255, 73, 0.5);" rowspan="2">
-            <text title"day of the month" id="day" ><!--day-->[27 16:15 ] </text>
-            <text title"n days considered in this tab" id="day" ><!--days-->[ 59 ] </text>
-            <text title"ticker" id="ticker" ><!--name-->ES_F</text>
+
+        <td id="rowhead" style="background-color: <--color0-->;">
+            <table id="container" height="100%"  cellpadding="0">
+                <tr>
+                    <td height="90%" colspan="3">
+                        <div>
+                            <text title"day of the month" id="day" ><!--day--></text>
+                            <text title"n days calculated" id="day" ><!--days--></text>
+                        </div>
+                        <div>
+                            <text title"ticker" id="ticker" ><!--name--></text>
+                        </div>
+                    </td>
+                </tr>
+                <tr>
+                    <td style="background-color: rgba(0, 0, 0, 0.5);" height="10%" width="94%">
+                    </td>
+                    <td style="background-color: rgba(250, 0, 250, 1);" height="5%">
+                    </td>
+                    <td style="background-color: rgba(0, 0, 0, 0.5);" height="1%">
+                    </td>
+                </tr>
+            </table>
         </td>
-        <td  id="cell" class="upper">
-            <!--v0-->+0.12%
+<!-- HEAD -->
+
+<!-- BODY -->
+<!-- BODY1 -->
+        <td id="container">
+            <table id="container" height="100%">
+
+                <tr>
+<!-- BODY1 -->
+<!-- VALUE -->
+                    <td id="cell" title="<!--val_t-->" colspan="3">
+                        <table  border="0" cellspacing="0" cellpadding="0" width="100%">
+                            <tr>
+                                <td align="left" style="vertical-align: middle;">
+                                    <text id="label"><!--lab--></text>
+                                </td>
+                                <td align="right" width="100%" style="vertical-align: middle;">
+                                    <text id="<!--val-avg-->"><!--val--></text>
+                                </td>
+                            </tr>
+                        </table>
+                    </td>
+<!-- VALUE -->
+<!-- BODY2 -->
+                </tr>
+                <tr>
+<!-- BODY2 -->
+<!-- AVERAGES -->
+                    <td id="cell" title="<!--val_t-->" align="right">
+                        <table  border="0" cellspacing="0" cellpadding="0" width="50">
+                            <tr>
+                                <td align="left" style="vertical-align: middle;">
+                                    <text id="label"><!--lab--></text>
+                                </td>
+                                <td align="right" width="100%" style="vertical-align: middle;">
+                                    <text id="<!--val-avg-->"><!--val--></text>
+                                </td>
+                            </tr>
+                        </table>
+                    </td>
+<!-- AVERAGES -->
+<!-- BODY3 -->
+                </tr>
+            </table>
         </td>
-        <td  id="cell">
-            <!--v0-->+0.05
-        </td>
-        <td  id="cell">
-            <!--v0-->+0.02%
-        </td>
-        <td  id="cell">
-            <!--v0-->0.21%
-        </td>
-        <td  id="cell">
-            <!--v0-->0.15%
-        </td>
-        <td  id="cell">
-            <!--v0-->0.18%
-        </td>
-        <td  id="cell">
-            <!--v0-->0.07
-        </td>
-    </tr>
-    <tr>
-        <td  id="cell">
-            <text title"day of the month" id="day" ><!--v0-->+0.12%</text>
-        </td>
-        <td  id="cell">
-            <!--v0-->+0.05
-        </td>
-        <td  id="cell">
-            <!--v0-->+0.02%
-        </td>
-        <td  id="cell">
-            <!--v0-->0.21%
-        </td>
-        <td  id="cell">
-            <!--v0-->0.15%
-        </td>
-        <td  id="cell">
-            <!--v0-->0.18%
-        </td>
-        <td  id="cell">
-            <!--v0-->0.07
-        </td>
+<!-- BODY3 -->
+<!-- BODY -->
+
+<!-- TAIL -->
     </tr>
 </table>
-</body>
 <!-- TAIL -->
