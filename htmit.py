@@ -149,12 +149,14 @@ class Page():
 
         ValCells = ''
         CellsOFavgsCells = ''
+        colspanTOT = 0
 
         for cell_line in guicsv:
 
             cell_line = cell_line.replace('\n','')
             formulas = cell_line.split(' --- ')
             colspan = len(formulas) - 1
+            colspanTOT += colspan + 1
 
 
             #insert first formula in value cell
@@ -164,6 +166,7 @@ class Page():
             thisValCell = thisValCell.replace('<!--val_t-->', str(formulas[0]))
             thisValCell = thisValCell.replace('<!--lab-->', 'V')
             thisValCell = thisValCell.replace('<--colspan-->', str(colspan))
+            # thisValCell += thisValCell + '<td rowspan="2"></td>'
 
             if colspan == 0:
                 avgsCells = avg_blankcell.replace('<--cellid-->', 'cell{}'.format(rigato))
@@ -185,7 +188,7 @@ class Page():
             #/
 
             ValCells += thisValCell
-            CellsOFavgsCells += avgsCells
+            CellsOFavgsCells += avgsCells  + '<td rowspan="2"></td>'
 
         if rigato == 1:
             rigato = 2
@@ -204,6 +207,7 @@ class Page():
         head = head.replace('<--colorid-->', ' rgba(230, 230, 230, 0.99)')
 
         html = head + tab
+        html = html.replace('<--colspanTOT-->', str(colspanTOT))
 
         return html
 
