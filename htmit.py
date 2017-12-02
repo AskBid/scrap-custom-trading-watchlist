@@ -1,16 +1,43 @@
 import datait
-from drawit import drawCandle, draw52RangeBar
+from drawit import drawCandle
 from datetime import date
 
 serverWwwPath = ''
 pageNumber = 0
 rigato = 1
 
+idcolors = [
+
+            ]
+
 def getWeekDay(dt):
     year, month, day = (int(x) for x in dt.split('-'))
     ans = date(year, month, day)
 
     return ans.strftime("%a")
+
+def draw52RangeBar(
+            low52 = 11865.0,
+            range52 = 1070.5, #12935.5  high52
+            dopen = 12527.00, #day open
+            drange = 157.50,
+            lenght = 100):
+
+    left2open_px = (lenght / range52) * (dopen - low52)
+    dayrange_px = (lenght / range52) * drange
+
+    if left2open_px > (lenght - 3):
+        left2open_px = lenght - 3
+
+    if dayrange_px < 3:
+        dayrange_px = 3
+
+    left2open_px = round(left2open_px)
+    dayrange_px = round(dayrange_px)
+
+    last_bit = lenght - (left2open_px + dayrange_px)
+    
+    return left2open_px, dayrange_px, last_bit
 
 class Page():
 
@@ -121,14 +148,10 @@ class Page():
         #             instData.df['dayl'].values[-1], # dayLow = 2542.5, #taken from [-1]
         #             imgpath_candles, # path = "gui/candle.png",
         #             "bar")
-        # draw52RangeBar(
-        #             190,
-        #             8,
-        #             instData.df['l52'].values[-1],
-        #             instData.day52r,
-        #             instData.df['open'].values[-1],
-        #             instData.df['dayr'].values[-1],
-        #             imgpath)
+        bar_lenghts = draw52RangeBar(  instData.df['l52'].values[-1],
+                                       instData.day52r,
+                                       instData.df['open'].values[-1],
+                                       instData.df['dayr'].values[-1])
 
         head = html.split('<!-- HEAD -->')[1]
         val_blankcell = html.split('<!-- VALUE -->')[1]
@@ -139,6 +162,9 @@ class Page():
         head = head.replace('<!--name-->',  str(instData.file_name))
         head = head.replace('<!--day-->',  str('[ ' + instData.lasthour + ' ] '))
         head = head.replace('<!--days-->',  str('[ '+ str(instData.daysAmount) +' ]'))
+        head = head.replace('<--barwidth0-->',  str(bar_lenghts[0]))
+        head = head.replace('<--barwidth1-->',  str(bar_lenghts[1]))
+        head = head.replace('<--barwidth2-->',  str(bar_lenghts[2]))
 
         # if serverWwwPath == '':
         #     html = html.replace('<!--imgpath-->', '../{}'.format(imgpath))
@@ -147,7 +173,7 @@ class Page():
         #     html = html.replace('<!--imgpath-->', '{}'.format(imgpath.replace(serverWwwPath, '')))
         #     html = html.replace('<!--imgpath_candles-->', '{}'.format(imgpath_candles.replace(serverWwwPath, '')))
 
-        ValCells = ''
+        ValCells = '<td id="spacer" rowspan="2"></td>' #change for switching rows order
         CellsOFavgsCells = ''
         colspanTOT = 0
 
@@ -156,8 +182,7 @@ class Page():
             cell_line = cell_line.replace('\n','')
             formulas = cell_line.split(' --- ')
             colspan = len(formulas) - 1
-            colspanTOT += colspan + 1
-
+            colspanTOT += colspan + 2
 
             #insert first formula in value cell
             thisValCell = val_blankcell
@@ -181,33 +206,33 @@ class Page():
 
                     avgsCells += thisAvgCell
 
-            #/
-
-            #insert fall other formula in averages cell
-
-            #/
-
-            ValCells += thisValCell
-            CellsOFavgsCells += avgsCells  + '<td rowspan="2"></td>'
-
-        if rigato == 1:
-            rigato = 2
-        else:
-            rigato = 1
+            ValCells += thisValCell  + '<td id="spacer" rowspan="2" width="0"></td>' #change for switching rows order
+            CellsOFavgsCells += avgsCells
 
         tab = ''
-        tab += CellsOFavgsCells
+        tab += ValCells #change for switching rows order
         tab += '</tr><tr>'
-        tab += ValCells
+        tab += CellsOFavgsCells #change for switching rows order
         tab += '</tr>'
 
         #head replace placed after because we need change column to be claculated first
         head = head.replace('<--color0-->',  instData.color()[0])
         head = head.replace('<--color1-->', instData.color()[1])
         head = head.replace('<--colorid-->', ' rgba(230, 230, 230, 0.99)')
+        head = head.replace('<--cellid-->', 'cell{}'.format(rigato))
 
         html = head + tab
         html = html.replace('<--colspanTOT-->', str(colspanTOT))
+        bar_size = 3
+        color_size = 12
+        html = html.replace('<--colspanBAR-->', str(bar_size))
+        html = html.replace('<--colspanCOLOR-->', str(color_size))
+        html = html.replace('<--colspanREST-->', str(colspanTOT-bar_size-color_size))
+
+        if rigato == 1:
+            rigato = 2
+        else:
+            rigato = 1
 
         return html
 

@@ -132,10 +132,12 @@ class Calc_dataframe(object):
             alpha = self.percentage('dayr')
         if isnan(alpha):
             alpha = 0.01
-        # alpha = alpha/1.5
+        softening_factor = 1.3
+        alpha = alpha/softening_factor
         alpha = ", {0:.3f})".format(alpha)
+        alphaTrueColor = ", {0:.3f})".format(1/softening_factor)
 
-        return (str(color) + str(alpha)), (str(color.replace('rgba','rgb')) + ')' )
+        return (str(color) + str(alpha)), (str(color) + str(alphaTrueColor))
 
     ### :STATISTIC FUNCTION ###
 

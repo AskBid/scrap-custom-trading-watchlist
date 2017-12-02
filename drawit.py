@@ -70,6 +70,8 @@ def drawCandle( lenght = 200, thickness = 25,
                 price = 2550.75, #taken from [-1]
                 dayLow = 2542.5, #taken from [-1]
 
+                offest = 0;
+
                 path = "gui/candle.png",
                 type_="bar"):
 
@@ -113,7 +115,7 @@ def drawCandle( lenght = 200, thickness = 25,
 
     ims = cairo.ImageSurface(cairo.FORMAT_ARGB32, thickness, lenght)
     cr = cairo.Context(ims)
-    cr.move_to(0,centerY)
+    cr.move_to(0,centerY - offest)
     cr.scale(1,-1)
     cr.translate(0, -lenght)
     cr.set_line_join(cairo.LINE_CAP_SQUARE)
