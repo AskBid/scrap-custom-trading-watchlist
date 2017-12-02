@@ -75,10 +75,10 @@ class Calc_dataframe(object):
 
         df.set_index(['date', 'time'], inplace=True)
 
-        try:
-            df = df[df.applymap(isnumber)] #makes sure that if there is a bad recording that gets NaN in dataframe so it does not affect calculation
-        except:
-            print('''something went wrong with the DB selection in datait.py and no value where selected''')
+        # try:
+        df = df[df.applymap(isnumber)] #makes sure that if there is a bad recording that gets NaN in dataframe so it does not affect calculation
+        # except:
+        #     print('''something went wrong with the DB selection in datait.py and no value where selected''')
 
         return df
 
@@ -132,7 +132,7 @@ class Calc_dataframe(object):
             alpha = self.percentage('dayr')
         if isnan(alpha):
             alpha = 0.01
-        alpha = alpha/1.5
+        # alpha = alpha/1.5
         alpha = ", {0:.3f})".format(alpha)
 
         return (str(color) + str(alpha)), (str(color.replace('rgba','rgb')) + ')' )
@@ -317,9 +317,9 @@ if __name__ == '__main__':
     pd.set_option('display.width', 1000)
 
     # today = time.strftime('%Y-%m-%d')
-    today = '2017-11-15'
+    today = '2017-11-20'
 
-    calc = Calc_dataframe('ES_F',today,30,'16:00','20:00')
+    calc = Calc_dataframe('ES_F',today,60,'16:00','20:00')
 
     print('----> ' + calc.file_name +  ' <----\n')
 

@@ -4,6 +4,7 @@ from datetime import date
 
 serverWwwPath = ''
 pageNumber = 0
+rigato = 1
 
 def getWeekDay(dt):
     year, month, day = (int(x) for x in dt.split('-'))
@@ -46,32 +47,15 @@ class Page():
             csv = f.readlines()
         # csv = ['DAX_i'] #to use as testing for html table
 
-        csv_temp = []
-        for line in csv:
-            line = line.replace('\n','').split(',')
-            csv_temp.append(line)
-        csv = csv_temp
-        del csv_temp
-
         with open('gui/bigpage.html') as f:
             html = f.read()
 
-        html2add = ''
-        for line in csv:
-            html2add += '<tr> \n'
-            for inst in line:
-                #spacing in between instruments tabs
-                html2add += '   <td style="padding: 0px 0px 0px 0px; /*Top right Bottom left*/"> \n'
+        bighead = html.split('<!-- bighead -->')[1]
+        bigbody_blank = html.split('<!-- bigbody -->')[1]
+        bigtail = html.split('<!-- bigtail -->')[1]
 
-                html2add += self.make1Tab(inst)
-
-                html2add += '   </td> \n'
-            html2add += '</tr> \n'
-
-        html = html.replace('<tr><td>sample</td></tr>', html2add)
-        html = html.replace('nan', '-')
         weekday = getWeekDay(self.date_input['enddate'])
-        html = html.replace('<!-- pagetitle -->',
+        bighead = bighead.replace('<!-- pagetitle -->',
                             '''
                             {}<text style="font-size: 17px; font-weight: 600; color: rgba(250, 250, 250, 0.9);">{} {}  | {}</text> - {} |  {}'''.format(
                                 self.date_input['enddate'][:8],
@@ -80,16 +64,30 @@ class Page():
                                 self.date_input['period_start'],
                                 self.date_input['period_end'],
                                 self.date_input['sample_days']))
-        html = html.replace('<!-- title -->', '{}_{}_{}-{}_{}'.format(
+        bighead = bighead.replace('<!-- title -->', '{}_{}_{}-{}_{}'.format(
             weekday,
             self.date_input['enddate'][-5:],
             self.date_input['period_start'].replace(':',''),
             self.date_input['period_end'].replace(':',''),
             self.date_input['sample_days']))
 
+        with open('gui/inst_tab.csv') as f:
+            guicsv = f.readlines()
+
+        bigbody = ''
+        for inst in csv:
+            inst = inst.replace('\n','')
+
+            if inst != '':
+                bigbody += self.make1Tab(inst, bigbody_blank, guicsv)
+
+        html = bighead + bigbody + bigtail
+        html = html.replace('nan', '-')
+
         return html
 
-    def make1Tab(self, inst):
+    def make1Tab(self, inst, html, guicsv):
+        global rigato
 
         if inst == '':
             return ''
@@ -132,127 +130,80 @@ class Page():
         #             instData.df['dayr'].values[-1],
         #             imgpath)
 
-        with open('gui/inst_tab.html') as f:
-            html = f.read()
         head = html.split('<!-- HEAD -->')[1]
-        body1 = html.split('<!-- BODY1 -->')[1]
-        body2 = html.split('<!-- BODY2 -->')[1]
-        body3 = html.split('<!-- BODY3 -->')[1]
         val_blankcell = html.split('<!-- VALUE -->')[1]
+        # val_blankcell = html.split('<!-- BODY -->')[1]
         avg_blankcell = html.split('<!-- AVERAGES -->')[1]
-        tail = html.split('<!-- TAIL -->')[1]
+        # tail = html.split('<!-- TAIL -->')[1]
 
         head = head.replace('<!--name-->',  str(instData.file_name))
-        head = head.replace('<!--day-->',  str('[ ' + instData.lastdate + ' ' + instData.lasthour + ' ] '))
+        head = head.replace('<!--day-->',  str('[ ' + instData.lasthour + ' ] '))
         head = head.replace('<!--days-->',  str('[ '+ str(instData.daysAmount) +' ]'))
 
-        with open('gui/inst_tab.csv') as f:
-            guicsv = f.readlines()
-
-        firstRow = ''
-        secondRow = ''
-
-        for cell_line in guicsv:
-
-            cell_line = cell_line.replace('\n','')
-            formulas = cell_line.split(' --- ')
-
-            #insert first formula in value cell
-            thisValCell = val_blankcell
-            thisValCell = thisValCell.replace('<!--val-->', str(instData.func(formulas[0])))
-            thisValCell = thisValCell.replace('<!--val_t-->', str(formulas[0]))
-            thisValCell = thisValCell.replace('<!--lab-->', 'lab')
-            #/
-
-            #insert fall other formula in averages cell
-            avgsCells = ''
-            for i in range(1, len(formulas)):
-                print(formulas[i])
-                thisAvgCell = avg_blankcell
-                thisAvgCell = thisAvgCell.replace('<!--val-->', str(instData.func(formulas[i])))
-                thisAvgCell = thisAvgCell.replace('<!--val_t-->', str(formulas[i]))
-                thisAvgCell = thisAvgCell.replace('<!--lab-->', 'lab')
-
-                avgsCells += thisAvgCell
-            #/
-
-            firstRow += thisValCell
-            secondRow += avgsCells
-
-        # html = head
-        #
-        # html = html.replace('<!--name-->',  str(instData.file_name))
-        # html = html.replace('<!--day-->',  str('[ ' + instData.lastdate + ' ' + instData.lasthour + ' ] '))
-        # html = html.replace('<!--days-->',  str('[ '+ str(instData.daysAmount) +' ]'))
-        # funclist = text[0].replace('\n','').split(' --- ')
-        # html = html.replace('<!--prc_2-->', str(instData.func(funclist[2])))
-        # html = html.replace('<!--prc_0-->', str(instData.func(funclist[0])))
-        # html = html.replace('<!--prc_1-->', str(instData.func(funclist[1])))
-        # html = html.replace('<!--prc_2_t-->', str(funclist[2]))
-        # html = html.replace('<!--prc_0_t-->', str(funclist[0]))
-        # html = html.replace('<!--prc_1_t-->', str(funclist[1]))
-        #
-        # funclist = text[1].replace('\n','').split(' --- ')
-        # val = instData.func(funclist[0]) #this want to be the price change based on 52wRangerather than price, must be calculated first not to let changepc column as this value
-        # if '-' not in val: val = '+' + val
-        # html = html.replace('<!--v0b-->',    val)
-        # html = html.replace('<!--v0b_t-->', funclist[0])
-        # val = instData.func(funclist[1])
-        # if '-' not in val: val = '+' + val
-        # html = html.replace('<!--v0-->',    val)
-        # html = html.replace('<!--v0_t-->', funclist[1])
-        # val = instData.func(funclist[2])
-        # if '-' not in val: val = '+' + val
-        # html = html.replace('<!--v1-->', val)
-        # html = html.replace('<!--v2-->', str(instData.func(funclist[3])))
-        # html = html.replace('<!--v3-->', str(instData.func(funclist[4])))
-        # html = html.replace('<!--v4-->', str(instData.func(funclist[5])))
-        # html = html.replace('<!--v5-->', str(instData.func(funclist[6])))
-        #
-        # html = html.replace('<!--v1_t-->', funclist[2])
-        # html = html.replace('<!--v2_t-->', str(funclist[3]))
-        # html = html.replace('<!--v3_t-->', str(funclist[4]))
-        # html = html.replace('<!--v4_t-->', str(funclist[5]))
-        # html = html.replace('<!--v5_t-->', str(funclist[6]))
-        #
-        # for i in range(2,len(text)):
-        #     html += '<tr>\n'
-        #
-        #     line = text[i].split(' --- ')
-        #
-        #     for cell_string in line:
-        #         celltype = cell_string.split('_')[0].replace('\n','')
-        #
-        #         label = cell_string.split('_')[1].replace('\n','')
-        #         func = cell_string.split('_')[2].replace('\n','')
-        #
-        #         if func == 'none':
-        #             cell = blankcell.replace('<n>', '1')
-        #         else:
-        #             cell = blankcell.replace('<n>', celltype)
-        #             if 'stat' in func:
-        #                 cell = cell.replace('<!--val-avg-->', 'average')
-        #             else:
-        #                 cell = cell.replace('<!--val-avg-->', 'value')
-        #             cell = cell.replace('<!--00t-->', func)
-        #             cell = cell.replace('<!--lab-->', label)
-        #             cell = cell.replace('<!--val-->', str(instData.func(func)))
-        #
-        #         html += cell
-        #
-        #     html += '</tr>\n\n'
-
-        html = head + body1 + firstRow + body2 + secondRow + body3 + tail
-
-        html = html.replace('<--color0-->',  instData.color()[0])
-        html = html.replace('<--color1-->', instData.color()[1])
-        html = html.replace('<--colorid-->', ' rgba(230, 230, 230, 0.99)')
         # if serverWwwPath == '':
         #     html = html.replace('<!--imgpath-->', '../{}'.format(imgpath))
         #     html = html.replace('<!--imgpath_candles-->', '../{}'.format(imgpath_candles))
         # else:
         #     html = html.replace('<!--imgpath-->', '{}'.format(imgpath.replace(serverWwwPath, '')))
         #     html = html.replace('<!--imgpath_candles-->', '{}'.format(imgpath_candles.replace(serverWwwPath, '')))
+
+        ValCells = ''
+        CellsOFavgsCells = ''
+
+        for cell_line in guicsv:
+
+            cell_line = cell_line.replace('\n','')
+            formulas = cell_line.split(' --- ')
+            colspan = len(formulas) - 1
+
+
+            #insert first formula in value cell
+            thisValCell = val_blankcell
+            thisValCell = thisValCell.replace('<--cellid-->', 'cell{}'.format(rigato))
+            thisValCell = thisValCell.replace('<!--val-->', str(instData.func(formulas[0])))
+            thisValCell = thisValCell.replace('<!--val_t-->', str(formulas[0]))
+            thisValCell = thisValCell.replace('<!--lab-->', 'V')
+            thisValCell = thisValCell.replace('<--colspan-->', str(colspan))
+
+            if colspan == 0:
+                avgsCells = avg_blankcell.replace('<--cellid-->', 'cell{}'.format(rigato))
+            else:
+                avgsCells = ''
+                for i in range(1, len(formulas)):
+                    thisAvgCell = avg_blankcell
+                    thisAvgCell = thisAvgCell.replace('<--cellid-->', 'cell{}'.format(rigato))
+                    thisAvgCell = thisAvgCell.replace('<!--val-->', str(instData.func(formulas[i])))
+                    thisAvgCell = thisAvgCell.replace('<!--val_t-->', str(formulas[i]))
+                    thisAvgCell = thisAvgCell.replace('<!--lab-->', 'v ')
+
+                    avgsCells += thisAvgCell
+
+            #/
+
+            #insert fall other formula in averages cell
+
+            #/
+
+            ValCells += thisValCell
+            CellsOFavgsCells += avgsCells
+
+        if rigato == 1:
+            rigato = 2
+        else:
+            rigato = 1
+
+        tab = ''
+        tab += CellsOFavgsCells
+        tab += '</tr><tr>'
+        tab += ValCells
+        tab += '</tr>'
+
+        #head replace placed after because we need change column to be claculated first
+        head = head.replace('<--color0-->',  instData.color()[0])
+        head = head.replace('<--color1-->', instData.color()[1])
+        head = head.replace('<--colorid-->', ' rgba(230, 230, 230, 0.99)')
+
+        html = head + tab
 
         return html
 

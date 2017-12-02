@@ -1,4 +1,4 @@
-last: yclose --- last: open --- last: price
+last: price --- last: yclose --- last: open
 change: open range
 change: open price --- stat: changepc avg abs --- stat: changepc std abs --- stat: changepc med abs --- stat: changepc pct abs
 last: changept

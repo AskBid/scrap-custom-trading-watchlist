@@ -42,9 +42,7 @@
 
             #cell1 {
                 padding:0px 5px 0px 5px;
-                vertical-align: middle;
-                align: center;
-                height: 30;
+                width: 100px;
                 border-width:1px 1px 1px 0px;
                 border-style: solid;
                 border-color: #333;
@@ -55,14 +53,12 @@
 
             #cell2 {
                 padding:0px 5px 0px 5px;
-                vertical-align: middle;
                 width: 100px;
-                height: 30;
                 border-width:1px 1px 1px 0px;
                 border-style: solid;
                 border-color: #333;
                 border-collapse: collapse;
-                background-color: rgba(220, 200, 220, 0.3);
+                background-color: rgba(250, 250, 250, 0.5);
                 color: rgba(0, 0, 0, 0.95);
             }
 
@@ -72,33 +68,6 @@
                 font-weight: 500;
                 color: rgba(0, 0, 0, 0.6);
                 padding: 0px 3px 6px 2px;
-            }
-
-            #value {
-                text-align: center;
-                vertical-align: middle;
-                font-size: 14px;
-                font-weight: 500;
-                padding: 10px 6px 0px 0px; /*Top right Bottom left*/
-            }
-
-            #average {
-                text-align: right;
-                vertical-align: middle;
-                font-size: 13px;
-                font-weight: 400;
-                font-style: italic;
-                color: rgba(0, 0, 0, 0.6);
-                padding: 0px 6px 0px 0px; /*Top right Bottom left*/
-            }
-
-            #label {
-                text-align: left;
-                vertical-align: bottom;
-                font-size: 11px;
-                font-weight: 400;
-                color: rgba(30, 30, 30, 0.5);
-                padding: 0px 2px 0px 2px; /*Top right Bottom left*/
             }
         </style>
 
@@ -146,8 +115,17 @@
                     </td>
             <!-- HEAD -->
             <!-- VALUE -->
-                    <td id="<--cellid-->" title="<!--val_t-->" colspan="<--colspan-->" align="center">
-                        <text id="value"><!--val--></text>
+                    <td id="<--cellid-->" title="<!--val_t-->" colspan="<--colspan-->">
+                        <table width="100%" height="100%">
+                            <tr>
+                                <td align="left" style="vertical-align: middle;">
+                                    <text id="label"><!--lab--></text>
+                                </td>
+                                <td align="center" width="100%" style="vertical-align: middle;">
+                                    <text id="<!--val-avg-->"><!--val--></text>
+                                </td>
+                            </tr>
+                        </table>
                     </td>
             <!-- VALUE -->
             <!-- BODY -->
@@ -156,7 +134,16 @@
             <!-- BODY -->
             <!-- AVERAGES -->
                     <td id="<--cellid-->" title="<!--val_t-->" align="right">
-                                    <text id="label"><!--lab--></text><text id="average"><!--val--></text>
+                        <table width="100%">
+                            <tr>
+                                <td align="left" style="vertical-align: middle;">
+                                    <text id="label"><!--lab--></text>
+                                </td>
+                                <td align="right" width="100%" style="vertical-align: middle;">
+                                    <text id="<!--val-avg-->"><!--val--></text>
+                                </td>
+                            </tr>
+                        </table>
                     </td>
             <!-- AVERAGES -->
             <!-- TAIL -->
