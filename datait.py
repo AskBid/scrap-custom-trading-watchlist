@@ -141,9 +141,16 @@ class Calc_dataframe(object):
 
     ### :STATISTIC FUNCTION ###
 
-    def last(self, col):
+    def last(self, col, calc_chpt_start_type = None):
         day = self.df
-        val = day[col].values[-1]
+
+        if col == 'changept' and calc_chpt_start_type != None:
+            self.df['changept'] = day['price'] - day[calc_chpt_start_type]
+
+        try:
+            val = day[col].values[-1]
+        except:
+            print('''the column ({}) requested has not been claculated yet\nso we cannot give you the last value of it\nif you were asking for "changept" try adding "open" or "yclose"'''.format(col))
 
         if col in 'price open dayr yclose changept':
             return writePrice(val, self.price)
@@ -211,7 +218,7 @@ class Calc_dataframe(object):
     def stat(self, col, stat_type, absSW = None):
         #example: getStats('dayr', 'std', True)
         day = self.df
-
+        
         if absSW == 'abs':
             if stat_type == 'avg':
                 val = day[col].abs().mean()

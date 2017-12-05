@@ -1,5 +1,0 @@
-last: yclose --- last: open --- last: price
-change: open range --- change: open price --- last: changept --- stat: changepc avg abs --- stat: changepc std abs --- stat: changepc med abs --- stat: changepc pct abs
-1_V_last: vol --- 1_V_stat: vol avg --- 1_V_stat: vol pct --- 1_V_stat: vol pc
-2_R_last: dayr --- 2_R_stat: dayr avg --- 2_R_stat: dayr pct --- 2_R_stat: dayr pc
-3_ _last: oi --- 3_ _stat: oi pct --- 1_ _none --- 1_ _none

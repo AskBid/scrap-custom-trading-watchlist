@@ -7,7 +7,24 @@ pageNumber = 0
 rigato = 1
 
 idcolors = [
-
+            '#9F9977', #0
+            '#FFF', #1
+            '#BC8777', #2
+            '#B2592D', #3
+            '#839182', #4
+            '#996398', #5
+            '#708EB3', #6
+            '#BC749A', #7
+            '#E73550', #8
+            '#DDD000', #9
+            '#1A63C2', #10
+            '#cc8454', #11
+            '#fdd9b5', #12
+            '#87a96b', #13
+            '#cda4de', #14
+            '#808080', #15
+            '#f0e891', #16
+            '#BDC2C7', #17
             ]
 
 def getWeekDay(dt):
@@ -36,7 +53,7 @@ def draw52RangeBar(
     dayrange_px = round(dayrange_px)
 
     last_bit = lenght - (left2open_px + dayrange_px)
-    
+
     return left2open_px, dayrange_px, last_bit
 
 class Page():
@@ -68,7 +85,144 @@ class Page():
 
         return html
 
-    def makePage(self, guilist = 'csv/guilist.csv'):
+    def makePage(self, guilist = 'gui/guilist.csv'):
+
+        def make1Tab(inst, inst_id, html, guicsv):
+            global rigato
+
+            colspanTOT = 0
+
+            if inst == '':
+                return ''
+            if '_Fr' in inst:
+                return ''
+            if '_YC' in inst:
+                return ''
+            if 'title' in inst:
+                for cell_line in guicsv:
+                    formulas = cell_line.split(' --- ')
+                    colspan = len(formulas) - 1
+                    colspanTOT += colspan + 4
+                titleTD = html.split('<!-- TITLE -->')[1]
+                titleTD = titleTD.replace('<--colspanTOT-->', str(colspanTOT))
+                titleTD = titleTD.replace('<!-- TITLETEXT -->', inst_id)
+
+                return titleTD
+
+
+            instData = datait.Calc_dataframe(inst,
+                                             self.date_input['enddate'],
+                                             int(self.date_input['sample_days']),
+                                             self.date_input['period_start'],
+                                             self.date_input['period_end'])
+
+            if instData.lastdate != self.date_input['enddate']:
+                return 'last day recorded before day selected:{}\n{}\n try increasing time period'.format(instData.lastdate, instData.file_name)
+
+            imgpath_candles = '{}img/{}_{}_bars.png'.format(serverWwwPath, str(pageNumber), instData.file_name)
+            drawCandle( 80,
+                        25,
+                        float(instData.stat('dayr','avg')), #avgRange = 10.17,
+                        float(instData.stat('dayr','std')), # stdRange = 4.0235,
+                        float(instData.dayr.replace(',','')), # dayRange = 19,
+                        instData.df['price'].values[-2], # yClose = 2560, #taken from [-1]
+                        instData.df['open'].values[-2], # yOpen = 2556.50, #taken from [-2]
+                        instData.df['dayl'].values[-2], # yLow = 2556.25, #taken from [-2]
+                        instData.df['dayh'].values[-2], # yHigh = 2562.25, #taken from [-2]
+                        instData.df['open'].values[-1], # dayOpen = 2560, #taken from [-1]
+                        instData.df['price'].values[-1], # price = 2560.75, #taken from [-1]
+                        instData.df['dayl'].values[-1], # dayLow = 2542.5, #taken from [-1]
+                        0,
+                        imgpath_candles, # path = "gui/candle.png",
+                        "bar")
+
+            bar_lenghts = draw52RangeBar(  instData.df['l52'].values[-1],
+                                           instData.day52r,
+                                           instData.df['open'].values[-1],
+                                           instData.df['dayr'].values[-1])
+
+            head = html.split('<!-- HEAD -->')[1]
+            val_blankcell = html.split('<!-- VALUE -->')[1]
+            avg_blankcell = html.split('<!-- AVERAGES -->')[1]
+            tail = html.split('<!-- TAIL -->')[1]
+
+            head = head.replace('<!--name-->',  str(instData.file_name))
+            head = head.replace('<!--day-->',  str('[ ' + instData.lasthour + ' ] '))
+            head = head.replace('<!--days-->',  str('n:[ '+ str(instData.daysAmount) +' ]'))
+            head = head.replace('<--barwidth0-->',  str(bar_lenghts[0]))
+            head = head.replace('<--barwidth1-->',  str(bar_lenghts[1]))
+            head = head.replace('<--barwidth2-->',  str(bar_lenghts[2]))
+
+            if serverWwwPath == '':
+                head = head.replace('<--imgpath_candles-->', '../{}'.format(imgpath_candles))
+            else:
+                head = head.replace('<--imgpath_candles-->', '{}'.format(imgpath_candles.replace(serverWwwPath, '')))
+
+            ValCells = '<td id="spacer" rowspan="2"></td>' #change for switching rows order
+            CellsOFavgsCells = ''
+
+
+            for cell_line in guicsv:
+
+                cell_line = cell_line.replace('\n','')
+                formulas = cell_line.split(' --- ')
+                colspan = len(formulas) - 1
+                colspanTOT += colspan + 3
+
+                #insert first formula in value cell
+                thisValCell = val_blankcell
+                thisValCell = thisValCell.replace('<--cellid-->', 'cell{}'.format(rigato))
+                thisValCell = thisValCell.replace('<!--val-->', str(instData.func(formulas[0])))
+                thisValCell = thisValCell.replace('<!--val_t-->', str(formulas[0]))
+                thisValCell = thisValCell.replace('<!--lab-->', 'V')
+                thisValCell = thisValCell.replace('<--colspan-->', str(colspan))
+                # thisValCell += thisValCell + '<td rowspan="2"></td>'
+
+                if colspan == 0:
+                    avgsCells = avg_blankcell.replace('<--cellid-->', 'cell{}'.format(rigato))
+                else:
+                    avgsCells = ''
+                    for i in range(1, len(formulas)):
+                        thisAvgCell = avg_blankcell
+                        thisAvgCell = thisAvgCell.replace('<--cellid-->', 'cell{}'.format(rigato))
+                        thisAvgCell = thisAvgCell.replace('<!--val-->', str(instData.func(formulas[i])))
+                        thisAvgCell = thisAvgCell.replace('<!--val_t-->', str(formulas[i]))
+                        thisAvgCell = thisAvgCell.replace('<!--lab-->', dispatch_F(formulas[i]))
+
+                        avgsCells += thisAvgCell
+
+                ValCells += thisValCell  + '<td id="spacer" rowspan="2" width="0"></td>' #change for switching rows order
+                CellsOFavgsCells += avgsCells
+
+            tab = ''
+            tab += ValCells #change for switching rows order
+            tab += '</tr><tr>'
+            tab += CellsOFavgsCells #change for switching rows order
+            tab += tail
+
+            #head replace placed after because we need change column to be claculated first
+            head = head.replace('<--color0-->',  instData.color()[0])
+            head = head.replace('<--color1-->', instData.color()[1])
+            if inst_id != '':
+                head = head.replace('<--colorid-->', str(idcolors[int(inst_id)]))
+                head = head.replace('<!-- ID -->', str(inst_id))
+            head = head.replace('<--cellid-->', 'cell{}'.format(rigato))
+
+            html = head + tab
+            html = html.replace('<--colspanTOT-->', str(colspanTOT))
+            bar_size = 4
+            color_size = 12
+            html = html.replace('<--colspanBAR-->', str(bar_size))
+            html = html.replace('<--colspanCOLOR-->', str(color_size))
+            html = html.replace('<--colspanREST-->', str(colspanTOT-bar_size-color_size))
+
+            if rigato == 1:
+                rigato = 2
+            else:
+                rigato = 1
+
+            return html
+            #make1tab() END END END END
 
         with open(guilist) as f:
             csv = f.readlines()
@@ -106,203 +260,98 @@ class Page():
             inst = inst.replace('\n','')
 
             if inst != '':
-                bigbody += self.make1Tab(inst, bigbody_blank, guicsv)
+                bigbody += make1Tab(inst.split(',')[0], inst.split(',')[1], bigbody_blank, guicsv)
+
 
         html = bighead + bigbody + bigtail
         html = html.replace('nan', '-')
 
         return html
 
-    def make1Tab(self, inst, html, guicsv):
-        global rigato
+def dispatch_F(formula):
+    if 'avg' in formula:
+        return 'x&#772;  '
+    if 'std' in formula:
+        return 's  '
+    if 'med' in formula:
+        return 'M  '
+    if 'pct' in formula:
+        return 'P<font size="1">i</font>  '
+    if 'pc' in formula:
+        return '%&#8897;  '
 
-        if inst == '':
-            return ''
-        if '_Fr' in inst:
-            return ''
-        if '_YC' in inst:
-            return ''
+    if 'last: yclose' in formula or 'last: open' in formula:
+        return ''
 
-        instData = datait.Calc_dataframe(inst,
-                                         self.date_input['enddate'],
-                                         int(self.date_input['sample_days']),
-                                         self.date_input['period_start'],
-                                         self.date_input['period_end'])
-
-        if instData.lastdate != self.date_input['enddate']:
-            return 'last day recorded before day selected:{}\n{}\n try increasing time period'.format(instData.lastdate, instData.file_name)
-
-        # imgpath = '{}img/{}_{}.png'.format(serverWwwPath, str(pageNumber), instData.file_name)
-        # imgpath_candles = '{}img/{}_{}_bars.png'.format(serverWwwPath, str(pageNumber), instData.file_name)
-        # drawCandle( 33,
-        #             25,
-        #             float(instData.stat('dayr','avg')), #avgRange = 10.17,
-        #             float(instData.stat('dayr','std')), # stdRange = 4.0235,
-        #             float(instData.dayr.replace(',','')), # dayRange = 19,
-        #             instData.df['price'].values[-2], # yClose = 2560, #taken from [-1]
-        #             instData.df['open'].values[-2], # yOpen = 2556.50, #taken from [-2]
-        #             instData.df['dayl'].values[-2], # yLow = 2556.25, #taken from [-2]
-        #             instData.df['dayh'].values[-2], # yHigh = 2562.25, #taken from [-2]
-        #             instData.df['open'].values[-1], # dayOpen = 2560, #taken from [-1]
-        #             instData.df['price'].values[-1], # price = 2560.75, #taken from [-1]
-        #             instData.df['dayl'].values[-1], # dayLow = 2542.5, #taken from [-1]
-        #             imgpath_candles, # path = "gui/candle.png",
-        #             "bar")
-        bar_lenghts = draw52RangeBar(  instData.df['l52'].values[-1],
-                                       instData.day52r,
-                                       instData.df['open'].values[-1],
-                                       instData.df['dayr'].values[-1])
-
-        head = html.split('<!-- HEAD -->')[1]
-        val_blankcell = html.split('<!-- VALUE -->')[1]
-        # val_blankcell = html.split('<!-- BODY -->')[1]
-        avg_blankcell = html.split('<!-- AVERAGES -->')[1]
-        # tail = html.split('<!-- TAIL -->')[1]
-
-        head = head.replace('<!--name-->',  str(instData.file_name))
-        head = head.replace('<!--day-->',  str('[ ' + instData.lasthour + ' ] '))
-        head = head.replace('<!--days-->',  str('[ '+ str(instData.daysAmount) +' ]'))
-        head = head.replace('<--barwidth0-->',  str(bar_lenghts[0]))
-        head = head.replace('<--barwidth1-->',  str(bar_lenghts[1]))
-        head = head.replace('<--barwidth2-->',  str(bar_lenghts[2]))
-
-        # if serverWwwPath == '':
-        #     html = html.replace('<!--imgpath-->', '../{}'.format(imgpath))
-        #     html = html.replace('<!--imgpath_candles-->', '../{}'.format(imgpath_candles))
-        # else:
-        #     html = html.replace('<!--imgpath-->', '{}'.format(imgpath.replace(serverWwwPath, '')))
-        #     html = html.replace('<!--imgpath_candles-->', '{}'.format(imgpath_candles.replace(serverWwwPath, '')))
-
-        ValCells = '<td id="spacer" rowspan="2"></td>' #change for switching rows order
-        CellsOFavgsCells = ''
-        colspanTOT = 0
-
-        for cell_line in guicsv:
-
-            cell_line = cell_line.replace('\n','')
-            formulas = cell_line.split(' --- ')
-            colspan = len(formulas) - 1
-            colspanTOT += colspan + 2
-
-            #insert first formula in value cell
-            thisValCell = val_blankcell
-            thisValCell = thisValCell.replace('<--cellid-->', 'cell{}'.format(rigato))
-            thisValCell = thisValCell.replace('<!--val-->', str(instData.func(formulas[0])))
-            thisValCell = thisValCell.replace('<!--val_t-->', str(formulas[0]))
-            thisValCell = thisValCell.replace('<!--lab-->', 'V')
-            thisValCell = thisValCell.replace('<--colspan-->', str(colspan))
-            # thisValCell += thisValCell + '<td rowspan="2"></td>'
-
-            if colspan == 0:
-                avgsCells = avg_blankcell.replace('<--cellid-->', 'cell{}'.format(rigato))
-            else:
-                avgsCells = ''
-                for i in range(1, len(formulas)):
-                    thisAvgCell = avg_blankcell
-                    thisAvgCell = thisAvgCell.replace('<--cellid-->', 'cell{}'.format(rigato))
-                    thisAvgCell = thisAvgCell.replace('<!--val-->', str(instData.func(formulas[i])))
-                    thisAvgCell = thisAvgCell.replace('<!--val_t-->', str(formulas[i]))
-                    thisAvgCell = thisAvgCell.replace('<!--lab-->', 'v ')
-
-                    avgsCells += thisAvgCell
-
-            ValCells += thisValCell  + '<td id="spacer" rowspan="2" width="0"></td>' #change for switching rows order
-            CellsOFavgsCells += avgsCells
-
-        tab = ''
-        tab += ValCells #change for switching rows order
-        tab += '</tr><tr>'
-        tab += CellsOFavgsCells #change for switching rows order
-        tab += '</tr>'
-
-        #head replace placed after because we need change column to be claculated first
-        head = head.replace('<--color0-->',  instData.color()[0])
-        head = head.replace('<--color1-->', instData.color()[1])
-        head = head.replace('<--colorid-->', ' rgba(230, 230, 230, 0.99)')
-        head = head.replace('<--cellid-->', 'cell{}'.format(rigato))
-
-        html = head + tab
-        html = html.replace('<--colspanTOT-->', str(colspanTOT))
-        bar_size = 3
-        color_size = 12
-        html = html.replace('<--colspanBAR-->', str(bar_size))
-        html = html.replace('<--colspanCOLOR-->', str(color_size))
-        html = html.replace('<--colspanREST-->', str(colspanTOT-bar_size-color_size))
-
-        if rigato == 1:
-            rigato = 2
-        else:
-            rigato = 1
-
-        return html
+    return '-  '
 
 
 if __name__ == '__main__':
-    # import argparse
-    # parser = argparse.ArgumentParser()
-    # parser.add_argument("number", help = "page number .html")
-    # args = parser.parse_args()
-    #
-    # pageNumber = args.number
-    #
-    # if pageNumber == '14':
-    #     start = '09:00'
-    #     end = '09:40'
-    # if pageNumber == '15':
-    #     start = '10:00'
-    #     end = '10:10'
-    # if pageNumber == '16':
-    #     start = '11:00'
-    #     end = '11:10'
-    # if pageNumber == '17':
-    #     start = '12:00'
-    #     end = '12:10'
-    # if pageNumber == '18':
-    #     start = '13:00'
-    #     end = '13:50'
-    # if pageNumber == '19':
-    #     start = '14:00'
-    #     end = '14:10'
-    # if pageNumber == '20':
-    #     start = '15:00'
-    #     end = '15:10'
-    # if pageNumber == '21':
-    #     start = '16:00'
-    #     end = '20:00'
-    #
-    #
-    # import time
-    # import datetime
-    # from mergeit import merge_db
-    #
-    # def prev_weekday(adate):
-    #     while adate.weekday() > 4: # Mon-Fri are 0-4
-    #         adate -= datetime.timedelta(days=1)
-    #     return adate
-    #
-    # merge_db('scrapData.db', 'data/scrapData.db')
-    # serverWwwPath = '/var/www/html/'
-    #
-    # today = time.strftime('%Y-%m-%d')
-    # today = prev_weekday(datetime.datetime.strptime(today, '%Y-%m-%d')).strftime("%Y-%m-%d")
-    #
-    # date_server = {
-    #     "enddate": today,
-    #     "sample_days": 60,
-    #     "period_start": start,
-    #     "period_end": end}
-    #
-    # page = Page(date_server)
+    import argparse
+    parser = argparse.ArgumentParser()
+    parser.add_argument("number", help = "page number .html")
+    args = parser.parse_args()
+
+    pageNumber = args.number
+
+    if pageNumber == '14':
+        start = '09:00'
+        end = '09:40'
+    if pageNumber == '15':
+        start = '10:00'
+        end = '10:10'
+    if pageNumber == '16':
+        start = '11:00'
+        end = '11:10'
+    if pageNumber == '17':
+        start = '12:00'
+        end = '12:10'
+    if pageNumber == '18':
+        start = '13:00'
+        end = '13:50'
+    if pageNumber == '19':
+        start = '14:00'
+        end = '14:10'
+    if pageNumber == '20':
+        start = '15:00'
+        end = '15:10'
+    if pageNumber == '21':
+        start = '16:00'
+        end = '20:00'
+
 
     import time
-    import webbrowser
-    import os
+    import datetime
+    from mergeit import merge_db
 
-    date_ex = {
-        "enddate": '2017-11-20',
+    def prev_weekday(adate):
+        while adate.weekday() > 4: # Mon-Fri are 0-4
+            adate -= datetime.timedelta(days=1)
+        return adate
+
+    merge_db('scrapData.db', 'data/scrapData.db')
+    serverWwwPath = '/var/www/html/'
+
+    today = time.strftime('%Y-%m-%d')
+    today = prev_weekday(datetime.datetime.strptime(today, '%Y-%m-%d')).strftime("%Y-%m-%d")
+
+    date_server = {
+        "enddate": today,
         "sample_days": 60,
-        "period_start": "16:00",
-        "period_end": "20:00"}
+        "period_start": start,
+        "period_end": end}
 
-    page = Page(date_ex)
-    webbrowser.get('windows-default').open(os.path.realpath(page.path), new=1, autoraise=True)
+    page = Page(date_server)
+    #
+    # import time
+    # import webbrowser
+    # import os
+    #
+    # date_ex = {
+    #     "enddate": '2017-11-20',
+    #     "sample_days": 60,
+    #     "period_start": "16:00",
+    #     "period_end": "20:00"}
+    #
+    # page = Page(date_ex)
+    # webbrowser.get('windows-default').open(os.path.realpath(page.path), new=1, autoraise=True)
