@@ -86,6 +86,13 @@ class Page():
         return html
 
     def makePage(self, guilist = 'gui/guilist.csv'):
+        with open('macrowatchlist_mw.csv') as f:
+            linklist = f.readlines()
+        linkdic = {}
+        for line in linklist:
+            linesplit = line.split(',')
+
+            linkdic[linesplit[0]] = linesplit[1]
 
         def make1Tab(inst, inst_id, html, guicsv):
             global rigato
@@ -106,9 +113,7 @@ class Page():
                 titleTD = html.split('<!-- TITLE -->')[1]
                 titleTD = titleTD.replace('<--colspanTOT-->', str(colspanTOT))
                 titleTD = titleTD.replace('<!-- TITLETEXT -->', inst_id)
-
                 return titleTD
-
 
             instData = datait.Calc_dataframe(inst,
                                              self.date_input['enddate'],
@@ -147,6 +152,7 @@ class Page():
             tail = html.split('<!-- TAIL -->')[1]
 
             head = head.replace('<!--name-->',  str(instData.file_name))
+            head = head.replace('<--link-->', linkdic[inst])
             head = head.replace('<!--day-->',  str('[ ' + instData.lasthour + ' ] '))
             head = head.replace('<!--days-->',  str('n:[ '+ str(instData.daysAmount) +' ]'))
             head = head.replace('<--barwidth0-->',  str(bar_lenghts[0]))
@@ -162,10 +168,10 @@ class Page():
             CellsOFavgsCells = ''
 
 
-            for cell_line in guicsv:
+            for line_of_formulas in guicsv:
 
-                cell_line = cell_line.replace('\n','')
-                formulas = cell_line.split(' --- ')
+                line_of_formulas = line_of_formulas.replace('\n','')
+                formulas = line_of_formulas.split(' --- ')
                 colspan = len(formulas) - 1
                 colspanTOT += colspan + 3
 
@@ -173,19 +179,24 @@ class Page():
                 thisValCell = val_blankcell
                 thisValCell = thisValCell.replace('<--cellid-->', 'cell{}'.format(rigato))
                 thisValCell = thisValCell.replace('<!--val-->', str(instData.func(formulas[0])))
-                thisValCell = thisValCell.replace('<!--val_t-->', str(formulas[0]))
+                thisValCell = thisValCell.replace('<!--val_t-->', str(formulas[0].split(': ')[1]))
                 thisValCell = thisValCell.replace('<!--lab-->', 'V')
                 thisValCell = thisValCell.replace('<--colspan-->', str(colspan))
-                # thisValCell += thisValCell + '<td rowspan="2"></td>'
 
+                #insert all other formulas in value cell
                 if colspan == 0:
                     avgsCells = avg_blankcell.replace('<--cellid-->', 'cell{}'.format(rigato))
                 else:
                     avgsCells = ''
                     for i in range(1, len(formulas)):
+                        value = instData.func(formulas[i])
+                        if 'vol pct' in formulas[i]:
+                            pass
+                            #add value to array used to make tree map
                         thisAvgCell = avg_blankcell
                         thisAvgCell = thisAvgCell.replace('<--cellid-->', 'cell{}'.format(rigato))
-                        thisAvgCell = thisAvgCell.replace('<!--val-->', str(instData.func(formulas[i])))
+                        thisAvgCell = thisAvgCell.replace('<!--val-->', str(value))
+                        print(str(formulas[i].split(': ')[1]))
                         thisAvgCell = thisAvgCell.replace('<!--val_t-->', str(formulas[i]))
                         thisAvgCell = thisAvgCell.replace('<!--lab-->', dispatch_F(formulas[i]))
 
@@ -222,7 +233,10 @@ class Page():
                 rigato = 1
 
             return html
-            #make1tab() END END END END
+            #make1tab() END END END END /////////////////////////////////////////////////////////////////////////////////////
+            #make1tab() END END END END /////////////////////////////////////////////////////////////////////////////////////
+            #make1tab() END END END END /////////////////////////////////////////////////////////////////////////////////////
+            #make1tab() END END END END /////////////////////////////////////////////////////////////////////////////////////
 
         with open(guilist) as f:
             csv = f.readlines()
@@ -342,7 +356,7 @@ if __name__ == '__main__':
         "period_end": end}
 
     page = Page(date_server)
-    #
+
     # import time
     # import webbrowser
     # import os

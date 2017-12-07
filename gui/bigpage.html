@@ -169,6 +169,11 @@
                 padding: 0px 2px 0px 2px; /*Top right Bottom left*/
             }
 
+            a:link, a:visited {
+                text-decoration: none;
+            }
+
+
         </style>
 
         <title><!-- title --></title>
@@ -200,7 +205,7 @@
                         <!-- none -->
                     </td>
                     <td id ="rowhead" colspan="<--colspanCOLOR-->" style="background-color: <--color0-->;">
-                        <text title"ticker" id="ticker"><!--name--></text>
+                        <a  target="_blank" href="<--link-->"><text title"ticker" id="ticker"><!--name--></text></a>
 
                     </td>
                     <td colspan="<--colspanREST-->" align="right" style="background-color: <--color0-->;">
@@ -232,7 +237,8 @@
             <!-- HEAD -->
             <!-- VALUE -->
                     <td id="<--cellid-->" title="<!--val_t-->" colspan="<--colspan-->">
-                        <text id="value"><!--val--></text>
+                        <div><text id="label"><!--val_t--></text></div>
+                        <div><text id="value"><!--val--></text></div>
                     </td>
             <!-- VALUE -->
             <!-- BODY -->
