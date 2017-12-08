@@ -179,7 +179,7 @@ class Page():
                 thisValCell = val_blankcell
                 thisValCell = thisValCell.replace('<--cellid-->', 'cell{}'.format(rigato))
                 thisValCell = thisValCell.replace('<!--val-->', str(instData.func(formulas[0])))
-                thisValCell = thisValCell.replace('<!--val_t-->', str(formulas[0].split(': ')[1]))
+                thisValCell = thisValCell.replace('<!--val_t-->', dispatch_F(formulas[0]))
                 thisValCell = thisValCell.replace('<!--lab-->', 'V')
                 thisValCell = thisValCell.replace('<--colspan-->', str(colspan))
 
@@ -196,7 +196,6 @@ class Page():
                         thisAvgCell = avg_blankcell
                         thisAvgCell = thisAvgCell.replace('<--cellid-->', 'cell{}'.format(rigato))
                         thisAvgCell = thisAvgCell.replace('<!--val-->', str(value))
-                        print(str(formulas[i].split(': ')[1]))
                         thisAvgCell = thisAvgCell.replace('<!--val_t-->', str(formulas[i]))
                         thisAvgCell = thisAvgCell.replace('<!--lab-->', dispatch_F(formulas[i]))
 
@@ -293,79 +292,95 @@ def dispatch_F(formula):
         return 'P<font size="1">i</font>  '
     if 'pc' in formula:
         return '%&#8897;  '
-
     if 'last: yclose' in formula or 'last: open' in formula:
         return ''
+    if 'last: price' in formula:
+        return 'PRICE'
+    if 'changept' in formula:
+        return 'PRICE +-'
+    if 'range' in formula:
+        return '% RANGE +-'
+    if 'change' in formula and 'price' in formula:
+        return '% PRICE +-'
+    if 'last: dayr' in formula:
+        return 'DAY RANGE'
+    if 'last: vol' in formula:
+        return 'VOLUME'
+    if 'last: oi' in formula:
+        return 'O.I.'
 
     return '-  '
 
-
-if __name__ == '__main__':
-    import argparse
-    parser = argparse.ArgumentParser()
-    parser.add_argument("number", help = "page number .html")
-    args = parser.parse_args()
-
-    pageNumber = args.number
-
-    if pageNumber == '14':
-        start = '09:00'
-        end = '09:40'
-    if pageNumber == '15':
-        start = '10:00'
-        end = '10:10'
-    if pageNumber == '16':
-        start = '11:00'
-        end = '11:10'
-    if pageNumber == '17':
-        start = '12:00'
-        end = '12:10'
-    if pageNumber == '18':
-        start = '13:00'
-        end = '13:50'
-    if pageNumber == '19':
-        start = '14:00'
-        end = '14:10'
-    if pageNumber == '20':
-        start = '15:00'
-        end = '15:10'
-    if pageNumber == '21':
-        start = '16:00'
-        end = '20:00'
-
+#
+# if __name__ == '__main__':
+#     import argparse
+#     parser = argparse.ArgumentParser()
+#     parser.add_argument("number", help = "page number .html")
+#     args = parser.parse_args()
+#
+#     pageNumber = args.number
+#
+#     if pageNumber == '14':
+#         start = '09:00'
+#         end = '09:40'
+#     if pageNumber == '15':
+#         start = '10:00'
+#         end = '10:10'
+#     if pageNumber == '16':
+#         start = '11:00'
+#         end = '11:10'
+#     if pageNumber == '17':
+#         start = '12:00'
+#         end = '12:10'
+#     if pageNumber == '18':
+#         start = '13:00'
+#         end = '13:50'
+#     if pageNumber == '19':
+#         start = '14:00'
+#         end = '14:10'
+#     if pageNumber == '20':
+#         start = '15:00'
+#         end = '15:10'
+#     if pageNumber == '21':
+#         start = '16:00'
+#         end = '20:00'
+#
+#
+#     import time
+#     import datetime
+#     from mergeit import merge_db
+#
+#     def prev_weekday(adate):
+#         while adate.weekday() > 4: # Mon-Fri are 0-4
+#             adate -= datetime.timedelta(days=1)
+#         return adate
+#
+#     merge_db('scrapData.db', 'data/scrapData.db')
+#     serverWwwPath = '/var/www/html/'
+#
+#     today = time.strftime('%Y-%m-%d')
+#     today = prev_weekday(datetime.datetime.strptime(today, '%Y-%m-%d')).strftime("%Y-%m-%d")
+#
+#     date_server = {
+#         "enddate": today,
+#         "sample_days": 60,
+#         "period_start": start,
+#         "period_end": end}
+#
+#     page = Page(date_server)
 
     import time
-    import datetime
-    from mergeit import merge_db
-
-    def prev_weekday(adate):
-        while adate.weekday() > 4: # Mon-Fri are 0-4
-            adate -= datetime.timedelta(days=1)
-        return adate
-
-    merge_db('scrapData.db', 'data/scrapData.db')
-    serverWwwPath = '/var/www/html/'
+    import webbrowser
+    import os
 
     today = time.strftime('%Y-%m-%d')
     today = prev_weekday(datetime.datetime.strptime(today, '%Y-%m-%d')).strftime("%Y-%m-%d")
 
-    date_server = {
+    date_ex = {
         "enddate": today,
         "sample_days": 60,
-        "period_start": start,
-        "period_end": end}
+        "period_start": "16:00",
+        "period_end": "20:00"}
 
-    page = Page(date_server)
-
-    # import time
-    # import webbrowser
-    # import os
-    #
-    # date_ex = {
-    #     "enddate": '2017-11-20',
-    #     "sample_days": 60,
-    #     "period_start": "16:00",
-    #     "period_end": "20:00"}
-    #
-    # page = Page(date_ex)
-    # webbrowser.get('windows-default').open(os.path.realpath(page.path), new=1, autoraise=True)
+    page = Page(date_ex)
+    webbrowser.get('windows-default').open(os.path.realpath(page.path), new=1, autoraise=True)
