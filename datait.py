@@ -17,16 +17,69 @@ from scipy import stats
 
 import sqlite3
 
+class Calc_YC(object):
+
+    def __init__(self,
+        inst_name,
+        enddate,
+        period_start,
+        period_end,
+        lookback_days = 7,
+        lookback_manydays = 30):
+
+        self.inst_name = inst_name
+        self.enddate = enddate
+        self.period_start = getTimestamp(period_start)
+        self.period_end = getTimestamp(period_end)
+        self.lookback_days = lookback_days
+        self.lookback_manydays = lookback_manydays
+
+        data = self.getRawCurves()
+        self.today_curve = data[0]
+        self.prev_curves = data[1::]
+
+    def getRawCurves(self, path = "scrapData.db"):
+        conn = sqlite3.connect(path)
+        c = conn.cursor()
+
+        start_date = dt.datetime.strptime(self.enddate, '%Y-%m-%d') - BDay(self.lookback_days)
+        start_date = start_date.strftime('%Y-%m-%d')
+
+        c.execute('''
+                    SELECT * FROM (
+                        SELECT * FROM YELDS
+                        WHERE
+                        name = "{!s}"
+                        AND date BETWEEN "{!s}" AND "{!s}"
+                        AND timestamp BETWEEN {} AND {}
+                        GROUP BY date, timestamp
+                        ORDER BY date(date), timestamp
+                        )
+                    GROUP BY date
+                    ORDER BY date(date);
+                    '''.format(
+                    self.inst_name,
+                    start_date,
+                    self.enddate,
+                    int(self.period_start),
+                    int(self.period_end))
+                 )
+
+        data = c.fetchall()
+
+        return data
+
+
 class Calc_dataframe(object):
 
     def __init__(self,
-        file_name,
+        inst_name,
         enddate,
         sample_days,
         period_start,
         period_end):
 
-        self.file_name = file_name
+        self.inst_name = inst_name
         self.enddate = enddate
         self.sample_days = sample_days - 1
         self.period_start = getTimestamp(period_start)
@@ -64,7 +117,7 @@ class Calc_dataframe(object):
             GROUP BY date
             ORDER BY date(date);
             '''.format(
-            '"' + str(self.file_name) + '"',
+            '"' + str(self.inst_name) + '"',
             start_date_str,
             end_date_str,
             self.period_start,
@@ -74,11 +127,8 @@ class Calc_dataframe(object):
         df.drop('name', axis=1, inplace=True)
 
         df.set_index(['date', 'time'], inplace=True)
-
-        # try:
-        df = df[df.applymap(isnumber)] #makes sure that if there is a bad recording that gets NaN in dataframe so it does not affect calculation
-        # except:
-        #     print('''something went wrong with the DB selection in datait.py and no value where selected''')
+        #makes sure that if there is a bad recording that gets NaN in dataframe so it does not affect calculation
+        df = df[df.applymap(isnumber)] #usually it gets error here because you have passed in a wrong inst_name
 
         return df
 
@@ -218,7 +268,7 @@ class Calc_dataframe(object):
     def stat(self, col, stat_type, absSW = None):
         #example: getStats('dayr', 'std', True)
         day = self.df
-        
+
         if absSW == 'abs':
             if stat_type == 'avg':
                 val = day[col].abs().mean()
@@ -326,41 +376,47 @@ if __name__ == '__main__':
     pd.set_option('display.width', 1000)
 
     # today = time.strftime('%Y-%m-%d')
-    today = '2017-11-20'
+    today = '2017-12-08'
 
-    calc = Calc_dataframe('ES_F',today,60,'16:00','20:00')
+    def test_inst():
+        calc = Calc_dataframe('VIX_i',today,60,'16:00','20:00')
 
-    print('----> ' + calc.file_name +  ' <----\n')
+        print('----> ' + calc.inst_name +  ' <----\n')
 
-    print('prc chgPc =  {}'.format(calc.change('open','price')))
-    print('avg "=       {}'.format(calc.stat('changepc', 'avg', 'abs')))
+        print('prc chgPc =  {}'.format(calc.change('open','price')))
+        print('avg "=       {}'.format(calc.stat('changepc', 'avg', 'abs')))
 
-    print('rng chgPc =  {}'.format(calc.change('open','range')))
-    print('avg "=       {}'.format(calc.stat('changepc', 'avg', 'abs')))
+        print('rng chgPc =  {}'.format(calc.change('open','range')))
+        print('avg "=       {}'.format(calc.stat('changepc', 'avg', 'abs')))
 
-    print('price =      ' + calc.price)
-    print('open =       {}'.format(calc.last('open')))
-    print('yclose =     {}'.format(calc.last('yclose')))
-    print('dayR =       {}'.format(calc.dayr))
-    print('dayR_pct =   {}'.format(calc.stat('dayr', 'pct')))
-    print('dayR_avg =   {}'.format(calc.stat('dayr', 'avg')))
-    print('dayR_med =   {}'.format(calc.stat('dayr', 'med')))
-    print('dayR_std =   {}'.format(calc.stat('dayr', 'std')))
-    print('chpt_describe = \n {}'.format(calc.getDescribe('changept')))
-    print('52r =        {}'.format(calc.day52r))
+        print('price =      ' + calc.price)
+        print('open =       {}'.format(calc.last('open')))
+        print('yclose =     {}'.format(calc.last('yclose')))
+        print('dayR =       {}'.format(calc.dayr))
+        print('dayR_pct =   {}'.format(calc.stat('dayr', 'pct')))
+        print('dayR_avg =   {}'.format(calc.stat('dayr', 'avg')))
+        print('dayR_med =   {}'.format(calc.stat('dayr', 'med')))
+        print('dayR_std =   {}'.format(calc.stat('dayr', 'std')))
+        print('chpt_describe = \n {}'.format(calc.getDescribe('changept')))
+        print('52r =        {}'.format(calc.day52r))
 
-    print('VOLUME =     {}'.format(calc.last('vol')))
-    print('VOLUME_avg = {}'.format(calc.stat('vol', 'avg')))
-    print('VOLUME_med = {}'.format(calc.stat('vol', 'med')))
-    print('VOLUME_std = {}'.format(calc.stat('vol', 'std')))
-    print('dayr/vol =   {}'.format(calc.dayr_vol_ratio()))
-    print('dayr/vol_avg={}'.format(calc.stat('thinness', 'avg')))
-    print('days amount= {}'.format(calc.daysAmount))
+        print('VOLUME =     {}'.format(calc.last('vol')))
+        print('VOLUME_avg = {}'.format(calc.stat('vol', 'avg')))
+        print('VOLUME_med = {}'.format(calc.stat('vol', 'med')))
+        print('VOLUME_std = {}'.format(calc.stat('vol', 'std')))
+        print('dayr/vol =   {}'.format(calc.dayr_vol_ratio()))
+        print('dayr/vol_avg={}'.format(calc.stat('thinness', 'avg')))
+        print('days amount= {}'.format(calc.daysAmount))
 
-    print('\ndispatch =   {}'.format(calc.func('stat: changepc avg abs')))
-    print('\npct =   {}'.format(calc.func('stat: vol pc')))
-    print('dispatch =   {}'.format(calc.func('last: price')))
+        print('\ndispatch =   {}'.format(calc.func('stat: changepc avg abs')))
+        print('\npct =   {}'.format(calc.func('stat: vol pc')))
+        print('dispatch =   {}'.format(calc.func('last: price')))
 
-    print('color: {}'.format(calc.color()))
+        print('color: {}'.format(calc.color()))
 
-    print(calc.df)
+        print(calc.df)
+
+    def testYC():
+        calc = Calc_YC('US_YC', today, '16:00','20:00')
+
+    testYC()

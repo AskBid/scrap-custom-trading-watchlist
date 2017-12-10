@@ -94,7 +94,28 @@ class Page():
 
             linkdic[linesplit[0]] = linesplit[1]
 
-        def make1Tab(inst, inst_id, html, guicsv):
+        def make1YC_json(inst, html, guicsv):
+
+            rawCrvs = datait.Calc_YC(inst,
+                                     self.date_input['enddate'],
+                                     self.date_input['period_start'],
+                                     self.date_input['period_end'])
+
+            x_arr = rawCrvs.today_curve[-2]
+            y_arr = rawCrvs.today_curve[-1]
+
+            # pathCSV = self.path.replace('.html','{}.json'.format(inst))
+            # htmlPage = open(self.path, 'w+')
+            # html = self.makePage()
+            # htmlPage.write(html)
+            # htmlPage.close()
+
+            print(y_arr)
+
+
+            return ''
+
+        def make1Tab(inst, html, guicsv):
             global rigato
 
             colspanTOT = 0
@@ -104,15 +125,15 @@ class Page():
             if '_Fr' in inst:
                 return ''
             if '_YC' in inst:
-                return ''
-            if 'title' in inst:
+                return make1YC_json(inst, html, guicsv)
+            if '_' not in inst:
                 for cell_line in guicsv:
                     formulas = cell_line.split(' --- ')
                     colspan = len(formulas) - 1
                     colspanTOT += colspan + 4
                 titleTD = html.split('<!-- TITLE -->')[1]
                 titleTD = titleTD.replace('<--colspanTOT-->', str(colspanTOT))
-                titleTD = titleTD.replace('<!-- TITLETEXT -->', inst_id)
+                titleTD = titleTD.replace('<!-- TITLETEXT -->', inst)
                 return titleTD
 
             instData = datait.Calc_dataframe(inst,
@@ -122,9 +143,9 @@ class Page():
                                              self.date_input['period_end'])
 
             if instData.lastdate != self.date_input['enddate']:
-                return 'last day recorded before day selected:{}\n{}\n try increasing time period'.format(instData.lastdate, instData.file_name)
+                return 'last day recorded before day selected:{}\n{}\n try increasing time period'.format(instData.lastdate, instData.inst_name)
 
-            imgpath_candles = '{}img/{}_{}_bars.png'.format(serverWwwPath, str(pageNumber), instData.file_name)
+            imgpath_candles = '{}img/{}_{}_bars.png'.format(serverWwwPath, str(pageNumber), instData.inst_name)
             drawCandle( 80,
                         25,
                         float(instData.stat('dayr','avg')), #avgRange = 10.17,
@@ -151,7 +172,7 @@ class Page():
             avg_blankcell = html.split('<!-- AVERAGES -->')[1]
             tail = html.split('<!-- TAIL -->')[1]
 
-            head = head.replace('<!--name-->',  str(instData.file_name))
+            head = head.replace('<!--name-->',  str(instData.inst_name))
             head = head.replace('<--link-->', linkdic[inst])
             head = head.replace('<!--day-->',  str('[ ' + instData.lasthour + ' ] '))
             head = head.replace('<!--days-->',  str('n:[ '+ str(instData.daysAmount) +' ]'))
@@ -213,9 +234,6 @@ class Page():
             #head replace placed after because we need change column to be claculated first
             head = head.replace('<--color0-->',  instData.color()[0])
             head = head.replace('<--color1-->', instData.color()[1])
-            if inst_id != '':
-                head = head.replace('<--colorid-->', str(idcolors[int(inst_id)]))
-                head = head.replace('<!-- ID -->', str(inst_id))
             head = head.replace('<--cellid-->', 'cell{}'.format(rigato))
 
             html = head + tab
@@ -273,7 +291,7 @@ class Page():
             inst = inst.replace('\n','')
 
             if inst != '':
-                bigbody += make1Tab(inst.split(',')[0], inst.split(',')[1], bigbody_blank, guicsv)
+                bigbody += make1Tab(inst, bigbody_blank, guicsv)
 
 
         html = bighead + bigbody + bigtail
@@ -311,71 +329,77 @@ def dispatch_F(formula):
 
     return '-  '
 
-#
-# if __name__ == '__main__':
-#     import argparse
-#     parser = argparse.ArgumentParser()
-#     parser.add_argument("number", help = "page number .html")
-#     args = parser.parse_args()
-#
-#     pageNumber = args.number
-#
-#     if pageNumber == '14':
-#         start = '09:00'
-#         end = '09:40'
-#     if pageNumber == '15':
-#         start = '10:00'
-#         end = '10:10'
-#     if pageNumber == '16':
-#         start = '11:00'
-#         end = '11:10'
-#     if pageNumber == '17':
-#         start = '12:00'
-#         end = '12:10'
-#     if pageNumber == '18':
-#         start = '13:00'
-#         end = '13:50'
-#     if pageNumber == '19':
-#         start = '14:00'
-#         end = '14:10'
-#     if pageNumber == '20':
-#         start = '15:00'
-#         end = '15:10'
-#     if pageNumber == '21':
-#         start = '16:00'
-#         end = '20:00'
-#
-#
-#     import time
-#     import datetime
-#     from mergeit import merge_db
-#
-#     def prev_weekday(adate):
-#         while adate.weekday() > 4: # Mon-Fri are 0-4
-#             adate -= datetime.timedelta(days=1)
-#         return adate
-#
-#     merge_db('scrapData.db', 'data/scrapData.db')
-#     serverWwwPath = '/var/www/html/'
-#
-#     today = time.strftime('%Y-%m-%d')
-#     today = prev_weekday(datetime.datetime.strptime(today, '%Y-%m-%d')).strftime("%Y-%m-%d")
-#
-#     date_server = {
-#         "enddate": today,
-#         "sample_days": 60,
-#         "period_start": start,
-#         "period_end": end}
-#
-#     page = Page(date_server)
+
+if __name__ == '__main__':
+    # import argparse
+    # parser = argparse.ArgumentParser()
+    # parser.add_argument("number", help = "page number .html")
+    # args = parser.parse_args()
+    #
+    # pageNumber = args.number
+    #
+    # if pageNumber == '14':
+    #     start = '09:00'
+    #     end = '09:40'
+    # if pageNumber == '15':
+    #     start = '10:00'
+    #     end = '10:10'
+    # if pageNumber == '16':
+    #     start = '11:00'
+    #     end = '11:10'
+    # if pageNumber == '17':
+    #     start = '12:00'
+    #     end = '12:10'
+    # if pageNumber == '18':
+    #     start = '13:00'
+    #     end = '13:50'
+    # if pageNumber == '19':
+    #     start = '14:00'
+    #     end = '14:10'
+    # if pageNumber == '20':
+    #     start = '15:00'
+    #     end = '15:10'
+    # if pageNumber == '21':
+    #     start = '16:00'
+    #     end = '20:00'
+    #
+    #
+    # import time
+    # import datetime
+    # from mergeit import merge_db
+    #
+    # def prev_weekday(adate):
+    #     while adate.weekday() > 4: # Mon-Fri are 0-4
+    #         adate -= datetime.timedelta(days=1)
+    #     return adate
+    #
+    # merge_db('scrapData.db', 'data/scrapData.db')
+    # serverWwwPath = '/var/www/html/'
+    #
+    # today = time.strftime('%Y-%m-%d')
+    # today = prev_weekday(datetime.datetime.strptime(today, '%Y-%m-%d')).strftime("%Y-%m-%d")
+    #
+    # date_server = {
+    #     "enddate": today,
+    #     "sample_days": 60,
+    #     "period_start": start,
+    #     "period_end": end}
+    #
+    # page = Page(date_server)
 
     import time
+    import datetime
     import webbrowser
     import os
 
+    def prev_weekday(adate):
+            while adate.weekday() > 4: # Mon-Fri are 0-4
+                adate -= datetime.timedelta(days=1)
+            return adate
+
     today = time.strftime('%Y-%m-%d')
     today = prev_weekday(datetime.datetime.strptime(today, '%Y-%m-%d')).strftime("%Y-%m-%d")
-
+    print(today)
     date_ex = {
         "enddate": today,
         "sample_days": 60,
