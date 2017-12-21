@@ -1,15 +1,35 @@
 <html>
     <head>
         <script src="https://d3js.org/d3.v4.min.js"></script>
-
     </head>
     <body>
+
         <script>
-            d3.csv("data.csv", function (data) {
 
-                console.log(data);
+            var svg = d3.select("body").append("svg")
+                .attr("witdh", 250)
+                .attr("height", 250);
 
-            })
+            d3.json("data.json", function (data){
+                    render(data)
+                    console.log(data)
+                });
+
+            var scale = d3.scaleLinear();
+
+            scale.domain([0,1]);
+            scale.range([0,250]);
+
+            function render(data) {
+            svg.selectAll("rect").data(data)
+                .enter().append("rect")
+                .attr("x", function(d) {return scale(d.x);})
+                .attr("y", 0)
+                .attr("height", function(d) {return scale(d.y);})
+                .attr("width",10);
+            }
+
         </script>
+
     </body>
 </html>

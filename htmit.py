@@ -1,6 +1,7 @@
 import datait
 from drawit import drawCandle
 from datetime import date
+import json
 
 serverWwwPath = ''
 pageNumber = 0
@@ -101,17 +102,16 @@ class Page():
                                      self.date_input['period_start'],
                                      self.date_input['period_end'])
 
-            x_arr = rawCrvs.today_curve[-2]
-            y_arr = rawCrvs.today_curve[-1]
+            x_arr =  eval(rawCrvs.today_curve[-2])
+            y_arr = eval(rawCrvs.today_curve[-1])
 
-            # pathCSV = self.path.replace('.html','{}.json'.format(inst))
-            # htmlPage = open(self.path, 'w+')
-            # html = self.makePage()
-            # htmlPage.write(html)
-            # htmlPage.close()
+            arr_4json = []
+            for i, x in enumerate(x_arr):
+                arr_4json.append({'x': x, 'y': y_arr[i]})
 
-            print(y_arr)
-
+            pathJSON = self.path.replace('.html','-{}.json'.format(inst))
+            with open(pathJSON, 'w+') as f:
+                json.dump(arr_4json, f, indent=2)
 
             return ''
 

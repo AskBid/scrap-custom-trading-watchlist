@@ -1,0 +1,21 @@
+<html>
+    <head>
+        <script src="https://d3js.org/d3.v4.min.js"></script>
+
+    </head>
+    <body>
+        <h3>pova</h3>
+        <script>
+            var nums = [80,90,543,125,28,97];
+            var svg = d3.select('body').append('svg');
+            d3.select('body').style('background-color', '#105530')
+
+            var bars = svg.selectAll('rect').data(nums);
+
+            bars = bars.attr('height', 30).attr('width', 50)
+
+            bars.enter().append('rect');
+            console.log(bars)
+        </script>
+    </body>
+</html>

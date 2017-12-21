@@ -1,0 +1,342 @@
+
+<html>
+    <head>
+
+        <style>
+            td {
+                /*font-family: Andale Mono;*/
+                /*font-family: Lucida Console, Andale Mono, Courier New;*/
+                font-family: Helvetica, sans-serif;
+                font-size: 12px;
+                font-weight: 600;
+                color: black;
+                border-width:1px;
+            }
+
+            #main {
+                table-layout: fixed;
+                padding:0px 0px 0px 0px;
+                border-width:0px 0px 0px 0px;
+                border-style: solid;
+                border-color: #333;
+                border-collapse: collapse;
+            }
+
+            #rowhead {
+                padding: 4px 10px 0px 70px;
+                text-align: left;
+                border-width: 0px 0px 0px 0px;
+                border-style: solid;
+                border-color: #333;
+                color: rgba(0, 0, 0, 0.95);
+            }
+
+            #spacer {
+                padding: 0px;
+                border-width:0px 0px 0px 0px;
+                width: 0px;
+                border-style: solid;
+                border-color: #333;
+                border-collapse: collapse;
+                color: rgba(0, 0, 0, 0.95);
+            }
+
+            #truecolor {
+                padding:0px 0px 0px 0px;
+                height: 5px;
+                border-width: 0px 0px 1px 1px;
+                border-style: solid;
+                border-color: #333;
+                border-collapse: collapse;
+                color: rgba(0, 0, 0, 0.95);
+            }
+
+            #cell1 {
+                padding:0px 5px 0px 5px;
+                vertical-align: middle;
+                text-align: center;
+                width: 70px;
+                height: 25;
+                border-width:1px 1px 1px 1px;
+                border-style: solid;
+                border-color: #333;
+                border-collapse: collapse;
+                background-color: rgba(250, 250, 250, 0.7);
+                color: rgba(0, 0, 0, 0.95);
+            }
+
+            #cell2 {
+                padding:0px 5px 0px 5px;
+                vertical-align: middle;
+                text-align: center;
+                width: 70px;
+                height: 25;
+                border-width:1px 1px 1px 1px;
+                border-style: solid;
+                border-color: #333;
+                border-collapse: collapse;
+                background-color: rgba(250, 240, 250, 0.5);
+                color: rgba(0, 0, 0, 0.95);
+            }
+            #bar {
+                padding:0px 0px 0px 0px;
+                spacing:0px 0px 0px 0px;
+                width: 100%;
+                height: 5px;
+                border-width:1px 1px 0px 0px;
+                border-style: solid;
+                border-color: #333;
+                border-collapse: collapse;
+            }
+            #title {
+                font-size: 15px;
+                font-weight: 700;
+                align: center;
+                vertical-align: middle;
+                height: 30;
+                background-color: rgba(10, 10, 10, 0.9);
+                color: rgba(250, 240, 250, 0.8);
+                padding:0px 0px 0px 100px;
+                border-width:0px 0px 0px 0px;
+                border-style: solid;
+                border-color: #333;
+                border-collapse: collapse;
+            }
+            #voidcell {
+                padding:0px 0px 0px 0px;
+                spacing:0px 0px 0px 0px;
+                border-width:0px 0px 0px 1px;
+                border-style: solid;
+                border-color: #333;
+                border-collapse: collapse;
+            }
+            #idcell {
+                padding:0px 0px 0px 10px;
+                text-align: left;
+                vertical-align: middle;
+                font-size: 12px;
+                font-weight: 1000;
+                border-width:0px 0px 0px 0px;
+                border-style: solid;
+                border-color: #333;
+                border-collapse: collapse;
+            }
+
+            #day {
+                vertical-align: top;
+                font-size: 11px;
+                font-weight: 500;
+                color: rgba(0, 0, 0, 0.6);
+                padding: 10px 3px 10px 10px;
+            }
+
+            #ticker {
+                font-family: Helvetica, sans-serif;
+                font-size: 13px;
+                font-weight: 700;
+                color: rgba(5, 5, 5, 0.95);
+                padding: 0px 10px 3px 2px;
+            }
+
+
+            #value {
+                text-align: center;
+                line-height: 100%;
+                vertical-align: middle;
+                font-size: 14px;
+                font-weight: 600;
+                padding: 10px 6px 0px 0px; /*Top right Bottom left*/
+            }
+
+            #average {
+                text-align: middle;
+                line-height: 100%;
+                vertical-align: bottom;
+                font-size: 14px;
+                font-weight: 500;
+                font-style: italic;
+                color: rgba(0, 0, 50, 1);
+                padding: 0px 6px 0px 0px; /*Top right Bottom left*/
+            }
+
+            #label {
+                text-align: middle;
+                line-height: 100%;
+                vertical-align: bottom;
+                font-size: 11px;
+                font-weight: 400;
+                color: rgba(30, 30, 30, 0.8);
+                padding: 0px 2px 0px 2px; /*Top right Bottom left*/
+            }
+
+            a:link, a:visited {
+                text-decoration: none;
+            }
+
+
+        </style>
+
+        <title>Tue_12-12_1600-2000_60</title>
+
+    </head>
+
+    <body bgcolor="#aaaaaa">
+
+        <div align="left" style="letter-spacing: 3px; padding: 10px 0px 5px 200px; font-size: 17px; font-weight: 100; font-family: Helvetica, sans-serif; color: rgba(250, 250, 250, 0.5);">
+            
+                            2017-12-<text style="font-size: 17px; font-weight: 600; color: rgba(250, 250, 250, 0.9);">12 Tue  | 16:00</text> - 20:00 |  60
+        </div>
+
+        <div>
+            Yeld Curves DIV
+        </div>
+
+        <div>
+        <table id="main" border="0"  cellpadding="0">
+
+            <tr>
+                <td colspan="43" id="title">
+                    VIX
+                </td>
+            </tr>
+            last day recorded before day selected:2017-12-11
+VIX_i
+ try increasing time periodlast day recorded before day selected:2017-12-11
+VIX_F
+ try increasing time period
+            <tr>
+                <td colspan="43" id="title">
+                    STOCKS
+                </td>
+            </tr>
+            last day recorded before day selected:2017-12-11
+SPY_i
+ try increasing time periodlast day recorded before day selected:2017-12-11
+SPX_i
+ try increasing time periodlast day recorded before day selected:2017-12-11
+ES_F
+ try increasing time periodlast day recorded before day selected:2017-12-11
+NASDAQ_i
+ try increasing time periodlast day recorded before day selected:2017-12-11
+NASDAQ_F
+ try increasing time periodlast day recorded before day selected:2017-12-11
+DJIA_i
+ try increasing time periodlast day recorded before day selected:2017-12-11
+DJIA_F
+ try increasing time periodlast day recorded before day selected:2017-12-11
+RUSSEL_i
+ try increasing time periodlast day recorded before day selected:2017-12-11
+RUSSEL_F
+ try increasing time periodlast day recorded before day selected:2017-12-11
+DAX_i
+ try increasing time periodlast day recorded before day selected:2017-12-11
+DAX_F
+ try increasing time periodlast day recorded before day selected:2017-12-11
+STOXX50_i
+ try increasing time periodlast day recorded before day selected:2017-12-11
+STOXX50_F
+ try increasing time periodlast day recorded before day selected:2017-12-11
+STOXX600_i
+ try increasing time periodlast day recorded before day selected:2017-12-11
+STOXX600_F
+ try increasing time periodlast day recorded before day selected:2017-12-11
+FTSE_i
+ try increasing time periodlast day recorded before day selected:2017-12-11
+FTSE_F
+ try increasing time periodlast day recorded before day selected:2017-12-11
+MIB_i
+ try increasing time periodlast day recorded before day selected:2017-12-11
+CAC_i
+ try increasing time periodlast day recorded before day selected:2017-12-11
+HANGSENG_i
+ try increasing time periodlast day recorded before day selected:2017-12-11
+HANGSENG_F
+ try increasing time periodlast day recorded before day selected:2017-12-11
+NIKKEI_i
+ try increasing time periodlast day recorded before day selected:2017-12-11
+NIKKEI_F
+ try increasing time period
+            <tr>
+                <td colspan="43" id="title">
+                    BONDS
+                </td>
+            </tr>
+            last day recorded before day selected:2017-12-11
+EURODOLLAR_F
+ try increasing time periodlast day recorded before day selected:2017-12-11
+US2_F
+ try increasing time periodlast day recorded before day selected:2017-12-11
+US5_F
+ try increasing time periodlast day recorded before day selected:2017-12-11
+US10_F
+ try increasing time periodlast day recorded before day selected:2017-12-11
+US30_F
+ try increasing time periodlast day recorded before day selected:2017-12-11
+GER2_F
+ try increasing time periodlast day recorded before day selected:2017-12-11
+GER5_F
+ try increasing time periodlast day recorded before day selected:2017-12-11
+GER10_F
+ try increasing time periodlast day recorded before day selected:2017-12-11
+UK5_Y
+ try increasing time periodlast day recorded before day selected:2017-12-11
+UK10_Y
+ try increasing time periodlast day recorded before day selected:2017-12-11
+JAP5_Y
+ try increasing time periodlast day recorded before day selected:2017-12-11
+JAP10_Y
+ try increasing time periodlast day recorded before day selected:2017-12-11
+ITA10_Y
+ try increasing time period
+            <tr>
+                <td colspan="43" id="title">
+                    CURRENCIES
+                </td>
+            </tr>
+            last day recorded before day selected:2017-12-11
+DOLLAR_i
+ try increasing time periodlast day recorded before day selected:2017-12-11
+EURUSD_S
+ try increasing time periodlast day recorded before day selected:2017-12-11
+GBPUSD_S
+ try increasing time periodlast day recorded before day selected:2017-12-11
+AUDUSD_S
+ try increasing time periodlast day recorded before day selected:2017-12-11
+EURYEN_S
+ try increasing time periodlast day recorded before day selected:2017-12-11
+USDYEN_S
+ try increasing time periodlast day recorded before day selected:2017-12-11
+USDCHF_S
+ try increasing time period
+            <tr>
+                <td colspan="43" id="title">
+                    COMMODITIES
+                </td>
+            </tr>
+            last day recorded before day selected:2017-12-11
+GOLD_S
+ try increasing time periodlast day recorded before day selected:2017-12-11
+GOLD_F
+ try increasing time periodlast day recorded before day selected:2017-12-11
+SILVER_S
+ try increasing time periodlast day recorded before day selected:2017-12-11
+SILVER_F
+ try increasing time periodlast day recorded before day selected:2017-12-11
+COPPER_F
+ try increasing time periodlast day recorded before day selected:2017-12-11
+CL_F
+ try increasing time periodlast day recorded before day selected:2017-12-11
+WTI_F
+ try increasing time periodlast day recorded before day selected:2017-12-11
+BRENT_F
+ try increasing time periodlast day recorded before day selected:2017-12-11
+NATURALGAS_F
+ try increasing time periodlast day recorded before day selected:2017-12-11
+CORN_F
+ try increasing time periodlast day recorded before day selected:2017-12-11
+SOYBEAN_F
+ try increasing time period
+        </table>
+        </div>
+    </body>
+</html>

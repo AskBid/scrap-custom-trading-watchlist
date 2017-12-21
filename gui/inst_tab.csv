@@ -1,7 +1,7 @@
 last: price --- last: yclose --- last: open
-last: changept open --- stat: changept avg abs
+last: changept open --- stat: changept avg abs --- stat: changept avg
 change: open range --- stat: changepc avg abs
 change: open price --- stat: changepc avg abs --- stat: changepc std abs --- stat: changepc med abs --- stat: changepc pct abs
-last: dayr --- stat: dayr avg --- stat: dayr pct --- stat: dayr pc
-last: vol --- stat: vol avg --- stat: vol pct --- stat: vol pc
+last: dayr --- stat: dayr avg --- stat: dayr pc --- stat: dayr pct
+last: vol --- stat: vol avg --- stat: vol pc --- stat: vol pct
 last: oi --- stat: oi pct

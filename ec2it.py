@@ -123,5 +123,5 @@ if __name__ == '__main__':
     # ec2.cmd('ls')
     # ec2.rmAll('logs')
     # ec2.putFile('htmit.py', 'mergeit.py', 'drawit.py', 'datait.py')
-    ec2.putFile('htmit.py')
-    # ec2.putFile('gui/guilist.csv')
+    # ec2.putFile('htmit.py')
+    ec2.putFile('gui/inst_tab.csv')
