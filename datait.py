@@ -11,7 +11,6 @@ import datetime as dt
 from pandas.tseries.offsets import BDay #to make operation betwen dates where only BusinessDays are considered
 
 from scrapit import getTimestamp
-from drawit import draw52RangeBar
 
 from scipy import stats
 

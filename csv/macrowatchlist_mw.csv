@@ -9,7 +9,6 @@ MIB_i,https://www.marketwatch.com/investing/index/i945?countrycode=xx,empty
 FTSE_i,https://www.marketwatch.com/investing/index/ukx?countrycode=uk,empty
 FTSE_F,http://www.marketwatch.com/investing/future/ftse%20futures?countrycode=uk,empty
 STOXX600_i,http://www.marketwatch.com/investing/index/sxxp?countrycode=xx,empty
-STOXX600_F,http://www.marketwatch.com/investing/future/stoxx%20600%20futures?countrycode=de&iso=xeur,empty
 STOXX50_i,https://www.marketwatch.com/investing/index/sx5e?countrycode=xx,empty
 STOXX50_F,http://www.marketwatch.com/investing/future/euro%20stoxx%2050%20futures?countrycode=de&iso=xeur,empty
 DAX_i,https://www.marketwatch.com/investing/index/dax?countrycode=dx,empty

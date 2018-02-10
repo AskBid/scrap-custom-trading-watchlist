@@ -9,53 +9,7 @@ except Exception as e:
 from math import radians
 from math import isnan
 
-def draw52RangeBar(lenght = 226,
-            thickness = 6,
-            low52 = 11865.0,
-            range52 = 1070.5, #12935.5  high52
-            dopen = 12527.00, #day open
-            drange = 157.50,
-            path = "gui/bar_trial.png",
-            orientation = "Vertical"):
-
-    left2open_px = (lenght / range52) * (dopen - low52)
-    range_px = (lenght / range52) * drange
-
-    if orientation == 'Vertical':
-        ims = cairo.ImageSurface(cairo.FORMAT_ARGB32, thickness, lenght)
-        cr = cairo.Context(ims)
-        cr.translate(0, lenght)
-        cr.move_to(0,0)
-        cr.rotate(radians(-90))
-    else:
-        ims = cairo.ImageSurface(cairo.FORMAT_ARGB32, lenght, thickness)
-        cr = cairo.Context(ims)
-
-    cr.set_line_width(0)
-    cr.set_source_rgb(0, 0, 0)
-    cr.rectangle(0, 0, lenght, thickness)
-    cr.set_line_join(cairo.LINE_JOIN_MITER)
-    cr.fill()
-    cr.stroke()
-
-    cr.set_source_rgb(1, 1, 1)
-
-    if left2open_px > (lenght - 3):
-        left2open_px = lenght - 3
-        cr.rectangle(left2open_px, 2, range_px, 2)
-
-    if range_px < 3:
-        range_px = 3
-
-
-    cr.rectangle(left2open_px, 0, range_px, thickness)
-    cr.set_line_join(cairo.LINE_JOIN_MITER)
-    cr.fill()
-    cr.stroke()
-
-    ims.write_to_png(path)
-
-def drawCandle( lenght = 200, thickness = 25,
+def drawSVGcandle( lenght = 80, thickness = 23,
 
                 avgRange = 10.17,
                 stdRange = 4.0235,
@@ -69,57 +23,44 @@ def drawCandle( lenght = 200, thickness = 25,
                 dayOpen = 2560, #taken from [-1]
                 price = 2550.75, #taken from [-1]
                 dayLow = 2542.5, #taken from [-1]
+                ):
 
-                offest = 0,
+    svg ='''    <svg id="svg" style="width: {};height: {};">
 
-                path = "gui/candle.png",
-                type_="bar"):
+    --avg--
+    --bar1--
+    --bar2--
+    </svg>'''.format(thickness,lenght)
+    def rect(x,y,w,h,color):
+        rect_str = '''<rect x="--x--" y="--y--" width="--w--" height="--h--" id="rectType_--color--"></rect>
+    '''
+        y = lenght - y -h
 
-    def background(r,g,b):
-        cr.set_source_rgb(r, g, b)
-        cr.set_line_width(0)
-        cr.rectangle(0, 0, thickness, lenght)
-        cr.set_line_join(cairo.LINE_JOIN_MITER)
-        cr.fill()
-        cr.stroke()
+        rect_str = rect_str.replace('--x--',str(x))
+        rect_str = rect_str.replace('--y--',str(y))
+        rect_str = rect_str.replace('--w--',str(w))
+        rect_str = rect_str.replace('--h--',str(h))
+        rect_str = rect_str.replace('--color--',str(color))
+        return rect_str
 
-    values = (avgRange, stdRange, dayRange, yClose, yOpen, yLow, yHigh, dayOpen, price, dayLow)
-    for value in values:
-        if isnan(value):
-            ims = cairo.ImageSurface(cairo.FORMAT_ARGB32, thickness, lenght)
-            cr = cairo.Context(ims)
-            background(1,0,0)
-            ims.write_to_png(path)
-            return 'NaN'
-
-    centerY = lenght / 2
-
-    space_border = 5
-    space_bars = 1
-    trunk_w = 3
-    arm_line_w = 2
-    half_arm_line_w = 1
-    arm_len = 1
-    body_w = 4
-
-    thickness = space_border + (trunk_w * 6)
+    def bar(x_start, y_start, len_LH, len_O, len_P, cl):
+        body_w = 3
+        rects = rect(x_start, y_start, body_w, len_LH, cl)
+        arm_w = 1
+        if len_O == 0:
+            len_O =+ 1
+        if len_O == len_LH:
+            len_O =- 1
+        if len_P == 0:
+            len_P =+ 1
+        if len_P == len_LH:
+            len_P =- 1
+        rects = rects + rect(x_start-arm_w, y_start+len_O-1, arm_w, 2, cl)
+        rects = rects + rect(x_start+body_w, y_start+len_P-1, arm_w, 2, cl)
+        return rects
 
     pt2px_rt = 0
     ratio = dayRange / avgRange
-
-    deltaOL = dayOpen - dayLow
-    deltaPL = price - dayLow
-    deltaLows =  yLow - dayLow
-    deltaOL_y = yOpen - yLow
-    deltaPL_y = yClose - yLow
-
-    ims = cairo.ImageSurface(cairo.FORMAT_ARGB32, thickness, lenght)
-    cr = cairo.Context(ims)
-    cr.move_to(0,centerY)
-    cr.scale(1,-1)
-    cr.translate(0, -lenght - offest)
-    cr.set_line_join(cairo.LINE_CAP_SQUARE)
-    background(0.95,0.95,0.95)
 
     if ratio < 2:
         ## find max points that fit inside canvas
@@ -132,93 +73,46 @@ def drawCandle( lenght = 200, thickness = 25,
         pt2px_rt = lenght / maxPts
 
     def pt2px(pts):
-        return pts * pt2px_rt
+        return round(pts * pt2px_rt)
 
-    def bar(x_start, y_start, len_LH, len_O, len_P, type_func, a):
-        def arms():
-            #today arm open
-            cr.rectangle(int(x_start),
-                         int(y_start + len_O - half_arm_line_w),
-                         int(-arm_len),
-                         int(arm_line_w))
-            #today arm current/close
-            cr.rectangle(int(x_start + trunk_w),
-                         int(y_start + len_P - half_arm_line_w),
-                         int(arm_len),
-                         int(arm_line_w))
-            cr.fill()
+    yStart = round(lenght / 4)
+    avgRange = pt2px(avgRange)
+    color_today_bar = ''
+    if dayOpen < price:
+        color_today_bar = 'gr'
+    else:
+        color_today_bar = 'r'
+    color_y_bar = ''
+    if yOpen < yClose:
+        color_y_bar = 'gr'
+    else:
+        color_y_bar = 'r'
+    dayRange = pt2px(dayRange)
+    yClose = pt2px(yClose)
+    yOpen = pt2px(yOpen)
+    yLow = pt2px(yLow)
+    yHigh = pt2px(yHigh)
+    dayOpen = pt2px(dayOpen)
+    price = pt2px(price)
+    dayLow = pt2px(dayLow)
 
-        if len_O < len_P:
-            cr.set_source_rgba(0.1, 0.8, 0.35,a)
-        else:
-            cr.set_source_rgba(1, 0.29, 0.3,a)
-        cr.set_line_width(0)
+    bar1 = bar(14, yStart, dayRange, dayOpen-dayLow, price-dayLow, color_today_bar)
+    bar2 = bar(6, yStart-(dayLow-yLow), yHigh-yLow, yOpen-yLow, yClose-yLow, color_y_bar)
 
-        arms()
-
-        cr.rectangle(int(x_start),
-                     int(y_start),
-                     int(trunk_w),
-                     int(len_LH))
-        cr.fill()
-
-    def avg_std_box(y_start, avg, std):
-
-        cr.set_source_rgba(0.2, 0.2, 0.2, 0.1)
-        cr.set_line_width(0)
-
-        avg = int(avg)
-
-        cr.rectangle(0,
-                     int(y_start),
-                     thickness,
-                     avg)
-        cr.fill()
-
-        if ratio >= 2:
-            for i in range(0,10):
-                cr.set_source_rgba(0.3, 0.3, 0.3, 0.1)
-                cr.rectangle(0,
-                             int(y_start - (avg * 2) + (avg * i)),
-                             thickness,
-                             2)
-                cr.fill()
-
-        cr.set_source_rgba(0, 0, 0.2, 0.1)
-
-        for i in range(0,thickness,2):
-            cr.rectangle(0 + i,
-                         int(y_start + avg - std),
-                         1,
-                         int(std*2))
-            cr.fill()
+    avgs = ''
+    for i in range(0,6,2):
+        avgs = avgs + rect(0, yStart + (avgRange*i), thickness, avgRange,'g')
+    for i in range(2,6,2):
+        avgs = avgs + rect(0, yStart + (-avgRange*i), thickness, avgRange,'g')
 
 
-    bar_len = pt2px(dayRange)
-    bar_low = int(lenght / 3)
-    bar_low_y = bar_low + pt2px(deltaLows)
-    bar_len_y = pt2px(yHigh - yLow)
 
-    avg_std_box(bar_low, pt2px(avgRange), pt2px(stdRange))
+    svg = svg.replace('--avg--', avgs)
+    svg = svg.replace('--bar1--', bar1)
+    svg = svg.replace('--bar2--', bar2)
 
-    bar(space_border + arm_len,
-        bar_low_y,
-        bar_len_y,
-        pt2px(deltaOL_y),
-        pt2px(deltaPL_y),
-        type_,
-        0.5)
 
-    bar(space_border + (arm_len*3) + trunk_w + space_bars,
-        bar_low,
-        bar_len,
-        pt2px(deltaOL),
-        pt2px(deltaPL),
-        type_,
-        0.9)
-
-    ims.write_to_png(path)
-
+    print(svg)
 
 if __name__ == "__main__":
-    drawCandle()
+    drawSVGcandle()

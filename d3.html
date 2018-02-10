@@ -2,34 +2,51 @@
     <head>
         <script src="https://d3js.org/d3.v4.min.js"></script>
     </head>
-    <body>
+    <style>
 
-        <script>
+    #rectType_g {
+        fill: rgb(130,130,130);
+        fill-opacity:0.15;
+        stroke-width: 0;
+    }
 
-            var svg = d3.select("body").append("svg")
-                .attr("witdh", 250)
-                .attr("height", 250);
+    #rectType_gr {
+        fill: rgb(25,200,88);
+        fill-opacity:1;
+        stroke-width: 0;
+    }
 
-            d3.json("data.json", function (data){
-                    render(data)
-                    console.log(data)
-                });
+    #rectType_r {
+        fill: rgb(250,70,75);
+        fill-opacity:1;
+        stroke-width: 0;
+    }
 
-            var scale = d3.scaleLinear();
+    #svg {
+        /* width: 25;
+        height: 200; */
+        background-color: white;
+    }
 
-            scale.domain([0,1]);
-            scale.range([0,250]);
+    </style>
+    <body style="background-color: black;">
 
-            function render(data) {
-            svg.selectAll("rect").data(data)
-                .enter().append("rect")
-                .attr("x", function(d) {return scale(d.x);})
-                .attr("y", 0)
-                .attr("height", function(d) {return scale(d.y);})
-                .attr("width",10);
-            }
+        <svg id="svg" style="width: 23;height: 80;">
 
-        </script>
+        <rect x="0" y="33" width="23" height="27" id="rectType_g"></rect>
+        <rect x="0" y="-21" width="23" height="27" id="rectType_g"></rect>
+        <rect x="0" y="-75" width="23" height="27" id="rectType_g"></rect>
+        <rect x="0" y="87" width="23" height="27" id="rectType_g"></rect>
+        <rect x="0" y="141" width="23" height="27" id="rectType_g"></rect>
 
+        <rect x="14" y="10" width="4" height="50" id="rectType_r"></rect>
+        <rect x="13" y="13" width="1" height="2" id="rectType_r"></rect>
+        <rect x="18" y="38" width="1" height="2" id="rectType_r"></rect>
+
+        <rect x="6" y="9" width="4" height="15" id="rectType_gr"></rect>
+        <rect x="5" y="23" width="1" height="2" id="rectType_gr"></rect>
+        <rect x="10" y="21" width="1" height="2" id="rectType_gr"></rect>
+
+        </svg>
     </body>
 </html>
