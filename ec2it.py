@@ -81,19 +81,6 @@ class EC2connection():
 
         return data
 
-# def fetch(del_onEC2 = 'leave'): #fetch from temp DB
-#     import mergeit
-#
-#     ec2 = EC2connection()
-#     ec2.getFiles('data/scrapData.db', 'fetch/')
-#     if del_onEC2 == 'delete':
-#         ec2.rmAll('data')
-#     copyfile('fetch/scrapData.db', 'fetch/_bak/{}_scrapData.db'.format(strftime('%Y-%m-%d_%H')))
-#     copyfile('scrapData.db', '_bak/{}_scrapData.db'.format(strftime('%Y-%m-%d_%H')))
-#     mergeit.merge_db('scrapData.db', 'fetch/scrapData.db')
-#     remove('fetch/scrapData.db')
-#     print('fetch complete.')
-
 def fetch(del_onEC2 = 'leave'): #just download complete DB
     import mergeit
 
@@ -101,7 +88,6 @@ def fetch(del_onEC2 = 'leave'): #just download complete DB
     ec2 = EC2connection()
     ec2.getFiles('scrapData.db', '.')
     print('fetch complete.')
-
 
 def getLogs():
     try:
@@ -116,14 +102,17 @@ def getLogs():
 
 if __name__ == '__main__':
     ec2 = EC2connection()
-    # ec2.getFiles(, 'trash')
+    # ec2.getFiles('watchlistdaily.csv', 'trash')
+    # ec2.getFiles('scrapData.db', 'trash')
     # ec2.cmd('ls data')
-    ec2.getFiles('data/scrapData.db', 'qui')
+    # ec2.getFiles('scrapDataBINTHIS.db', 'qui/scrapDataBINTHIS.db.db')
     # ec2.getAllFiles('~/logs','trash')
     # ec2.cmd('ls')
     # ec2.rmAll('logs')
-    # ec2.putFile('htmit.py', 'mergeit.py', 'drawit.py', 'datait.py')
+    ec2.putFile('macrowatchlist_mw.csv')
     # ec2.putFile('htmit.py')
+    # ec2.putFile('scrapit.py')
 
+    print('script runned')
 
     # ec2.putFile('gui/bigpage.html')

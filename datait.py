@@ -127,7 +127,9 @@ class Calc_dataframe(object):
 
         df.set_index(['date', 'time'], inplace=True)
         #makes sure that if there is a bad recording that gets NaN in dataframe so it does not affect calculation
+
         df = df[df.applymap(isnumber)] #usually it gets error here because you have passed in a wrong inst_name
+
 
         return df
 
@@ -374,11 +376,11 @@ if __name__ == '__main__':
     pd.set_option('display.max_columns', 500)
     pd.set_option('display.width', 1000)
 
-    # today = time.strftime('%Y-%m-%d')
-    today = '2017-12-08'
+    today = time.strftime('%Y-%m-%d')
+    # today = '2018-07-07'
 
     def test_inst():
-        calc = Calc_dataframe('VIX_i',today,60,'16:00','20:00')
+        calc = Calc_dataframe('CAC_i',today,60,'16:00','20:00')
 
         print('----> ' + calc.inst_name +  ' <----\n')
 
@@ -415,7 +417,9 @@ if __name__ == '__main__':
 
         print(calc.df)
 
-    def testYC():
-        calc = Calc_YC('US_YC', today, '16:00','20:00')
+    test_inst()
 
-    testYC()
+    # def testYC():
+    #     calc = Calc_YC('US_YC', today, '16:00','20:00')
+    #
+    # testYC()

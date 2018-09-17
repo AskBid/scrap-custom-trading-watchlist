@@ -210,6 +210,7 @@ class Page():
         def make1Tab(inst, html, guicsv):
             global rigato
 
+            print('make 1 tab for {}'.format(inst))
             colspanTOT = 0
 
             if inst == '':
@@ -228,20 +229,26 @@ class Page():
                 titleTD = titleTD.replace('<--colspanTOT-->', str(colspanTOT))
                 titleTD = titleTD.replace('<!-- TITLETEXT -->', inst)
                 return titleTD
-
-            instData = datait.Calc_dataframe(inst,
-                                             self.date_input['enddate'],
-                                             int(self.date_input['sample_days']),
-                                             self.date_input['period_start'],
-                                             self.date_input['period_end'])
+            try:
+                instData = datait.Calc_dataframe(inst,
+                                                 self.date_input['enddate'],
+                                                 int(self.date_input['sample_days']),
+                                                 self.date_input['period_start'],
+                                                 self.date_input['period_end'])
+            except:
+                return 'No DataFrame for __ <a  target="_blank" href="{}">{}</a><br />'.format(linkdic[inst], inst)
 
             if instData.lastdate != self.date_input['enddate']:
-                return 'last day recorded before day selected:{}\n{}\n try increasing time period'.format(instData.lastdate, instData.inst_name)
+                return 'Missing Data_ Last day recorded: {} __ <a  target="_blank" href="{}">{}</a><br />'.format(instData.lastdate, linkdic[inst], instData.inst_name)
 
-            bar_lenghts = draw52RangeBar(  instData.df['l52'].values[-1],
-                                           instData.day52r,
-                                           instData.df['open'].values[-1],
-                                           instData.df['dayr'].values[-1])
+            try:
+                bar_lenghts = draw52RangeBar(  instData.df['l52'].values[-1],
+                                               instData.day52r,
+                                               instData.df['open'].values[-1],
+                                               instData.df['dayr'].values[-1])
+            except:
+                print("draw52RangeBar for {} went wrong in hmtlit.py".format(inst))
+                return ''
 
             head = html.split('<!-- HEAD -->')[1]
             val_blankcell = html.split('<!-- VALUE -->')[1]
@@ -256,18 +263,22 @@ class Page():
             head = head.replace('<--barwidth1-->',  str(bar_lenghts[1]))
             head = head.replace('<--barwidth2-->',  str(bar_lenghts[2]))
 
-            head = head.replace('<!--svg-->', drawSVGcandle( 80,13,
-                        float(instData.stat('dayr','avg')), #avgRange = 10.17,
-                        float(instData.stat('dayr','std')), # stdRange = 4.0235,
-                        float(instData.dayr.replace(',','')), # dayRange = 19,
-                        instData.df['price'].values[-2], # yClose = 2560, #taken from [-1]
-                        instData.df['open'].values[-2], # yOpen = 2556.50, #taken from [-2]
-                        instData.df['dayl'].values[-2], # yLow = 2556.25, #taken from [-2]
-                        instData.df['dayh'].values[-2], # yHigh = 2562.25, #taken from [-2]
-                        instData.df['open'].values[-1], # dayOpen = 2560, #taken from [-1]
-                        instData.df['price'].values[-1], # price = 2560.75, #taken from [-1]
-                        instData.df['dayl'].values[-1]))
-                        
+            try:
+                head = head.replace('<!--svg-->', drawSVGcandle( 80,13,
+                            float(instData.stat('dayr','avg')), #avgRange = 10.17,
+                            float(instData.stat('dayr','std')), # stdRange = 4.0235,
+                            float(instData.dayr.replace(',','')), # dayRange = 19,
+                            instData.df['price'].values[-2], # yClose = 2560, #taken from [-1]
+                            instData.df['open'].values[-2], # yOpen = 2556.50, #taken from [-2]
+                            instData.df['dayl'].values[-2], # yLow = 2556.25, #taken from [-2]
+                            instData.df['dayh'].values[-2], # yHigh = 2562.25, #taken from [-2]
+                            instData.df['open'].values[-1], # dayOpen = 2560, #taken from [-1]
+                            instData.df['price'].values[-1], # price = 2560.75, #taken from [-1]
+                            instData.df['dayl'].values[-1]))
+            except:
+                print("drawSVGcandle for {} went wrong in hmtlit.py".format(inst))
+                return ''
+
             ValCells = '<td id="spacer" rowspan="2"></td>' #change for switching rows order
             CellsOFavgsCells = ''
 
@@ -374,7 +385,10 @@ class Page():
             inst = inst.replace('\n','')
 
             if inst != '':
-                bigbody += make1Tab(inst, bigbody_blank, guicsv)
+                try:
+                    bigbody += make1Tab(inst, bigbody_blank, guicsv)
+                except:
+                    print(inst + ' did not htm')
 
 
         html = bighead + bigbody + bigtail

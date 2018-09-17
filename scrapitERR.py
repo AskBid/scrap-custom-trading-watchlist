@@ -6,7 +6,6 @@ import os, errno
 import re #used to get rid of all the characters which are not numbers or dashes
 import sqlite3
 import argparse
-import json
 
 def getTimestamp(h_m):
     hours = int(h_m.split(":")[0])
@@ -35,7 +34,8 @@ def getDataFormat():
         "h52": "",
         "l52": "",
         "vol": "",
-        "oi": ""}
+        "oi": "",
+        "ticker": ""}
     return dataFormat
 
 def getDataFormatCDS():
@@ -389,8 +389,6 @@ def scrapMarketwatch(address):
 
     try:
         priceTab = sup.find("h3",{"class": lambda x: x and 'intraday__price' in x})
-        print(priceTab)
-        print(sup)
         if priceTab.find('bg-quote') != None:
             bgquote = priceTab.find('bg-quote')
             data["price"] = bgquote.text.replace(",","").replace(" ","")
@@ -453,45 +451,86 @@ def scrapMarketwatch(address):
 
     return data
 
-def scrapBarchart(address):
-    #creating formatting data from scrapdata
+def scrapBloomberg(address):
+    #creating/formatting data from scrapdata
     r = requests.get(address)
     c = r.content
     sup = bs(c,"html.parser")
 
-    div = sup.find_all("div",{"class": "bc-quote-overview row"})
-    div = div[0].attrs
-    div = div.get('data-ng-init')
-    raw_data = div.split('"raw":')
-    raw_data = raw_data[1].split('}')
-    raw_data = raw_data[0] + '}'
-    dic = json.loads(raw_data)
+    lab = sup.find_all("div",{"class": lambda x: x and 'cell__label' in x})
+    val = sup.find_all("div",{"class": lambda x: x and 'value' in x})
 
     data = getDataFormat()
+
+    if not len(lab) == len(val):
+        toCull = len(lab) - len(val)
+        if toCull > 0:
+            for i in range(0,toCull):
+                lab.pop()
+        else:
+            for i in range(0,toCull):
+                val.pop()
+        print("'{}' labels and values mismatch was fixed".format(address))
+        logfile.write("{}: '{}' labels and values mismatch was fixed...\n".format(hour, address))
+        # for i, item in enumerate(val):
+        #     print("{}:  {}".format(i, item))
+        # print('')
+        # for i, item in enumerate(lab):
+        #     print("{}:  {}".format(i, item))
+
+    scrapData = {}
+    #we create a dictionary of scraped data with labels as key and val as values
+    for i, key in enumerate(lab):
+        scrapData[key.text.replace(" ","")] = re.sub("[^0-9. -]", "", val[i].text)
 
     data["date"] = date
     data["time"] = hour
     data["day"] = day
 
-    data["price"] = dic.get('lastPrice')
-    data["yclose"] = dic.get('previousPrice')
-    data["open"] = dic.get('openPrice')
+    try:
+        data["price"] = sup.find("div",{"class":"price"}).text.replace(",","").replace(" ","")
+    except Exception as e:
+        print(str(e))
+        print("'{}' No 'Price'".format(address))
+        logfile.write("{}: '{}' No 'Price'...\n {} \n".format(hour, address, str(e)))
 
-    data["dayh"] = dic.get('highPrice')
-    data["dayl"] = dic.get('lowPrice')
+    try:
+        data["open"] = scrapData["Open"].replace(" ","")
+    except Exception as e:
+        print(str(e))
+        print("'{}' No 'Open'".format(address))
+        logfile.write("{}: '{}' No 'Open'...\n {} \n".format(hour, address, str(e)))
 
-    data["h52"] = dic.get('highPrice1y')
-    if (data["h52"] == None):
-        data["h52"] = dic.get('highPriceYtd')
+    try:
+        data["yclose"] = scrapData["PreviousClose"].replace(" ","")
+    except Exception as e:
+        print(str(e))
+        print("'{}' No 'yClose'".format(address))
+        logfile.write("{}: '{}' No 'yClose'...\n {} \n".format(hour, address, str(e)))
 
-    data["l52"] = dic.get('lowPrice1y')
-    if (data["l52"] == None):
-        data["l52"] = dic.get('lowPriceYtd')
+    try:
+        data["dayh"] = scrapData["DayRange"].replace(" - ",";;").replace(" ","").split(";;")[1]
+        data["dayl"] = scrapData["DayRange"].replace(" - ",";;").replace(" ","").split(";;")[0]
+    except Exception as e:
+        print(str(e))
+        print("'{}' No 'DayRange'".format(address))
+        logfile.write("{}: '{}' No 'DayRange'...\n {} \n".format(hour, address, str(e)))
 
-    data["vol"] = dic.get('volume')
-    data["oi"] = dic.get('openInterest')
+    try:
+        data["h52"] = scrapData["52WkRange"].replace(" - ",";;").replace(" ","").split(";;")[1]
+        data["l52"] = scrapData["52WkRange"].replace(" - ",";;").replace(" ","").split(";;")[0]
+    except Exception as e:
+        print(str(e))
+        print("'{}' No '52WkRange'".format(address))
+        logfile.write("{}: '{}' No '52WkRange'...\n {} \n".format(hour, address, str(e)))
 
-    return data
+
+    try:
+        data["vol"] = scrapData["Volume"].replace(" ","")
+    except:
+        pass
+
+    return data;
 
 ##
 #\ scraping functions
@@ -506,9 +545,6 @@ def selector(address):
 
     if 'bloomberg' in address:
         return scrapBloomberg(address)
-
-    if 'barchart' in address:
-        return scrapBarchart(address)
 
     if 'worldgovernmentbonds.com/country' in address:
         return scrapWorldgovernmentbonds(address)
@@ -717,14 +753,13 @@ def writeit(csvFile, db):
     csvlist.close
 
 if __name__ == '__main__':
-    parser = argparse.ArgumentParser()
-    parser.add_argument("file_csv", help = "file where to read all the instruments to scrap from")
-    parser.add_argument("db", help = "main database")
-    args = parser.parse_args()
-    
-    writeit(args.file_csv, args.db)
-    # print(scrapBarchart('https://www.barchart.com/futures/quotes/ES*0'))
-    # print(scrapBarchart('https://www.barchart.com/stocks/quotes/$HSI'))
+    # parser = argparse.ArgumentParser()
+    # parser.add_argument("file_csv", help = "file where to read all the instruments to scrap from")
+    # parser.add_argument("db", help = "main database")
+    # args = parser.parse_args()
+    #
+    # writeit(args.file_csv, args.db)
+    scrapBloomberg('https://www.bloomberg.com/quote/SX5E:IND')
 
 try:
     logfile.close()

@@ -1,0 +1,29 @@
+
+#to remove emails
+0 2 * * 7 sudo rm /var/spool/mail/ec2-user
+#to remove temporary database
+0 3 * * 7 sudo rm /data/scrapData.db
+
+#limit for same measurement taken in two different times is 10 minutes
+#in reality the 14:05~ on desktop was done at 13:45
+
+#the merge (mergeit.py)	of the temporary database (data/scrapData.db) with the main scrapData.db,
+#is made inside the htmit.py script and it is runned before the page class so that if that gets an
+#error the merge still runs.
+
+40 9 * * 1-5 python36 htmit.py 14
+15 10 * * 1-5 python36 htmit.py 15
+15 11 * * 1-5 python36 htmit.py 16
+15 12 * * 1-5 python36 htmit.py 17
+15 13 * * 1-5 python36 htmit.py 18
+15 14 * * 1-5 python36 htmit.py 19
+15 15 * * 1-5 python36 htmit.py 20
+30 16 * * 1-5 python36 htmit.py 21
+
+30 9 * * 1-5 python36 scrapit.py macrowatchlist_mw.csv data/scrapData.db
+
+5 10-15 * * 1-5 python36 scrapit.py macrowatchlist_mw.csv data/scrapData.db
+
+14 16 * * 1-5 python36 scrapit.py macrowatchlist_mw.csv data/scrapData.db
+
+1 16 * * 1-5 python36 scrapit.py watchlistdaily.csv data/scrapData.db
